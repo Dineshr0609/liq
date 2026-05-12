@@ -1,0 +1,195 @@
+EUROPEAN DISTRIBUTOR REBATE AGREEMENT 
+EMEA Market Volume Incentive Program 
+ 
+1. AGREEMENT DETAILS 
+Contract ID: CTR-TS-008 
+Agreement Name: EMEA Distributor Volume Rebate Program 
+Effective Date: June 1, 2023 
+Expiration Date: June 1,2028 
+Program Type: Tiered Volume Rebate 
+Currency: EUR (Euro) 
+ 
+2. CONTRACTING PARTIES 
+This European Distributor Rebate Agreement (“Agreement”) is entered into by and 
+between: 
+Licensor / Program Sponsor 
+Tech Sound Audio 
+410 Innovation Drive, Suite 500 
+San Jose, California 95134 
+Delaware Corporation 
+Authorized Distributor Partners 
+(As defined in Partner Assignment Records) 
+ 
+3. PURPOSE OF THE PROGRAM 
+This Agreement establishes the commercial rebate framework designed to: 
+• Incentivize distributor sales growth across EMEA 
+• Reward higher Net Sales performance 
+• Maintain structured tier progression 
+• Support regional channel expansion 
+Rebates are strictly governed by contract terms, qualifiers, and eligibility validation rules. 
+
+ 
+4. PROGRAM ELIGIBILITY 
+Eligibility requires: 
+• Active partner assignment 
+• Sales within authorized territories 
+• Sales through approved channels 
+• Compliance with reporting obligations 
+• Valid rebate claims submission 
+• Proof of performance (where required) 
+Only eligible Net Sales transactions qualify. 
+ 
+5. TERRITORY AND CHANNEL APPLICABILITY 
+5.1 Authorized Territory 
+Status Region 
+Authorized Europe / EMEA (Europe Middle East Africa) 
+ 
+5.2 Authorized Channels 
+Status Channels 
+Authorized National Distributor; Regional Distributor 
+ 
+6. COMMERCIAL TERMS AND REBATE STRUCTURE 
+ 
+6.1 Tiered Volume Rebates – EMEA Distributor Program 
+Tier   Term 
+ID  
+ Term 
+Type  
+ 
+Calculation 
+Basis  
+ Rate Type   
+Rebate 
+Rate  
+ Tier Min 
+(EUR)  
+ Tier Max 
+(EUR) 
+Tier 
+1  
+ 
+TERM-
+ Tiered 
+Volume 
+Rebate  
+ Net Sales 
+Value  
+ 
+Percentage  
+ 3.0% 
+of Net 
+Sales  
+ 0   499,999.99 
+
+TS-
+022  
+Tier 
+2  
+ 
+TERM-
+TS-
+023  
+ Tiered 
+Volume 
+Rebate  
+ Net Sales 
+Value  
+ 
+Percentage  
+ 5.0% 
+of Net 
+Sales  
+ 500,000   1,499,999.99 
+Tier 
+3  
+ 
+TERM-
+TS-
+024  
+ Tiered 
+Volume 
+Rebate  
+ Net Sales 
+Value  
+ 
+Percentage  
+ 7.5% 
+of Net 
+Sales  
+ 
+1,500,000  
+ 
+99,999,999.99 
+ 
+Common Term Conditions – Tiered Volume Rebates 
+All Tiered Volume Rebates described above: 
+• Currency: EUR 
+• Payment Timing: Quarterly 
+• Payment Method: Wire 
+• Requires Claim: TRUE 
+• Claim Deadline: 60 Days 
+• Proof of Performance: TRUE 
+ 
+Calculation Methodology 
+Rebate Amount = Eligible Net Sales × Applicable Tier Rate 
+Tier determination is based on cumulative eligible Net Sales Value per calendar quarter. 
+ 
+Tier Application Logic 
+Tiers are applied progressively based on cumulative eligible Net Sales per calendar quarter. 
+• The highest achieved tier applies to eligible quarterly sales 
+• Tier eligibility resets each quarter unless specified otherwise 
+• All validation rules must pass for payout eligibility 
+ 
+7. REPORTING REQUIREMENTS 
+Partners must submit: 
+
+• Quarterly Net Sales reports 
+• Territory & channel breakdown 
+• Returns / adjustments 
+• Claim documentation 
+• Supporting financial records 
+Failure to submit compliant reports may delay payments. 
+ 
+8. CLAIM VALIDATION 
+All rebates subject to: 
+• Sales eligibility verification 
+• Channel compliance validation 
+• Territory authorization checks 
+• Tier threshold confirmation 
+• Proof-of-performance review 
+ 
+9. AUDIT AND COMPLIANCE 
+Tech Sound Audio reserves the right to audit: 
+• Sales records 
+• Rebate calculations 
+• Claims documentation 
+• Financial adjustments 
+Material discrepancies may result in rebate recovery. 
+ 
+10. TERMINATION 
+This Agreement may be terminated for: 
+• Material breach 
+• Fraudulent reporting 
+• Regulatory violations 
+• Persistent non-compliance 
+Upon termination, unpaid rebates may be voided. 
+
+ 
+11. GOVERNING LAW 
+This Agreement shall be governed by the laws of the State of Delaware. 
+ 
+12. SIGNATURES 
+ 
+LICENSOR / PROGRAM SPONSOR 
+Tech Sound Audio 
+Authorized Signature: __________________________ 
+Name: __________________________ 
+Title: __________________________ 
+Date: __________________________ 
+ 
+AUTHORIZED DISTRIBUTOR PARTNER 
+Partner Name: __________________________ 
+Authorized Signature: __________________________ 
+Name: __________________________ 
+Title: __________________________ 
+Date: __________________________

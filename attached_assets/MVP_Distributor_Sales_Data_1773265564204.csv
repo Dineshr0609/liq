@@ -1,0 +1,10 @@
+contract_id,distributor_name,quarter,transaction_date,territory_code,sku,product_name,units,net_sales_amount,transaction_type,rebate_eligible,exclusion_reason
+DRA-TSA-ND-2026,National Distributor,2026-Q1,2026-01-15,US,TS-WH-PRO-001-BLK,SoundPro Wireless Headphones - Black,300,76500.0,SALE,TRUE,
+DRA-TSA-ND-2026,National Distributor,2026-Q1,2026-02-10,US,TS-WH-PRO-001-WHT,SoundPro Wireless Headphones - White,250,63750.0,SALE,TRUE,
+DRA-TSA-ND-2026,National Distributor,2026-Q1,2026-03-05,CA,TS-WH-ESS-003-BLK,EssentialSound Wireless - Black,400,51000.0,SALE,TRUE,
+DRA-TSA-ND-2026,National Distributor,2026-Q1,2026-03-18,US,TS-WD-STD-001-BLK,Studio Wired Pro - Black,80,13600.0,RETURN,FALSE,Returned products
+DRA-TSA-ND-2026,National Distributor,2026-Q1,2026-03-25,MX,TS-WH-PRO-001-SLV,SoundPro Wireless Headphones - Silver,50,9000.0,SAMPLE,FALSE,Promotional sample units
+DRA-TSA-ND-2026,National Distributor,2026-Q2,2026-04-12,US,TS-WH-PRM-002-BLK,PremiumSound Max - Black,600,180000.0,SALE,TRUE,
+DRA-TSA-ND-2026,National Distributor,2026-Q2,2026-05-09,CA,TS-WH-PRM-002-WHT,PremiumSound Max - White,500,150000.0,SALE,TRUE,
+DRA-TSA-ND-2026,National Distributor,2026-Q2,2026-06-02,US,TS-WH-ESS-003-WHT,EssentialSound Wireless - White,450,57375.0,SALE,TRUE,
+DRA-TSA-ND-2026,National Distributor,2026-Q2,2026-06-20,MX,TS-WH-PRO-001-BLK,SoundPro Wireless Headphones - Black,75,19125.0,WARRANTY,FALSE,Warranty replacements

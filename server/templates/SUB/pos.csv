@@ -1,0 +1,4 @@
+date,storeId,storeRegion,productCode,productName,qty,unitPrice,grossSales,channel
+2026-01-15,WEB-PORTAL,Online,SAAS-PRO-MO,Pro Monthly,12,49.00,588.00,SelfService
+2026-02-15,WEB-PORTAL,Online,SAAS-PRO-MO,Pro Monthly,18,49.00,882.00,SelfService
+2026-03-15,WEB-PORTAL,Online,SAAS-ENT-AN,Enterprise Annual,2,12000.00,24000.00,SelfService

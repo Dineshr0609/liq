@@ -1,0 +1,9 @@
+contract_id,licensee_name,quarter,report_date,territory_code,sku,product_name,units_sold,net_sales_amount,reported_royalty_amount
+RLA-TSA-ATM-2026,AudioTech Manufacturing,2026-Q1,2026-04-08,US,TS-WH-PRO-001-BLK,SoundPro Wireless Headphones - Black,800,240000.0,12000.0
+RLA-TSA-ATM-2026,AudioTech Manufacturing,2026-Q1,2026-04-08,US,TS-WH-PRM-002-BLK,PremiumSound Max - Black,300,135000.0,6750.0
+RLA-TSA-ATM-2026,AudioTech Manufacturing,2026-Q2,2026-07-07,CA,TS-WH-PRO-001-WHT,SoundPro Wireless Headphones - White,900,270000.0,13500.0
+RLA-TSA-ATM-2026,AudioTech Manufacturing,2026-Q2,2026-07-07,CA,TS-WH-ESS-003-BLK,EssentialSound Wireless - Black,700,105000.0,5250.0
+RLA-TSA-ATM-2026,AudioTech Manufacturing,2026-Q3,2026-10-06,US,TS-WH-PRM-002-WHT,PremiumSound Max - White,400,180000.0,9000.0
+RLA-TSA-ATM-2026,AudioTech Manufacturing,2026-Q3,2026-10-06,MX,TS-WH-ESS-003-WHT,EssentialSound Wireless - White,600,90000.0,4500.0
+RLA-TSA-ATM-2026,AudioTech Manufacturing,2026-Q4,2027-01-08,US,TS-WH-PRO-001-SLV,SoundPro Wireless Headphones - Silver,1000,300000.0,15000.0
+RLA-TSA-ATM-2026,AudioTech Manufacturing,2026-Q4,2027-01-08,US,TS-WH-ESS-003-BLK,EssentialSound Wireless - Black,600,90000.0,4500.0

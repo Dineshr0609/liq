@@ -1,0 +1,57 @@
+Layer 1: The Main Instruction
+
+The AI is told:
+
+"You are a license agreement analysis expert. Analyze this document and extract structured, machine-readable rules."
+
+It's given a list of rule types to look for, such as:
+
+Percentage — things like "5% of net sales"
+Tiered — different rates at different sales volumes (like your rebate tiers)
+Minimum Guarantees — "minimum payment of $X per year"
+Caps and Limits — "maximum fee of $Y per quarter"
+Fixed Fees — "annual license fee of $Z"
+Deductions — "less 3% for marketing expenses"
+Late Payment Penalty — interest charges
+Conditions — compliance rules, obligations, restrictions
+Data Reference — informational clauses (definitions, territory lists)
+
+Layer 2: The JSON Template
+
+The AI is told to output every rule in a specific structure:
+
+Rule Name: "Volume-Based Rebate Tier Schedule"
+Rule Type: "rebate_tiered"
+Description: "Plain English explanation of what this clause says"
+Conditions:
+  - Product Categories: ["Headphones", "Soundbars"]
+  - Territories: ["United States", "Canada"]
+  - Time Period: "quarterly"
+Calculation:
+  - Tiers: [{min: 0, max: 1000, rate: 2%}, {min: 1001, max: 5000, rate: 5%}, ...]
+Source:
+  - Page number, section reference, and the actual text from the contract
+Confidence: 0.95 (how sure the AI is)
+Layer 3: Contract-Type-Specific Instructions
+
+
+The system adjusts the prompt based on what kind of contract it's analyzing. For example:
+
+Electronics/Patent contracts → look for "per unit" pricing, ASP percentages, premium multipliers
+Manufacturing/Tech → look for Net Sales %, dollar-based thresholds
+Plant/Nursery → look for container size pricing, per-plant rates
+Distributor agreements (like your Super Lenses contract) → look for rebate tiers, MAP pricing, compliance terms
+How Clause Categories Get Assigned
+
+The AI assigns each rule a clause category based on what section of the contract it came from:
+
+pricing → pricing sections, MAP policies, rate structures
+rebate → volume rebate programs, tier schedules, calculation methodology
+territory → geographic definitions and restrictions
+compliance → reporting requirements, audit rights, internal controls
+general → term duration, termination, dispute resolution
+payment → payment terms and schedules
+product → product definitions and coverage
+customer_segment → distributor/reseller appointment terms
+These categories are what create the tab navigation on the rules page (the tabs you see like "Pricing & Rates 9", "Rebate Programs 10", etc.).
+

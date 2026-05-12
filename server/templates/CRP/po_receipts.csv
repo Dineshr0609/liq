@@ -1,0 +1,4 @@
+date,poNumber,vendorCode,productCode,productName,qtyReceived,unitCost,totalCost,warehouseCode
+2026-01-05,PO-2026-0102,VEND-C,SKU-A100,Aurora Tea Blend,1000,4.75,4750.00,WH-EAST
+2026-02-09,PO-2026-0138,VEND-C,SKU-A200,Sunset Coffee,800,6.10,4880.00,WH-WEST
+2026-03-18,PO-2026-0181,VEND-C,SKU-A100,Aurora Tea Blend,1200,4.75,5700.00,WH-CENTRAL

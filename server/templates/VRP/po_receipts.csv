@@ -1,0 +1,4 @@
+date,poNumber,vendorCode,productCode,productName,qtyReceived,unitCost,totalCost,warehouseCode
+2026-01-08,PO-2026-0145,VEND-A,WIDGET-100,Premium Widget,500,21.25,10625.00,WH-EAST
+2026-02-02,PO-2026-0167,VEND-B,WIDGET-200,Standard Widget,300,14.00,4200.00,WH-WEST
+2026-03-15,PO-2026-0192,VEND-A,WIDGET-100,Premium Widget,600,21.25,12750.00,WH-CENTRAL

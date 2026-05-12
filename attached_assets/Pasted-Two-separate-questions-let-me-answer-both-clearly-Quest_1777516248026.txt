@@ -1,0 +1,61 @@
+Two separate questions — let me answer both clearly.
+
+Question 1 — Can you give the Control Center v2 HTML to dev to replace the existing one?
+Yes, with one important caveat. The HTML mockup is a design spec, not production code. It uses hardcoded dummy data (147 obligations, $3.92M, specific partner names). Dev needs to wire it to real API endpoints. The structure, layout, tab logic, and all the UI patterns are correct and production-ready in terms of design — but the data needs to come from your actual calculation engine, not the static values in the HTML.
+Specifically tell dev:
+
+The three-tab structure (Today / Snapshot / Health) replaces the existing five-tab structure
+The Prepare → Review → Lock workflow bar replaces the simple close readiness banner
+The Subledger Pipeline bar data comes from the same source as the Subledger Close screen pipeline
+The obligation card grouping on Today tab needs a query that groups open items by partner/counterparty
+The Variance vs Prior table needs prior period data from the calculation run history
+The Lock Period button must be disabled programmatically when critical blockers exist
+
+
+Question 2 — Things to check with developer on the Period Close UI
+Looking at the Subledger Close screenshot and everything we've designed, here are the specific things to verify with dev before that screen goes to users.
+
+1 — Lock Period button guard
+Currently the Lock Period button appears active (orange) even when critical blockers are open. Dev needs to add a server-side guard — not just a UI disable. The lock should be rejected at the API level if any blocker with severity critical exists in an unresolved state. The UI disable is the first layer, the API guard is the second. Both are needed.
+Before locking: check blockers table for 
+status = 'open' AND severity = 'critical'
+If any exist → reject lock with specific blocker list
+
+2 — The pipeline stage percentages need consistent denominators
+Stage 4 (JEs 94%) and Stage 5 (Settlements 65%) use different denominators. JE percentage is out of accruals posted. Settlement percentage is out of JEs posted. The drop from 94% to 65% looks alarming but it's partly because the denominator changes. Dev should confirm: what is each stage's denominator, and is it consistent and documented? Finance will ask why settlement is 65% when JEs are 94% — the answer needs to be clear from the data.
+
+3 — Close Blockers — who creates them and how
+The blockers panel shows items like "5 JEs unposted in CRP-STACK program." How does this blocker get created? Is it:
+
+System-generated automatically when a condition is detected (e.g. JE status = draft after Day 2)
+Manually created by a user
+AI-generated from anomaly detection
+
+Dev needs to clarify the blocker creation mechanism. The screen implies system-generated with AI suggestions, but if there's no automated detection logic, blockers won't appear and the panel will always be empty. This needs a blocker detection service that runs on a schedule and evaluates conditions against configurable rules.
+
+4 — Variance threshold configuration
+The screen shows "+8.2% vs Mar — exceeds 5% controller threshold." Where is that 5% threshold configured? It needs to be:
+
+Configurable per company (not hardcoded)
+Stored in company settings or period close configuration
+Accessible to Finance to adjust (some periods a higher variance is expected — Q1 always higher than Q4)
+
+If it's hardcoded at 5%, Finance will hit false positives constantly. It should be a setting: variance_alert_threshold_pct with a default of 5%.
+
+5 — The AI suggestions in Close Blockers use hardcoded account numbers
+The screen shows "Auto-post via 'Post Approved JEs'? Net Dr 2150 / Cr 4000 = $186,400." Those account numbers (2150/4000) don't match the account structure we designed (5420/2310). Once DataIQ COA Rules is live, the AI suggestion should pull the actual configured accounts for that obligation type and flow. For now, either remove the account numbers from the AI suggestion or show them as configurable placeholders, not hardcoded values. Finance will catch this immediately if the accounts don't match their Oracle COA.
+
+6 — Period over Period — what constitutes "Day 4 ✓" vs "Day 3"
+The table shows Mar 2026 closed on Day 4, Feb on Day 5, Jan on Day 6. What defines a "close day"? Is it calendar days from period end? Business days? Days from when the Prepare stage was started? This needs a clear definition stored in the period close record so the comparison is meaningful. If Apr closes on Day 3 that's better than Mar's Day 4 — but only if the denominator is the same.
+
+7 — "What's Changed Today" — is this a real audit log or assembled on-the-fly
+The screen shows timestamped items (J. Chen approved 14 accruals at 08:42, System promoted at 09:01). Is this pulling from a real audit log table, or is it assembled from multiple tables at query time? If it's assembled at query time, it needs to be fast — Finance will refresh this during close. If it's a dedicated audit log, confirm the log captures system actions (not just user actions) and that the actor field correctly distinguishes user vs system vs agent.
+
+8 — Subledger Pipeline — obligation count vs settlement count gap
+Pipeline shows 147 obligations and 138 settlements. The 9-obligation gap represents obligations that haven't reached settlement yet. Dev needs to confirm: are these 9 obligations tracked somewhere so Finance can see which specific ones are in the gap? The pipeline bar shows the count but clicking it should filter the drill-down table to show only those 9. If that drill-down filter isn't wired, the count is informative but not actionable.
+
+9 — The Readiness % calculation
+The screen shows "Readiness 75%." How is this calculated? It should be a weighted score across pipeline stages, not a simple average. An obligation stuck at Stage 3 (Accrual) is worse than one stuck at Stage 7 (Deduction) because it blocks more downstream stages. If the readiness score weights all stages equally, it will understate how blocked the period is when early-stage items are stuck. Clarify the weighting logic with dev.
+
+10 — Assign button — who can be assigned
+The Close Blockers panel has an "Assign" button next to each blocker. Who is in the assignee list? Is it all LicenseIQ users for this company, or only users with specific roles (Controller, Staff Accountant)? And when something is assigned, does the assignee get a notification? If assignment creates no notification, Finance will assign items and nothing will happen. The notification mechanism (email, in-app, or both) needs to be confirmed before this feature goes live.

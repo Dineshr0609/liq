@@ -1,0 +1,4 @@
+date,storeId,storeRegion,productCode,productName,qty,unitPrice,grossSales,channel
+2026-01-12,STORE-NY-01,Northeast,WIDGET-100,Premium Widget,42,49.99,2099.58,Retail
+2026-02-04,STORE-CA-07,West,WIDGET-200,Standard Widget,28,32.99,923.72,Retail
+2026-03-19,STORE-TX-12,South,WIDGET-100,Premium Widget,55,49.99,2749.45,Retail

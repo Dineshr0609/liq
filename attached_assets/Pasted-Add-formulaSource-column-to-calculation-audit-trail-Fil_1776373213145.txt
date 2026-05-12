@@ -1,0 +1,76 @@
+Add formulaSource column to calculation audit trail
+File: client/src/pages/calculation-audit-trail.tsx
+Priority: High — traceability is LicenseIQ's core promise; Finance needs to see how each fee was computed
+Effort: Small — additive column change to existing tables
+ 
+Current State
+The calculation-audit-trail.tsx page has two tables. The summary table (lines 759-768) shows: Rule Name, Type, Transactions, Sales Amount, Fee Amount, % of Total. The detail table (lines 1099-1108) shows: Audit Ref, Product, Qty, Gross Amount, Rule Applied, Contract Fee. Neither table shows formulaSource or tierMode.
+ 
+Change 1 — Add Formula Source column to the detail table
+In the detail table (the per-transaction breakdown), add a Formula Source column after Rule Applied. The column header:
+<TableHead className="font-semibold">Formula Source</TableHead>
+ 
+The column cell, for each breakdown item:
+<TableCell>
+  <FormulaSourceBadge source={item.formulaSource} />
+</TableCell>
+ 
+Add the FormulaSourceBadge component
+Add this component at the top of the file (before the default export):
+const FORMULA_SOURCE_CONFIG: Record<string, { label: string; color: string; description: string }> = {
+  primary_formula_node:          { label: 'Formula',        color: 'bg-green-100 text-green-800',  description: 'Executed from structured formula definition' },
+  rebate_tiered_quarterly_universal: { label: 'Quarterly',  color: 'bg-blue-100 text-blue-800',   description: 'Quarterly rebate aggregation via universal engine' },
+  table_data_field_mappings:     { label: 'Table',          color: 'bg-purple-100 text-purple-800', description: 'Built on-the-fly from extracted table data' },
+  base_rate_percentage:          { label: 'Base Rate',      color: 'bg-orange-100 text-orange-800', description: 'AI-extracted percentage rate' },
+  fixed_amount:                  { label: 'Fixed',          color: 'bg-gray-100 text-gray-700',   description: 'Fixed fee or bonus amount' },
+  minimum_guarantee:             { label: 'Min Guarantee',  color: 'bg-red-100 text-red-800',     description: 'Minimum guarantee true-up applied' },
+  tiers_array:                   { label: 'Tiers',          color: 'bg-indigo-100 text-indigo-800', description: 'Built from AI-extracted tier array' },
+  volume_tiers_legacy:           { label: 'Legacy Tiers',   color: 'bg-yellow-100 text-yellow-800', description: 'Built from legacy volumeTiers field' },
+  direct_base_rate_final:        { label: 'Direct Rate',    color: 'bg-amber-100 text-amber-800', description: 'Final fallback: direct baseRate from rule' },
+  unknown:                       { label: 'Unknown',        color: 'bg-gray-100 text-gray-500',   description: 'Formula source could not be determined' },
+};
+ 
+function FormulaSourceBadge({ source }: { source?: string }) {
+  const cfg = FORMULA_SOURCE_CONFIG[source || 'unknown'] || FORMULA_SOURCE_CONFIG.unknown;
+  return (
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <span className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium cursor-help ${cfg.color}`}
+            data-testid={`badge-formula-source-${source}`}>
+            {cfg.label}
+          </span>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p className="text-xs max-w-[200px]">{cfg.description}</p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  );
+}
+ 
+Change 2 — Add Formula Source breakdown to the run summary card
+The summary table shows rules with aggregated totals. Below it, add a collapsible section called 'Formula Source Breakdown' that shows how many fee items used each source for this run. Query this from the calculationAuditItems API (GET /api/calculation-runs/:runId/audit-items or from the existing calculation detail endpoint). Display as a small pill-row:
+<div className="flex flex-wrap gap-2 mt-3">
+  {Object.entries(formulaSourceCounts).map(([source, count]) => (
+    <span key={source} className="flex items-center gap-1">
+      <FormulaSourceBadge source={source} />
+      <span className="text-xs text-muted-foreground">{count}</span>
+    </span>
+  ))}
+</div>
+ 
+The formulaSourceCounts object is derived from the breakdown array: group by formulaSource and count items per group. This gives Finance a quick overview — e.g., '42 Formula, 8 Base Rate, 2 Legacy Tiers' — so they know at a glance how many items are on the primary path vs fallbacks.
+ 
+Change 3 — Add tierMode indicator to quarterly rebate rows
+For rows where formulaSource === 'rebate_tiered_quarterly_universal', show a small additional badge indicating whether whole or marginal tier mode was used. Read this from the breakdown item's auditTrail or from a tierMode field if present:
+{item.formulaSource === 'rebate_tiered_quarterly_universal' && item.tierMode && (
+  <span className={`ml-1 inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium
+    ${item.tierMode === 'marginal' ? 'bg-blue-50 text-blue-700' : 'bg-gray-50 text-gray-600'}`}>
+    {item.tierMode === 'marginal' ? 'Marginal' : 'Whole-tier'}
+  </span>
+)}
+ 
+Import additions needed
+Add to the existing imports at the top of the file if not already present:
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';

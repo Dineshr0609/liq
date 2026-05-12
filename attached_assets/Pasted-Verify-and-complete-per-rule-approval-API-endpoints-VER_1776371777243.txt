@@ -1,0 +1,134 @@
+Verify and complete per-rule approval API endpoints  [VERIFY]
+Files: server/rulesRoutes.ts, shared/schema.ts (contract_rules table)
+Priority: High — calculation gate is in place but useless without working approve/reject endpoints
+Context: calculationService.ts now gates on approvalStatus = 'approved'. The gate works. But if Finance has no way to approve rules through the UI, no calculations will ever run on new contracts.
+ 
+What to verify first
+Before writing any new code, check whether the approve/reject endpoints already exist from commit 4e026b3c. Run the following check:
+•       Search rulesRoutes.ts for '/approve' — if a POST /api/contracts/:contractId/rules/:ruleId/approve endpoint exists, skip to Step 3
+•       Search rulesRoutes.ts for 'approvalStatus' — if update logic exists, confirm it sets approvedBy and approvedAt
+•       Search shared/schema.ts for 'approvalStatus' — confirm the column exists on the contractRules table definition
+ 
+Step 1 — Confirm schema column exists
+In shared/schema.ts, the contractRules table must have these columns. If any are missing, add them and run npm run db:push:
+approvalStatus: text('approval_status').default('pending'),
+  // values: 'pending' | 'approved' | 'rejected'
+approvedBy: text('approved_by'),
+approvedAt: timestamp('approved_at'),
+approvalNotes: text('approval_notes'),
+ 
+Step 2 — Add approve endpoint if missing
+If POST /api/contracts/:contractId/rules/:ruleId/approve does not exist, add it to rulesRoutes.ts inside the registerRulesRoutes function:
+app.post('/api/contracts/:contractId/rules/:ruleId/approve',
+  isAuthenticated,
+  async (req: any, res) => {
+    const { contractId, ruleId } = req.params;
+    const { notes } = req.body;
+ 
+    // Role check — only owner/admin/editor can approve rules
+    const contextRole = req.user?.activeContext?.role;
+    const canApprove = ['owner', 'admin', 'editor'].includes(contextRole) ||
+      req.user?.role === 'admin' || req.user?.isSystemAdmin;
+    if (!canApprove) {
+      return res.status(403).json({ message: 'Insufficient permissions to approve rules' });
+    }
+ 
+    const { contract, authorized, error } = await validateContractAccess(contractId, req.user);
+    if (!contract) return res.status(404).json({ message: error || 'Contract not found' });
+    if (!authorized) return res.status(403).json({ message: error || 'Access denied' });
+ 
+    await storage.updateRoyaltyRule(ruleId, {
+      approvalStatus: 'approved',
+      approvedBy: req.user.id,
+      approvedAt: new Date(),
+      approvalNotes: notes || null,
+    });
+ 
+    await createAuditLog(req, 'rule_approved', 'contract_rule', ruleId, { contractId, notes });
+    res.json({ message: 'Rule approved successfully' });
+  }
+);
+ 
+Step 3 — Add reject endpoint if missing
+If POST /api/contracts/:contractId/rules/:ruleId/reject does not exist, add it immediately after the approve endpoint:
+app.post('/api/contracts/:contractId/rules/:ruleId/reject',
+  isAuthenticated,
+  async (req: any, res) => {
+    const { contractId, ruleId } = req.params;
+    const { reason } = req.body;
+ 
+    // Reason is required for reject — Finance must document why
+    if (!reason || reason.trim().length === 0) {
+      return res.status(400).json({ message: 'Rejection reason is required' });
+    }
+ 
+    const contextRole = req.user?.activeContext?.role;
+    const canReject = ['owner', 'admin', 'editor'].includes(contextRole) ||
+      req.user?.role === 'admin' || req.user?.isSystemAdmin;
+    if (!canReject) return res.status(403).json({ message: 'Insufficient permissions' });
+ 
+    const { contract, authorized, error } = await validateContractAccess(contractId, req.user);
+    if (!contract) return res.status(404).json({ message: error || 'Contract not found' });
+    if (!authorized) return res.status(403).json({ message: error || 'Access denied' });
+ 
+    await storage.updateRoyaltyRule(ruleId, {
+      approvalStatus: 'rejected',
+      approvedBy: req.user.id,
+      approvedAt: new Date(),
+      approvalNotes: reason,
+    });
+ 
+    await createAuditLog(req, 'rule_rejected', 'contract_rule', ruleId, { contractId, reason });
+    res.json({ message: 'Rule rejected' });
+  }
+);
+ 
+Step 4 — Update HumanReviewQueue.tsx to call these endpoints
+In client/src/pages/HumanReviewQueue.tsx, add two useMutation hooks:
+const approveMutation = useMutation({
+  mutationFn: ({ contractId, ruleId }: { contractId: string; ruleId: string }) =>
+    apiRequest('POST', `/api/contracts/${contractId}/rules/${ruleId}/approve`),
+  onSuccess: () => {
+    queryClient.invalidateQueries({ queryKey: ['/api/royalty-rules'] });
+    toast({ title: 'Rule approved', description: 'Rule is now active in calculations' });
+  },
+});
+ 
+const rejectMutation = useMutation({
+  mutationFn: ({ contractId, ruleId, reason }: { contractId: string; ruleId: string; reason: string }) =>
+    apiRequest('POST', `/api/contracts/${contractId}/rules/${ruleId}/reject`, { reason }),
+  onSuccess: () => {
+    queryClient.invalidateQueries({ queryKey: ['/api/royalty-rules'] });
+    toast({ title: 'Rule rejected' });
+  },
+});
+ 
+For each rule row in the queue, add Approve and Reject buttons. The Approve button calls approveMutation. The Reject button should prompt for a reason (inline text input or dialog) before calling rejectMutation. Show a badge indicating the current approvalStatus of each rule so Finance can see at a glance which rules are pending, approved, or rejected.
+ 
+Step 5 — Add approval status filter to rules management UI
+In client/src/pages/rules-management.tsx, add a status filter dropdown alongside the existing filters. Options: All, Pending Approval, Approved, Rejected. This lets Finance quickly find all rules that need sign-off before running calculations.
+ 
+Critical edge case — what happens to contracts with all-pending rules
+With the approval gate active, a contract whose rules are all in 'pending' status will return totalLicenseFee = 0 with an empty breakdown. This will be confusing without clear feedback. Add a check at the start of calculateWithUniversalEvaluator: if rules.length === 0 (after the approved filter), check if there are pending rules and if so return a specific error:
+if (rules.length === 0) {
+  const pendingRules = await db.select().from(contractRules)
+    .where(and(
+      eq(contractRules.contractId, contractId),
+      eq(contractRules.isActive, true),
+      eq(contractRules.approvalStatus, 'pending')
+    ));
+  if (pendingRules.length > 0) {
+    return {
+      totalLicenseFee: 0,
+      breakdown: [],
+      metadata: {
+        mode: 'universal',
+        rulesApplied: 0,
+        salesProcessed: salesItems.length,
+        pendingApprovalCount: pendingRules.length,
+        error: `${pendingRules.length} rule(s) are pending approval. Approve rules before running calculations.`,
+      },
+    };
+  }
+}
+ 

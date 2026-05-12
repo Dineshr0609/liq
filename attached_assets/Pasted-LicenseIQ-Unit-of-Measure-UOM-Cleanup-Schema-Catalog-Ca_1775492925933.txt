@@ -1,0 +1,35 @@
+LicenseIQ – Unit of Measure (UOM) Cleanup & Schema Catalog Card – Full Implementation
+Problem
+The uom_master table had:
+uom_name values with "Per " prefix (e.g., "Per Unit", "Per Case", "Per Lb")
+uom_code values with per_ prefix (e.g., per_unit, per_case, per_lb)
+This caused the Schema Catalog to show redundant "Per" text in the UOM Master records. Additionally, the Unit of Measure card was missing from the Market Data section in the Schema Catalog — it showed only 3 tables. After the fix it correctly shows 4 tables including Unit of Measure.
+Step 1 — Database Migration (run directly via SQL)
+Strip "Per " from names (14 rows):
+Rename codes — strip per_ prefix across all 3 tables:
+Step 2 — Backend: seed-master-data.ts
+Update the uomData array to use clean codes and names (no per_ prefix, no "Per " prefix):
+Step 3 — Backend: routes.ts
+Update the /api/reference/uom-master GET endpoint auto-seed section to use the same clean codes (matching the uomData above) so that new deployments seed with correct values.
+Step 4 — Frontend: licenseiq-schema.tsx
+In the LOOKUP_TABLES array, add the uom-master entry under the "Market Data" category (alongside Customer Segments, Sales Channels, Territory Master):
+{ 
+  key: "uom-master", 
+  name: "Unit of Measure", 
+  tableName: "uom_master", 
+  description: "Unit of measure definitions used in contract fee rules and calculations", 
+  category: "Market Data", 
+  apiBase: "/api/reference/uom-master", 
+  codeField: "uom_code", 
+  nameField: "uom_name", 
+  codeLabel: "UOM Code", 
+  nameLabel: "UOM Name", 
+  extraFields: [{ key: "uom_category", label: "Category" }] 
+},
+This makes the Unit of Measure card appear in the Schema Catalog under Market Data, and the Data tab shows/edits records via the /api/reference/uom-master endpoint with UOM Code, UOM Name, and Category columns.
+Result
+Market Data section: 3 tables → 4 tables (Unit of Measure card added)
+All UOM codes: per_unit → unit, per_case → case, etc.
+All UOM names: Per Unit → Unit, Per Case → Case, etc.
+All FK references in contract_rules and items updated to match new codes
+Seed data updated so new deployments use clean codes from the start

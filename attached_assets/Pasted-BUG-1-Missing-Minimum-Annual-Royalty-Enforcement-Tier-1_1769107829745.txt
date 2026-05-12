@@ -1,0 +1,141 @@
+BUG 1: Missing Minimum Annual Royalty Enforcement (Tier 1)
+
+Actual:
+AI generated Tier 1 royalty rules using only percentage-based calculations on Net Sales and did not include Minimum Annual Royalty thresholds for any tier.
+
+Expected:
+Each Tier 1 Net Sales bracket must enforce the contractual Minimum Annual Royalty, charging the greater of:
+
+calculated royalty, or
+
+minimum annual royalty
+
+Tier - 	Minimum Annual Royalty
+$0–$5M - $125,000
+$5M–$15M - $200,000
+$15M–$50M - $350,000
+>$50M - $500,000
+
+BUG 2: Tier 2 Royalty Rates Incorrectly Converted to $/Unit
+
+Actual:
+AI converted Tier 2 royalty percentages into per-unit dollar rates:
+
+$7.20/unit
+$8.50/unit
+$9.80/unit
+
+Expected:
+Tier 2 royalties must be calculated as percentages of Net Sales, not per-unit fees:
+
+Category	                 Expected Royalty
+All Industrial Applications	7.2% of Net Sales
+Aerospace / High-Performance	8.5% of Net Sales
+Custom Engineering Projects	9.8% of Net Sales
+
+BUG 3: Incorrect Quantity-Based Tier Logic for Tier 2
+
+Actual:
+AI created quantity-based conditional logic such as:
+
+quantity <= All Industrial Applications
+
+These values are labels, not numeric quantities.
+
+Expected:
+Tier 2 royalty application must be category-based, determined by product classification, not quantity ranges.
+
+BUG 4: Missing $15,000 Engineering Fee for Custom Engineering Projects
+
+Actual:
+AI generated Tier 2 royalties without applying the mandatory $15,000 engineering fee for Custom Engineering Projects.
+
+Expected:
+When product category is Custom Engineering Projects, royalty calculation must include:
+9.8% of Net Sales plus a fixed $15,000 engineering fee
+
+BUG 5: Milestone Payments Generated as $0.00
+
+Actual:
+AI generated milestone rules using:
+
+quantity × $0.00/unit
+
+All milestone payments were effectively set to $0.
+
+Expected:
+Milestones must trigger fixed, one-time payments as defined in the contract:
+
+Milestone	Payment
+First Commercial Production	$150,000
+$10M Cumulative Net Sales	$200,000
+$50M Cumulative Net Sales	$350,000
+Market Leadership Achievement	$500,000
+
+
+BUG 6: Duplicate Tier 1 Royalty Rules Created
+
+Actual:
+AI generated multiple Tier 1 rules with identical royalty logic, creating risk of double charging.
+
+Expected:
+There must be one canonical Tier 1 royalty rule, referenced consistently without duplication.
+
+BUG 7: Fabricated Base Rate ($0.07) Not Present in Contract
+
+Actual:
+AI introduced a $0.07 base rate for automotive components.
+
+Expected:
+No base rate exists in the contract.
+All royalties must be calculated strictly using percentage-based Net Sales tiers.
+
+BUG 8 : Incorrect Effective Start Date Extracted from Contract
+
+Actual:
+
+The AI Analysis screen shows:
+Start Date: January 7, 2024
+End Date: January 7, 2034
+This date is displayed under Key Dates in the analysis summary.
+
+Expected:
+The contract PDF clearly states:
+Effective Date: January 8, 2024
+The Start Date must be January 8, 2024, and the End Date should be calculated from that date (January 8, 2034).
+
+
+BUG 9 : Formula Preview Does Not Reflect Contract-Based Royalty Logic
+Actual:
+
+After generating rules from Manage Rules and uploading sales data + contract data, clicking View Rules → Formula Preview shows formulas that:
+
+Calculate royalties using quantity × dollar rate (e.g., quantity × $0.07)
+
+Apply unit-based volume tiers (e.g., 0–5,000,000 units)
+
+Display fabricated dollar rates instead of contract percentages
+
+Ignore Net Sales–based calculation
+
+Do not enforce Minimum Annual Royalties
+
+Show formulas that differ from the rules generated and confirmed in Manage Rules
+
+As a result, the Formula Preview does not match the contract or the generated rules.
+
+Expected:
+
+The Formula Preview must exactly mirror the approved contract rules generated in Manage Rules, such that:
+
+Royalties are calculated using Net Sales × percentage, not quantity
+
+Tier thresholds are based on Annual Net Sales ($), not units
+
+No $ / unit rates are displayed unless explicitly defined in the contract
+
+Minimum Annual Royalties are enforced where applicable
+
+The previewed formula is contract-accurate, rule-accurate, and calculation-ready
+
+In short:

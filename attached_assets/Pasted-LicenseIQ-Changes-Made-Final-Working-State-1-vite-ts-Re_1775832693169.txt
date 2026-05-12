@@ -1,0 +1,66 @@
+LicenseIQ — Changes Made (Final Working State)
+1. vite.ts
+Remove process.exit(1) from Vite's custom error logger so Vite HMR errors do not crash the API server.
+
+2. financeRoutes.ts
+Add a DELETE endpoint for journal entries:
+
+Route: DELETE /api/journal-entries/:id
+Deletes the row where jeId matches the param
+Returns 404 if not found, otherwise returns { deleted: true, jeId }
+3. journal-entry-hub.tsx
+Import Trash2 from lucide-react
+Add deleteMutation using useMutation that calls DELETE /api/journal-entries/:id
+On success: use queryClient.setQueryData to instantly remove the deleted entry from the ["/api/journal-entries"] cache array, and decrement the total count in ["/api/journal-entries/summary"] cache — do not wait for a refetch
+If the deleted entry is currently selected (selectedJE === id), clear it
+Show toast: "Journal entry deleted"
+Add a delete button in the Actions column that calls window.confirm() before firing the mutation — do not use any Radix Dialog
+Add staleTime: 0 to the entries useQuery to override the global staleTime: Infinity
+4. sales-upload.tsx
+Interface — UploadedDataset
+
+Add "rejected" to the status union type
+Add rejectionReason?: string
+Add previewHeaders?: string[]
+Add previewRows?: string[][]
+Upload flow
+
+Import Fragment from React, Papa from papaparse
+Before calling uploadMutation.mutate(), read the CSV file text with PapaParse in the browser and store parsed headers and up to 200 rows in a parsedPreviewRef
+In uploadMutation.onSuccess, always set newDataset.status = "pending", attach previewHeaders and previewRows from the ref, and call setDatasets(prev => [newDataset, ...prev]) — no separate pendingDataset state
+Auto-open the review panel for the new dataset: setReviewingDataset(newDataset.id)
+Toast: "Upload Successful — Click Approve to enable for calculations"
+Status badges
+
+"pending" → yellow badge
+"rejected" → red badge
+"validated" → green badge (unchanged)
+Datasets table — accordion rows
+
+Wrap each dataset's JSX in <Fragment key={ds.id}> so each dataset renders two <tr> elements:
+The normal data row — Review button shows "Close" when that row's panel is open, "Review" otherwise; clicking toggles the panel and resets the reject form state
+An accordion <tr> with colSpan={6} that renders the review panel directly under that row — only shown when reviewingDataset === ds.id
+Opening one row's panel closes any other open panel
+Status badge cell: wrap in a <span title={...}> showing the rejection reason on hover when status === "rejected"
+Review panel (inside accordion row)
+
+Show dataset name + status badge ("Pending Approval" yellow or "Rejected" red)
+Stats grid: Total Rows, Valid, Errors, Contracts
+If status === "rejected" and rejectionReason exists, show a red banner with the reason
+Action buttons (all plain <button> or shadcn Button, no Radix Dialog anywhere):
+Preview (blue outline) — shown when previewHeaders exists; opens a plain <div> fixed overlay (not Radix Dialog) with a scrollable table of all columns and rows, row number column, paginated at 100 rows/page with Previous/Next plain buttons; clicking the dark backdrop closes it
+Approve (green) — shown when status === "pending"; sets status to "validated", closes panel
+Re-approve (green) — shown when status === "rejected"; sets status to "validated", clears rejectionReason, closes panel
+Reject (red outline) — shown when status === "pending" or "rejected" and the inline reject form is not open; clicking shows the inline form
+Fix Mappings — always shown
+Inline reject form — appears below the buttons (no dialog/portal):
+Label: "Reason for rejection *"
+Subtext: "This reason will be stored and visible to all team members"
+Native <textarea> (4 rows, plain HTML, no Radix)
+"Reject Dataset" button disabled until textarea has text
+On confirm: sets status = "rejected", stores rejectionReason, closes the form and panel, shows destructive toast
+Cancel button clears the form
+Calculate tab Datasets list
+
+Filter to only status === "validated" || status === "partial" — pending and rejected datasets do not appear here
+If none qualify, show: "No approved datasets — go to Data Ingestion, upload and approve a dataset first"

@@ -1,0 +1,4 @@
+date,storeId,storeRegion,productCode,productName,qty,unitPrice,grossSales,channel
+2026-01-19,RES-STORE-NY,Northeast,RES-WIDGET-A,Widget Alpha,32,64.99,2079.68,Reseller
+2026-02-23,RES-STORE-TOR,Canada-East,RES-WIDGET-B,Widget Beta,21,84.99,1784.79,Reseller
+2026-03-21,RES-STORE-MX,Latin America,RES-WIDGET-A,Widget Alpha,44,64.99,2859.56,Reseller

@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>LicenseIQ – Journal Entry Hub</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0d1117;--surface:#161b22;--surface2:#1c2333;--surface3:#21262d;
+  --border:#30363d;--border2:#3d444d;
+  --accent:#4f8ef7;--accent2:#3875e0;--accent-glow:rgba(79,142,247,.15);
+  --green:#3fb950;--green-bg:rgba(63,185,80,.12);
+  --yellow:#d29922;--yellow-bg:rgba(210,153,34,.12);
+  --red:#f85149;--red-bg:rgba(248,81,73,.12);
+  --purple:#a371f7;--purple-bg:rgba(163,113,247,.12);
+  --teal:#39d353;--teal-bg:rgba(57,211,83,.1);
+  --orange:#f0883e;--orange-bg:rgba(240,136,62,.12);
+  --text:#e6edf3;--text2:#8b949e;--text3:#6e7681;
+  --ai-from:#4f8ef7;--ai-to:#a371f7;
+  --radius:8px;--radius-lg:12px;font-size:13px;
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Inter','Segoe UI',sans-serif;background:var(--bg);color:var(--text);height:100vh;overflow:hidden;display:flex;flex-direction:column}
+/* ── TOPNAV ── */
+.topnav{height:48px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:16px;flex-shrink:0;z-index:100}
+.brand{display:flex;align-items:center;gap:8px;font-weight:700;font-size:15px;letter-spacing:-.3px;text-decoration:none;color:inherit}
+.brand-icon{width:28px;height:28px;border-radius:6px;background:linear-gradient(135deg,var(--ai-from),var(--ai-to));display:flex;align-items:center;justify-content:center;font-size:14px}
+.brand em{color:var(--accent);font-style:normal}
+.nav-sep{flex:1}
+.nav-breadcrumb{display:flex;align-items:center;gap:6px;color:var(--text2);font-size:12px}
+.nav-breadcrumb .active{color:var(--text);font-weight:500}
+.nav-switch{display:flex;align-items:center;gap:4px;background:var(--surface2);border:1px solid var(--border2);border-radius:6px;padding:3px}
+.nav-switch a{padding:3px 10px;border-radius:4px;font-size:11px;font-weight:500;color:var(--text2);text-decoration:none;transition:all .15s}
+.nav-switch a.active{background:var(--accent);color:#fff}
+.nav-switch a:hover:not(.active){background:var(--surface3);color:var(--text)}
+.nav-actions{display:flex;align-items:center;gap:10px}
+.avatar{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#4f8ef7,#a371f7);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;cursor:pointer}
+.icon-btn{width:30px;height:30px;border-radius:6px;background:transparent;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text2);font-size:14px}
+/* ── LAYOUT ── */
+.layout{display:flex;flex:1;overflow:hidden}
+.sidebar{width:200px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto;padding:12px 8px;gap:2px}
+.sidebar-section{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;padding:8px 8px 4px}
+.sidebar-item{display:flex;align-items:center;gap:9px;padding:7px 10px;border-radius:6px;color:var(--text2);cursor:pointer;font-size:12.5px;transition:all .15s;text-decoration:none}
+.sidebar-item:hover{background:var(--surface2);color:var(--text)}
+.sidebar-item.active{background:var(--accent-glow);color:var(--accent);font-weight:500}
+.sidebar-item .icon{font-size:14px;width:16px;text-align:center}
+.sidebar-badge{margin-left:auto;background:var(--yellow-bg);color:var(--yellow);font-size:10px;font-weight:600;padding:1px 6px;border-radius:10px}
+.main{flex:1;display:flex;overflow:hidden}
+.workarea{flex:1;display:flex;flex-direction:column;overflow:hidden}
+/* ── PAGE HEADER ── */
+.page-header{padding:16px 24px 14px;border-bottom:1px solid var(--border);background:var(--surface);flex-shrink:0}
+.page-title-row{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.page-title{font-size:18px;font-weight:700}
+.page-subtitle{color:var(--text2);font-size:12px}
+.period-badge{background:var(--surface3);border:1px solid var(--border2);border-radius:6px;padding:3px 10px;font-size:12px;color:var(--text2)}
+.header-actions{display:flex;gap:8px;margin-left:auto}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:6px;font-size:12px;font-weight:500;cursor:pointer;border:1px solid transparent;transition:all .15s;white-space:nowrap}
+.btn-primary{background:var(--accent);color:#fff;border-color:var(--accent2)}
+.btn-primary:hover{background:var(--accent2)}
+.btn-secondary{background:var(--surface2);color:var(--text);border-color:var(--border2)}
+.btn-secondary:hover{background:var(--surface3)}
+.btn-ghost{background:transparent;color:var(--text2);border-color:var(--border)}
+.btn-ghost:hover{background:var(--surface2);color:var(--text)}
+.btn-danger{background:var(--red-bg);color:var(--red);border-color:rgba(248,81,73,.3)}
+.btn-green{background:var(--green-bg);color:var(--green);border-color:rgba(63,185,80,.3)}
+.btn-orange{background:var(--orange-bg);color:var(--orange);border-color:rgba(240,136,62,.3)}
+.btn-purple{background:var(--purple-bg);color:var(--purple);border-color:rgba(163,113,247,.3)}
+.btn-sm{padding:4px 10px;font-size:11px}
+.filters-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.search-box{display:flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border2);border-radius:6px;padding:6px 12px;width:220px}
+.search-box input{background:none;border:none;outline:none;color:var(--text);width:100%;font-size:12px}
+.select-filter{background:var(--surface2);border:1px solid var(--border2);border-radius:6px;padding:6px 12px;color:var(--text);font-size:12px;cursor:pointer;outline:none}
+/* ── STAGE PIPELINE ── */
+.pipeline-bar{display:flex;align-items:center;padding:12px 24px;gap:0;background:var(--surface);border-bottom:1px solid var(--border);flex-shrink:0;overflow-x:auto}
+.stage{display:flex;align-items:center;cursor:pointer}
+.stage-box{display:flex;flex-direction:column;align-items:center;padding:8px 18px;border-radius:0;transition:all .15s;position:relative;min-width:110px}
+.stage-box:hover .stage-num{opacity:.85}
+.stage-num{font-size:20px;font-weight:700;line-height:1}
+.stage-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
+.stage-count{font-size:10px;margin-top:1px}
+.stage-arrow{color:var(--text3);font-size:18px;margin:0 2px;flex-shrink:0}
+.stage.active .stage-box{background:var(--accent-glow);border-radius:8px}
+.stage.active .stage-num{color:var(--accent)}
+.stage.active .stage-label{color:var(--accent)}
+/* ── INSIGHTS WIDGET ── */
+.insights-widget{display:flex;gap:12px;padding:14px 24px;background:var(--surface);border-bottom:1px solid var(--border);flex-shrink:0}
+.insight-card{flex:1;background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius);padding:12px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:all .15s}
+.insight-card:hover{border-color:var(--accent);background:var(--surface3)}
+.insight-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+.insight-icon.red{background:var(--red-bg)}.insight-icon.yellow{background:var(--yellow-bg)}.insight-icon.green{background:var(--green-bg)}.insight-icon.purple{background:var(--purple-bg)}.insight-icon.orange{background:var(--orange-bg)}
+.insight-num{font-size:22px;font-weight:700;line-height:1}
+.insight-label{font-size:11px;color:var(--text2);margin-top:2px}
+.insight-num.red{color:var(--red)}.insight-num.yellow{color:var(--yellow)}.insight-num.green{color:var(--green)}.insight-num.purple{color:var(--purple)}.insight-num.orange{color:var(--orange)}
+.insight-ai-tag{margin-left:auto;background:var(--accent-glow);color:var(--accent);font-size:9px;font-weight:600;padding:2px 7px;border-radius:10px;text-transform:uppercase;letter-spacing:.5px;align-self:flex-start}
+/* ── CONTENT ── */
+.content-area{flex:1;display:flex;overflow:hidden}
+.table-panel{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.table-toolbar{padding:10px 20px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border);flex-shrink:0;background:var(--surface)}
+.table-label{font-size:12px;font-weight:600;color:var(--text2)}
+.count-badge{background:var(--surface3);color:var(--text2);font-size:11px;padding:1px 8px;border-radius:10px;border:1px solid var(--border2)}
+.table-scroll{flex:1;overflow-y:auto}
+table{width:100%;border-collapse:collapse}
+thead th{padding:9px 14px;text-align:left;font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:10;white-space:nowrap}
+tbody tr{border-bottom:1px solid var(--border);cursor:pointer;transition:background .1s}
+tbody tr:hover{background:var(--surface2)}
+tbody tr.selected{background:rgba(79,142,247,.08);border-left:3px solid var(--accent)}
+tbody td{padding:9px 14px;font-size:12px;vertical-align:middle}
+.je-id{font-weight:600;color:var(--accent);font-size:11px}
+.td-bold{font-weight:500}
+.tag{display:inline-flex;align-items:center;gap:4px;background:var(--surface3);border:1px solid var(--border2);border-radius:4px;padding:2px 8px;font-size:11px;color:var(--text2)}
+.status-pill{display:inline-flex;align-items:center;gap:4px;font-size:11px;padding:2px 9px;border-radius:10px;font-weight:500}
+.status-pill.draft{background:var(--surface3);color:var(--text3)}
+.status-pill.pending{background:var(--yellow-bg);color:var(--yellow)}
+.status-pill.approved{background:var(--accent-glow);color:var(--accent)}
+.status-pill.synced{background:var(--purple-bg);color:var(--purple)}
+.status-pill.posted{background:var(--green-bg);color:var(--green)}
+.status-pill.failed{background:var(--red-bg);color:var(--red)}
+.erp-pill{display:inline-flex;align-items:center;gap:4px;font-size:11px;padding:2px 8px;border-radius:6px;font-weight:500}
+.erp-pill.synced{background:var(--green-bg);color:var(--green)}
+.erp-pill.pending{background:var(--yellow-bg);color:var(--yellow)}
+.erp-pill.failed{background:var(--red-bg);color:var(--red)}
+.erp-pill.na{background:var(--surface3);color:var(--text3)}
+.amount-dr{color:var(--red);font-weight:600}
+.amount-cr{color:var(--green);font-weight:600}
+/* ── DETAIL PANEL ── */
+.detail-panel{width:320px;flex-shrink:0;display:flex;flex-direction:column;background:var(--surface);border-left:1px solid var(--border);overflow:hidden}
+.detail-header{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
+.detail-header h3{font-size:13px;font-weight:600;flex:1}
+.detail-scroll{flex:1;overflow-y:auto;padding:0}
+.detail-tabs{display:flex;border-bottom:1px solid var(--border);background:var(--surface)}
+.detail-tab{flex:1;padding:9px 0;text-align:center;font-size:11px;font-weight:500;color:var(--text2);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s}
+.detail-tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.detail-tab:hover:not(.active){color:var(--text)}
+.detail-body{padding:16px}
+.je-amount-header{background:linear-gradient(135deg,rgba(79,142,247,.08),rgba(163,113,247,.08));border:1px solid rgba(79,142,247,.2);border-radius:var(--radius);padding:14px;text-align:center;margin-bottom:14px}
+.je-amount-val{font-size:24px;font-weight:700;background:linear-gradient(135deg,var(--ai-from),var(--ai-to));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.je-amount-sub{font-size:11px;color:var(--text2);margin-top:3px}
+.meta-row{display:flex;justify-content:space-between;align-items:flex-start;font-size:12px;margin-bottom:9px}
+.meta-key{color:var(--text2);font-size:11px}
+.meta-val{font-weight:500;text-align:right}
+.section-title{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin:14px 0 8px;padding-top:12px;border-top:1px solid var(--border)}
+/* JE Lines */
+.je-lines{display:flex;flex-direction:column;gap:4px}
+.je-line{display:flex;align-items:center;background:var(--surface2);border:1px solid var(--border2);border-radius:6px;padding:7px 10px;gap:8px}
+.je-line-acct{flex:1;font-size:11px}
+.je-line-acct-code{color:var(--accent);font-weight:600;font-size:10px}
+.je-line-acct-name{color:var(--text);margin-top:1px}
+.je-line-type{font-size:10px;font-weight:600;padding:2px 6px;border-radius:4px;text-transform:uppercase;letter-spacing:.3px;flex-shrink:0}
+.je-line-type.dr{background:var(--red-bg);color:var(--red)}
+.je-line-type.cr{background:var(--green-bg);color:var(--green)}
+.je-line-amount{font-size:12px;font-weight:600;text-align:right;min-width:70px}
+/* ERP Sync Status */
+.erp-sync-box{background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius);padding:12px;margin-bottom:8px}
+.erp-sync-header{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.erp-logo{width:28px;height:28px;border-radius:6px;background:var(--surface3);display:flex;align-items:center;justify-content:center;font-size:13px}
+.erp-sync-title{font-size:12px;font-weight:600}
+.erp-sync-row{display:flex;justify-content:space-between;font-size:11px;margin-bottom:6px}
+.erp-sync-key{color:var(--text2)}
+.erp-sync-val{font-weight:500}
+.erp-progress{height:4px;background:var(--border2);border-radius:2px;overflow:hidden;margin-top:8px}
+.erp-progress-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--ai-from),var(--ai-to))}
+/* Audit */
+.audit-entry{display:flex;gap:10px;margin-bottom:10px}
+.audit-dot{width:8px;height:8px;border-radius:50%;margin-top:3px;flex-shrink:0}
+.audit-text{font-size:11px;color:var(--text2);line-height:1.5}
+.audit-time{font-size:10px;color:var(--text3)}
+/* Recon */
+.recon-match{background:var(--green-bg);border:1px solid rgba(63,185,80,.25);border-radius:6px;padding:8px 10px;margin-bottom:6px}
+.recon-diff{background:var(--yellow-bg);border:1px solid rgba(210,153,34,.25);border-radius:6px;padding:8px 10px;margin-bottom:6px}
+.recon-label{font-size:11px;font-weight:600;margin-bottom:4px}
+.recon-row{display:flex;justify-content:space-between;font-size:11px;color:var(--text2)}
+.detail-actions{padding:12px 16px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:6px}
+/* ── AI PANEL ── */
+.ai-panel{width:340px;flex-shrink:0;display:flex;flex-direction:column;background:var(--surface);border-left:1px solid var(--border);overflow:hidden}
+.ai-panel-header{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;background:linear-gradient(180deg,var(--surface2),var(--surface))}
+.ai-logo{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,var(--ai-from),var(--ai-to));display:flex;align-items:center;justify-content:center;font-size:15px}
+.ai-header-text h3{font-size:13px;font-weight:700}
+.ai-header-text p{font-size:11px;color:var(--text2)}
+.ai-online{margin-left:auto;display:flex;align-items:center;gap:5px;font-size:11px;color:var(--green)}
+.ai-dot{width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.ai-context-bar{padding:8px 14px;background:var(--accent-glow);border-bottom:1px solid rgba(79,142,247,.2);font-size:11px;color:var(--accent);display:flex;align-items:center;gap:6px}
+.ai-messages{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:12px}
+.ai-msg-ai{background:var(--surface2);border:1px solid var(--border2);border-radius:10px;border-top-left-radius:2px;padding:12px 14px;font-size:12px;line-height:1.6}
+.ai-msg-user{background:var(--accent-glow);border:1px solid rgba(79,142,247,.25);border-radius:10px;border-top-right-radius:2px;padding:10px 14px;font-size:12px;align-self:flex-end;max-width:85%;color:var(--text)}
+.ai-msg-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.ai-msg-label.ai-label{color:var(--accent)}
+.ai-msg-label.user-label{color:var(--text3);text-align:right;flex-direction:row-reverse}
+.ai-analysis-row{display:flex;align-items:center;gap:10px;margin-bottom:6px;background:var(--surface3);border-radius:6px;padding:7px 10px}
+.ai-analysis-icon{font-size:15px}
+.ai-analysis-text{font-size:12px;flex:1}
+.ai-analysis-val{font-weight:600;font-size:12px;white-space:nowrap}
+.ai-insight-box{background:rgba(210,153,34,.1);border:1px solid rgba(210,153,34,.25);border-radius:8px;padding:12px 14px;margin-bottom:8px}
+.ai-insight-title{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--yellow);margin-bottom:6px}
+.ai-insight-detail{font-size:11px;color:var(--text2);margin-bottom:3px}
+.ai-draft-box{background:var(--surface3);border:1px solid var(--border2);border-radius:8px;padding:12px 14px;margin:8px 0}
+.ai-draft-title{font-size:12px;font-weight:600;margin-bottom:8px}
+.ai-draft-row{display:flex;justify-content:space-between;font-size:11px;margin-bottom:5px}
+.ai-draft-key{color:var(--text2)}
+.ai-draft-val{font-weight:500}
+.ai-line-preview{background:var(--surface2);border-radius:6px;padding:8px;margin-top:6px}
+.ai-line-row{display:flex;justify-content:space-between;font-size:11px;padding:3px 0;border-bottom:1px solid var(--border)}
+.ai-line-row:last-child{border:none}
+.ai-line-label{color:var(--text2)}
+.ai-line-dr{color:var(--red);font-weight:600}
+.ai-line-cr{color:var(--green);font-weight:600}
+.ai-suggestions{padding:10px 14px;border-top:1px solid var(--border);background:var(--surface);flex-shrink:0}
+.ai-suggestions-label{font-size:10px;color:var(--text3);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
+.ai-chips{display:flex;flex-wrap:wrap;gap:5px}
+.ai-chip{background:var(--surface2);border:1px solid var(--border2);border-radius:20px;padding:4px 10px;font-size:11px;color:var(--text2);cursor:pointer;transition:all .15s;white-space:nowrap}
+.ai-chip:hover{background:var(--accent-glow);border-color:rgba(79,142,247,.4);color:var(--accent)}
+.ai-input-area{padding:12px 14px;border-top:1px solid var(--border);display:flex;align-items:flex-end;gap:8px}
+.ai-input{flex:1;background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:8px 12px;color:var(--text);font-size:12px;outline:none;resize:none;min-height:36px;max-height:80px;font-family:inherit;line-height:1.5}
+.ai-input:focus{border-color:var(--accent)}
+.ai-send-btn{width:34px;height:34px;border-radius:8px;flex-shrink:0;background:linear-gradient(135deg,var(--ai-from),var(--ai-to));border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+/* ── MODAL ── */
+.modal-overlay{display:none;position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.65);backdrop-filter:blur(4px);align-items:center;justify-content:center}
+.modal-overlay.show{display:flex}
+.modal{background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius-lg);width:560px;max-height:85vh;overflow-y:auto;box-shadow:0 24px 64px rgba(0,0,0,.6)}
+.modal-header{padding:18px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;position:sticky;top:0;background:var(--surface);z-index:1}
+.modal-header h2{font-size:15px;font-weight:700;flex:1}
+.modal-body{padding:20px}
+.modal-footer{padding:14px 20px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end}
+.form-row{display:flex;gap:12px;margin-bottom:12px}
+.form-group{flex:1;display:flex;flex-direction:column;gap:5px}
+.form-label{font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.4px}
+.form-input{background:var(--surface2);border:1px solid var(--border2);border-radius:6px;padding:7px 10px;color:var(--text);font-size:12px;outline:none;width:100%}
+.form-input:focus{border-color:var(--accent)}
+.form-select{background:var(--surface2);border:1px solid var(--border2);border-radius:6px;padding:7px 10px;color:var(--text);font-size:12px;outline:none;width:100%;cursor:pointer}
+.je-draft-lines{margin-top:14px}
+.je-draft-line{display:flex;gap:8px;align-items:center;margin-bottom:6px;background:var(--surface2);border:1px solid var(--border2);border-radius:6px;padding:8px 10px}
+.je-draft-line-num{font-size:10px;color:var(--text3);width:16px;text-align:center}
+.je-draft-line-info{flex:1;min-width:0}
+.je-draft-line-acct{font-size:11px;font-weight:600;color:var(--accent)}
+.je-draft-line-desc{font-size:11px;color:var(--text2)}
+.je-draft-line-type{font-size:10px;font-weight:700;padding:2px 6px;border-radius:3px;text-transform:uppercase}
+.je-draft-line-type.dr{background:var(--red-bg);color:var(--red)}
+.je-draft-line-type.cr{background:var(--green-bg);color:var(--green)}
+.je-draft-line-amount{font-size:12px;font-weight:600;text-align:right;min-width:80px}
+.je-balance-row{display:flex;justify-content:space-between;padding:8px 10px;background:var(--surface3);border-radius:6px;font-size:12px;margin-top:4px}
+.je-balance-label{color:var(--text2)}
+.je-balance-val{font-weight:600}
+.balanced-badge{background:var(--green-bg);color:var(--green);font-size:11px;padding:2px 8px;border-radius:10px;font-weight:600}
+.ai-badge{background:var(--accent-glow);color:var(--accent);font-size:9px;font-weight:600;padding:2px 7px;border-radius:10px;text-transform:uppercase;letter-spacing:.5px}
+</style>
+</head>
+<body>
+
+<!-- TOP NAV -->
+<nav class="topnav">
+  <a class="brand" href="#"><div class="brand-icon">⚡</div><span>License<em>IQ</em></span></a>
+  <div class="nav-sep"></div>
+  <div class="nav-breadcrumb">
+    <span>Finance Hub</span><span style="color:var(--text3)">›</span><span class="active">Journal Entry Hub</span>
+  </div>
+  <div class="nav-sep"></div>
+  <div class="nav-switch">
+    <a href="licenseiq-accrual-management.html">Accrual Mgmt</a>
+    <a href="licenseiq-journal-entry-hub.html" class="active">Journal Entry Hub</a>
+  </div>
+  <div class="nav-actions">
+    <div class="icon-btn">🔔</div><div class="icon-btn">⚙️</div>
+    <div class="avatar">CT</div>
+  </div>
+</nav>
+
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-section">Finance Hub</div>
+    <a class="sidebar-item" href="licenseiq-accrual-management.html"><span class="icon">📋</span> Accrual Management</a>
+    <div class="sidebar-item active"><span class="icon">📓</span> Journal Entry Hub</div>
+    <div class="sidebar-item"><span class="icon">🗂️</span> Period Close <span class="sidebar-badge">2</span></div>
+    <div class="sidebar-item"><span class="icon">⚖️</span> Adjustments &amp; Disputes</div>
+    <div class="sidebar-section" style="margin-top:8px">Contract Intelligence</div>
+    <div class="sidebar-item"><span class="icon">🔍</span> Search Contracts</div>
+    <div class="sidebar-item"><span class="icon">🗺️</span> Term Mapping</div>
+    <div class="sidebar-item"><span class="icon">🕐</span> Pending Queue <span class="sidebar-badge">7</span></div>
+    <div class="sidebar-section" style="margin-top:8px">Financial Intelligence</div>
+    <div class="sidebar-item"><span class="icon">📊</span> Analytics</div>
+    <div class="sidebar-item"><span class="icon">📄</span> Reports</div>
+    <div class="sidebar-section" style="margin-top:8px">System</div>
+    <div class="sidebar-item"><span class="icon">🗄️</span> Master Data</div>
+    <div class="sidebar-item"><span class="icon">🔗</span> ERP Mapping</div>
+    <div class="sidebar-item"><span class="icon">👤</span> User Mgmt</div>
+  </aside>
+
+  <div class="main">
+    <div class="workarea">
+
+      <!-- PAGE HEADER -->
+      <div class="page-header">
+        <div class="page-title-row">
+          <div>
+            <div class="page-title">Journal Entry Hub</div>
+            <div class="page-subtitle">Draft · Approve · Sync to ERP · Reconcile – AI-powered journal workflow</div>
+          </div>
+          <div class="period-badge">📅 Mar 2026</div>
+          <div class="header-actions">
+            <button class="btn btn-ghost btn-sm" onclick="openDraftModal()">+ Draft JE</button>
+            <button class="btn btn-secondary btn-sm" onclick="sendAIMessage('Sync all approved JEs to SAP ERP')">⟳ Sync to ERP</button>
+            <button class="btn btn-secondary btn-sm">⬇ Export</button>
+            <button class="btn btn-primary btn-sm" onclick="openApprovalBatch()">✓ Bulk Approve</button>
+          </div>
+        </div>
+        <div class="filters-row">
+          <div class="search-box"><span>🔍</span><input placeholder="Search JE ID, accrual, contract…"/></div>
+          <select class="select-filter"><option>All Stages</option><option>Draft</option><option>Pending Approval</option><option>Approved</option><option>Synced to ERP</option><option>Posted</option></select>
+          <select class="select-filter"><option>All Flow Types</option><option>Rebate</option><option>Royalty</option><option>Commission</option></select>
+          <select class="select-filter"><option>All ERP Systems</option><option>SAP S/4HANA</option><option>Oracle NetSuite</option><option>Microsoft D365</option></select>
+          <button class="btn btn-ghost btn-sm">⚡ AI Filter</button>
+        </div>
+      </div>
+
+      <!-- JE WORKFLOW PIPELINE -->
+      <div class="pipeline-bar">
+        <div class="stage active" onclick="filterStage('all')">
+          <div class="stage-box">
+            <div class="stage-num" style="color:var(--text)">24</div>
+            <div class="stage-label" style="color:var(--text2)">Total JEs</div>
+            <div class="stage-count" style="color:var(--text3)">Mar 2026</div>
+          </div>
+        </div>
+        <div class="stage-arrow">›</div>
+        <div class="stage" onclick="filterStage('draft')">
+          <div class="stage-box">
+            <div class="stage-num" style="color:var(--text3)">4</div>
+            <div class="stage-label" style="color:var(--text3)">Draft</div>
+            <div class="stage-count" style="color:var(--text3)">Incomplete</div>
+          </div>
+        </div>
+        <div class="stage-arrow">›</div>
+        <div class="stage" onclick="filterStage('pending')">
+          <div class="stage-box">
+            <div class="stage-num" style="color:var(--yellow)">6</div>
+            <div class="stage-label" style="color:var(--yellow)">Pending</div>
+            <div class="stage-count" style="color:var(--text3)">Needs approval</div>
+          </div>
+        </div>
+        <div class="stage-arrow">›</div>
+        <div class="stage" onclick="filterStage('approved')">
+          <div class="stage-box">
+            <div class="stage-num" style="color:var(--accent)">5</div>
+            <div class="stage-label" style="color:var(--accent)">Approved</div>
+            <div class="stage-count" style="color:var(--text3)">Ready to sync</div>
+          </div>
+        </div>
+        <div class="stage-arrow">›</div>
+        <div class="stage" onclick="filterStage('synced')">
+          <div class="stage-box">
+            <div class="stage-num" style="color:var(--purple)">3</div>
+            <div class="stage-label" style="color:var(--purple)">ERP Synced</div>
+            <div class="stage-count" style="color:var(--text3)">Awaiting post</div>
+          </div>
+        </div>
+        <div class="stage-arrow">›</div>
+        <div class="stage" onclick="filterStage('posted')">
+          <div class="stage-box">
+            <div class="stage-num" style="color:var(--green)">6</div>
+            <div class="stage-label" style="color:var(--green)">Posted</div>
+            <div class="stage-count" style="color:var(--text3)">Reconciled</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- AI INSIGHTS WIDGET -->
+      <div class="insights-widget">
+        <div class="insight-card" onclick="sendAIMessage('Show unbalanced journal entries that need attention')">
+          <div class="insight-icon red">⚠️</div>
+          <div><div class="insight-num red">2</div><div class="insight-label">Unbalanced JEs</div></div>
+          <div class="insight-ai-tag">AI</div>
+        </div>
+        <div class="insight-card" onclick="sendAIMessage('Which journal entries failed ERP sync?')">
+          <div class="insight-icon orange">🔴</div>
+          <div><div class="insight-num orange">1</div><div class="insight-label">ERP Sync Failed</div></div>
+          <div class="insight-ai-tag">AI</div>
+        </div>
+        <div class="insight-card" onclick="sendAIMessage('Show JEs pending approval for more than 48 hours')">
+          <div class="insight-icon yellow">🕐</div>
+          <div><div class="insight-num yellow">3</div><div class="insight-label">Approval Overdue</div></div>
+          <div class="insight-ai-tag">AI</div>
+        </div>
+        <div class="insight-card" onclick="sendAIMessage('Show reconciliation status for Mar 2026')">
+          <div class="insight-icon green">✅</div>
+          <div><div class="insight-num green">$1.17M</div><div class="insight-label">Total Posted</div></div>
+          <div class="insight-ai-tag">AI</div>
+        </div>
+        <div class="insight-card" onclick="sendAIMessage('Show accruals ready to generate journal entries')">
+          <div class="insight-icon purple">🔁</div>
+          <div><div class="insight-num purple">8</div><div class="insight-label">Accruals → JE Ready</div></div>
+          <div class="insight-ai-tag">AI</div>
+        </div>
+      </div>
+
+      <!-- TABLE + DETAIL -->
+      <div class="content-area">
+
+        <!-- JE TABLE -->
+        <div class="table-panel">
+          <div class="table-toolbar">
+            <span class="table-label">Journal Entries</span>
+            <span class="count-badge" id="jeCount">24 records</span>
+            <div style="flex:1"></div>
+            <button class="btn btn-ghost btn-sm">⊞ Columns</button>
+            <button class="btn btn-ghost btn-sm">⇅ Sort</button>
+            <button class="btn btn-ghost btn-sm">⊡ Group by Flow</button>
+          </div>
+          <div class="table-scroll">
+            <table>
+              <thead><tr>
+                <th style="width:24px"><input type="checkbox" id="selectAll" onchange="toggleSelectAll(this)"/></th>
+                <th>JE ID</th>
+                <th>Source</th>
+                <th>Contract / Counterparty</th>
+                <th>Flow Type</th>
+                <th>Period</th>
+                <th>Total Amount</th>
+                <th>JE Stage</th>
+                <th>ERP Sync</th>
+                <th>Balanced</th>
+                <th>Actions</th>
+              </tr></thead>
+              <tbody id="jeTable"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- JE DETAIL PANEL -->
+        <div class="detail-panel" id="detailPanel">
+          <div class="detail-header">
+            <h3 id="detailTitle" style="color:var(--text2)">Select a journal entry</h3>
+            <button class="btn btn-ghost btn-sm" onclick="closeDetail()">✕</button>
+          </div>
+          <div class="detail-tabs" id="detailTabs" style="display:none">
+            <div class="detail-tab active" onclick="switchTab('overview',this)">Overview</div>
+            <div class="detail-tab" onclick="switchTab('lines',this)">JE Lines</div>
+            <div class="detail-tab" onclick="switchTab('erp',this)">ERP Sync</div>
+            <div class="detail-tab" onclick="switchTab('recon',this)">Reconciliation</div>
+          </div>
+          <div class="detail-scroll">
+            <div id="detailBody" class="detail-body">
+              <div style="padding:40px 0;text-align:center;color:var(--text3)">
+                <div style="font-size:36px;margin-bottom:12px">📓</div>
+                <div style="font-size:13px">Click any journal entry to view details</div>
+              </div>
+            </div>
+          </div>
+          <div class="detail-actions" id="detailActions" style="display:none"></div>
+        </div>
+
+      </div><!-- content-area -->
+    </div><!-- workarea -->
+
+    <!-- LiQ AI AGENT PANEL -->
+    <div class="ai-panel">
+      <div class="ai-panel-header">
+        <div class="ai-logo">🤖</div>
+        <div class="ai-header-text"><h3>LiQ AI Agent</h3><p>Journal Entry Hub context</p></div>
+        <div class="ai-online"><div class="ai-dot"></div>Active</div>
+      </div>
+      <div class="ai-context-bar" id="aiContextBar">
+        📌 Context: Journal Entry Hub – Mar 2026 · 24 JEs · $1.17M total
+      </div>
+      <div class="ai-messages" id="aiMessages">
+        <div class="ai-msg-ai">
+          <div class="ai-msg-label ai-label">✦ LiQ Agent</div>
+          I'm monitoring your journal entries for <strong>Mar 2026</strong>.<br/><br/>
+          I've detected:
+          <div class="ai-analysis-row" style="margin-top:8px"><div class="ai-analysis-icon">⚠️</div><div class="ai-analysis-text">2 unbalanced JEs</div><div class="ai-analysis-val" style="color:var(--red)">Review needed</div></div>
+          <div class="ai-analysis-row"><div class="ai-analysis-icon">🔴</div><div class="ai-analysis-text">1 ERP sync failure</div><div class="ai-analysis-val" style="color:var(--orange)">JE2041</div></div>
+          <div class="ai-analysis-row"><div class="ai-analysis-icon">🕐</div><div class="ai-analysis-text">3 approvals overdue</div><div class="ai-analysis-val" style="color:var(--yellow)">>48h</div></div>
+          <br/>Select a JE or ask me anything.
+        </div>
+      </div>
+      <div class="ai-suggestions">
+        <div class="ai-suggestions-label">Quick Actions</div>
+        <div class="ai-chips">
+          <div class="ai-chip" onclick="sendAIMessage('Preview journal entry for ACC2032 Distributor rebate')">Preview JE</div>
+          <div class="ai-chip" onclick="sendAIMessage('Trace JE2038 back to original contract clause')">Trace to contract</div>
+          <div class="ai-chip" onclick="sendAIMessage('Why did ERP sync fail for JE2041?')">ERP sync issue</div>
+          <div class="ai-chip" onclick="sendAIMessage('Show reconciliation gap between LicenseIQ and SAP')">Recon gap</div>
+          <div class="ai-chip" onclick="sendAIMessage('Generate JEs for all approved accruals')">Generate all JEs</div>
+          <div class="ai-chip" onclick="openDraftModal()">Draft new JE</div>
+        </div>
+      </div>
+      <div class="ai-input-area">
+        <textarea class="ai-input" id="aiInput" rows="1" placeholder="Ask anything about journal entries…" onkeydown="handleKey(event)"></textarea>
+        <button class="ai-send-btn" onclick="sendCurrentInput()">➤</button>
+      </div>
+    </div>
+
+  </div><!-- main -->
+</div><!-- layout -->
+
+<!-- DRAFT JE MODAL -->
+<div class="modal-overlay" id="draftModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div style="width:28px;height:28px;border-radius:6px;background:linear-gradient(135deg,var(--ai-from),var(--ai-to));display:flex;align-items:center;justify-content:center;font-size:14px">📓</div>
+      <h2>Draft Journal Entry</h2>
+      <div class="ai-badge">AI Assisted</div>
+      <button class="btn btn-ghost btn-sm" onclick="closeDraftModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group">
+          <div class="form-label">Source Accrual</div>
+          <select class="form-select" id="sourceAccrual" onchange="autofillFromAccrual(this.value)">
+            <option value="">Select accrual source…</option>
+            <option value="ACC2032">ACC2032 – Distributor Program A ($420,000)</option>
+            <option value="ACC2033">ACC2033 – Solar License ($75,000)</option>
+            <option value="ACC2034">ACC2034 – Retail Commission ($118,500)</option>
+            <option value="ACC2035">ACC2035 – North Region Rebate ($64,200)</option>
+            <option value="ACC2036">ACC2036 – Premium OEM Royalty ($210,000)</option>
+            <option value="MANUAL">Manual (no source accrual)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <div class="form-label">Period</div>
+          <input class="form-input" value="Mar 2026" id="jePeriod"/>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <div class="form-label">Flow Type</div>
+          <select class="form-select" id="jeFlowType"><option>Rebate</option><option>Royalty</option><option>Commission</option><option>Accrual Reversal</option><option>True-up</option></select>
+        </div>
+        <div class="form-group">
+          <div class="form-label">ERP Target</div>
+          <select class="form-select"><option>SAP S/4HANA</option><option>Oracle NetSuite</option><option>Microsoft D365</option></select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <div class="form-label">Reference / Description</div>
+          <input class="form-input" id="jeDescription" placeholder="Enter journal entry description…"/>
+        </div>
+      </div>
+
+      <!-- AI-generated JE lines -->
+      <div class="je-draft-lines" id="jeDraftLines" style="display:none">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+          <div style="font-size:12px;font-weight:600">AI-Generated JE Lines</div>
+          <div class="ai-badge">AI</div>
+          <button class="btn btn-ghost btn-sm" style="margin-left:auto" onclick="addManualLine()">+ Add Line</button>
+        </div>
+        <div id="jeLinesList"></div>
+        <div class="je-balance-row" id="jeBalanceRow">
+          <span class="je-balance-label">Total Debit</span><span class="je-balance-val" id="jeTotalDr">$0</span>
+          <span class="je-balance-label" style="margin-left:16px">Total Credit</span><span class="je-balance-val" id="jeTotalCr">$0</span>
+          <span id="balancedBadge"></span>
+        </div>
+      </div>
+
+      <div id="noLinesMsg" style="padding:20px;text-align:center;color:var(--text3);font-size:12px;background:var(--surface2);border-radius:6px;border:1px dashed var(--border2)">
+        Select a source accrual to auto-generate JE lines with AI account mapping
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeDraftModal()">Cancel</button>
+      <button class="btn btn-secondary" onclick="saveAsDraft()">Save as Draft</button>
+      <button class="btn btn-primary" onclick="submitForApproval()">Submit for Approval →</button>
+    </div>
+  </div>
+</div>
+
+<!-- APPROVAL BATCH MODAL -->
+<div class="modal-overlay" id="approvalModal">
+  <div class="modal" style="width:500px">
+    <div class="modal-header">
+      <h2>Bulk Approve Journal Entries</h2>
+      <button class="btn btn-ghost btn-sm" onclick="closeApprovalModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div style="background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius);padding:12px;margin-bottom:14px">
+        <div style="font-size:12px;font-weight:600;margin-bottom:8px">Pending Approval – 6 JEs</div>
+        <div id="approvalList"></div>
+      </div>
+      <div style="background:var(--accent-glow);border:1px solid rgba(79,142,247,.25);border-radius:var(--radius);padding:12px;font-size:12px">
+        <div style="font-weight:600;color:var(--accent);margin-bottom:4px">✦ AI Review Summary</div>
+        <div style="color:var(--text2)">All 6 entries reviewed. 5 cleared with high confidence. <strong style="color:var(--yellow)">1 flagged</strong> for manual review (JE2042 – account mapping mismatch).</div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeApprovalModal()">Cancel</button>
+      <button class="btn btn-secondary">Approve Selected (5)</button>
+      <button class="btn btn-primary">Approve All &amp; Sync to ERP →</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── DATA ────────────────────────────────────────────────────────────
+const journalEntries = [
+  { id:'JE2038', source:'ACC2032', contract:'Distributor Program A', party:'Distributor Corp', flow:'Rebate',      period:'Mar 2026', amount:420000, stage:'pending',  erp:'pending', balanced:true  },
+  { id:'JE2039', source:'ACC2033', contract:'Solar License Agreement',party:'Solar Corp',       flow:'Royalty',     period:'Mar 2026', amount:75000,  stage:'draft',    erp:'na',      balanced:false },
+  { id:'JE2040', source:'ACC2034', contract:'Retail Commission Plan', party:'RetailCo',         flow:'Commission',  period:'Mar 2026', amount:118500, stage:'posted',   erp:'synced',  balanced:true  },
+  { id:'JE2041', source:'ACC2035', contract:'North Region Rebate',    party:'NorTech Ltd',      flow:'Rebate',      period:'Mar 2026', amount:64200,  stage:'approved', erp:'failed',  balanced:true  },
+  { id:'JE2042', source:'ACC2036', contract:'Premium OEM Royalty',    party:'OEM Partners',     flow:'Royalty',     period:'Mar 2026', amount:210000, stage:'pending',  erp:'pending', balanced:false },
+  { id:'JE2043', source:'ACC2037', contract:'Agent Commission Q1',    party:'AgentPlus',        flow:'Commission',  period:'Mar 2026', amount:33000,  stage:'draft',    erp:'na',      balanced:true  },
+  { id:'JE2044', source:'ACC2038', contract:'Euro Distributor Rebate',party:'EuroDist GmbH',    flow:'Rebate',      period:'Mar 2026', amount:97500,  stage:'posted',   erp:'synced',  balanced:true  },
+  { id:'JE2045', source:'ACC2039', contract:'APAC License Royalty',   party:'APAC Corp',        flow:'Royalty',     period:'Mar 2026', amount:155000, stage:'synced',   erp:'synced',  balanced:true  },
+  { id:'JE2046', source:'MANUAL',  contract:'Manual Accrual Reversal',party:'Internal',         flow:'Accrual Rev', period:'Feb 2026', amount:12500,  stage:'approved', erp:'pending', balanced:true  },
+  { id:'JE2047', source:'ACC2032', contract:'Distributor Program A',  party:'Distributor Corp', flow:'True-up',     period:'Feb 2026', amount:8000,   stage:'posted',   erp:'synced',  balanced:true  },
+];
+
+const stageLabel = { draft:'Draft', pending:'Pending Approval', approved:'Approved', synced:'ERP Synced', posted:'Posted', failed:'Failed' };
+const flowIcon   = { Rebate:'💰', Royalty:'📜', Commission:'🤝', 'Accrual Rev':'↩', 'True-up':'⚖️' };
+const erpLabel   = { synced:'● Synced', pending:'○ Pending', failed:'✕ Failed', na:'— N/A' };
+
+const accrualLines = {
+  ACC2032:{ desc:'Distributor Program A Rebate – Mar 2026 · Section 7.2 Tier 3', amount:420000,
+    lines:[
+      {acct:'5010',name:'Rebate Expense',type:'dr',amount:420000},
+      {acct:'2410',name:'Accrued Rebate Payable',type:'cr',amount:420000},
+    ]},
+  ACC2033:{ desc:'Solar License Royalty Estimate – Mar 2026', amount:75000,
+    lines:[
+      {acct:'5020',name:'Royalty Expense',type:'dr',amount:75000},
+      {acct:'2420',name:'Accrued Royalties Payable',type:'cr',amount:75000},
+    ]},
+  ACC2034:{ desc:'Retail Commission Plan – Mar 2026', amount:118500,
+    lines:[
+      {acct:'5030',name:'Sales Commission Expense',type:'dr',amount:118500},
+      {acct:'2430',name:'Commissions Payable',type:'cr',amount:118500},
+    ]},
+  ACC2035:{ desc:'North Region Volume Rebate – Mar 2026', amount:64200,
+    lines:[
+      {acct:'5010',name:'Rebate Expense',type:'dr',amount:64200},
+      {acct:'2410',name:'Accrued Rebate Payable',type:'cr',amount:64200},
+    ]},
+  ACC2036:{ desc:'Premium OEM Royalty – Mar 2026', amount:210000,
+    lines:[
+      {acct:'5020',name:'Royalty Expense',type:'dr',amount:210000},
+      {acct:'2420',name:'Accrued Royalties Payable',type:'cr',amount:210000},
+    ]},
+};
+
+let selectedJE = null;
+let activeTab  = 'overview';
+
+// ── RENDER TABLE ────────────────────────────────────────────────
+function renderTable(filter='all') {
+  const tbody = document.getElementById('jeTable');
+  const rows  = filter === 'all' ? journalEntries : journalEntries.filter(j => j.stage === filter);
+  document.getElementById('jeCount').textContent = `${rows.length} records`;
+  tbody.innerHTML = rows.map(j => {
+    const sel = j.id === selectedJE ? 'selected' : '';
+    const balIcon = j.balanced
+      ? '<span style="color:var(--green)">✓ Balanced</span>'
+      : '<span style="color:var(--red)">✕ Unbalanced</span>';
+    return `<tr class="${sel}" onclick="selectJE('${j.id}')">
+      <td><input type="checkbox" onclick="event.stopPropagation()"/></td>
+      <td class="je-id">${j.id}</td>
+      <td><span class="tag">${j.source}</span></td>
+      <td class="td-bold"><div>${j.contract}</div><div style="font-size:11px;color:var(--text2)">${j.party}</div></td>
+      <td><span class="tag">${flowIcon[j.flow]||''} ${j.flow}</span></td>
+      <td style="color:var(--text2);font-size:11px">${j.period}</td>
+      <td style="font-weight:600;font-size:13px">$${j.amount.toLocaleString()}</td>
+      <td><span class="status-pill ${j.stage}">${stageLabel[j.stage]}</span></td>
+      <td><span class="erp-pill ${j.erp}">${erpLabel[j.erp]}</span></td>
+      <td style="font-size:11px">${balIcon}</td>
+      <td style="display:flex;gap:4px;flex-wrap:nowrap">
+        <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();askAIAbout('${j.id}')">✦ AI</button>
+        ${j.stage==='pending'?'<button class="btn btn-green btn-sm" onclick="event.stopPropagation()">✓ Approve</button>':''}
+        ${j.stage==='approved'&&j.erp!=='synced'?'<button class="btn btn-purple btn-sm" onclick="event.stopPropagation();sendAIMessage(\'Sync '+j.id+' to SAP ERP\')">⟳ Sync</button>':''}
+        ${j.erp==='failed'?'<button class="btn btn-orange btn-sm" onclick="event.stopPropagation();sendAIMessage(\'Why did ERP sync fail for '+j.id+'?\')">⚠ Fix</button>':''}
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+// ── SELECT JE ──────────────────────────────────────────────────
+function selectJE(id) {
+  selectedJE = id;
+  renderTable();
+  const j = journalEntries.find(x => x.id === id);
+  document.getElementById('detailTitle').textContent = id;
+  document.getElementById('detailTitle').style.color = 'var(--text)';
+  document.getElementById('detailTabs').style.display = 'flex';
+  activeTab = 'overview';
+  document.querySelectorAll('.detail-tab').forEach((t,i) => t.classList.toggle('active', i===0));
+  renderDetailOverview(j);
+  updateAIContext(j);
+}
+
+function closeDetail() {
+  selectedJE = null; renderTable();
+  document.getElementById('detailTitle').textContent = 'Select a journal entry';
+  document.getElementById('detailTitle').style.color = 'var(--text2)';
+  document.getElementById('detailTabs').style.display = 'none';
+  document.getElementById('detailBody').innerHTML = '<div style="padding:40px 0;text-align:center;color:var(--text3)"><div style="font-size:36px;margin-bottom:12px">📓</div><div style="font-size:13px">Click any journal entry to view details</div></div>';
+  document.getElementById('detailActions').style.display = 'none';
+}
+
+function switchTab(tab, el) {
+  activeTab = tab;
+  document.querySelectorAll('.detail-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  const j = journalEntries.find(x => x.id === selectedJE);
+  if (!j) return;
+  if (tab === 'overview') renderDetailOverview(j);
+  else if (tab === 'lines') renderDetailLines(j);
+  else if (tab === 'erp') renderDetailERP(j);
+  else if (tab === 'recon') renderDetailRecon(j);
+}
+
+function renderDetailOverview(j) {
+  document.getElementById('detailBody').innerHTML = `
+    <div class="detail-body">
+      <div class="je-amount-header">
+        <div class="je-amount-val">$${j.amount.toLocaleString()}</div>
+        <div class="je-amount-sub">${j.contract} · ${j.period}</div>
+      </div>
+      <div class="meta-row"><span class="meta-key">JE ID</span><span class="meta-val" style="color:var(--accent)">${j.id}</span></div>
+      <div class="meta-row"><span class="meta-key">Source Accrual</span><span class="meta-val">${j.source}</span></div>
+      <div class="meta-row"><span class="meta-key">Counterparty</span><span class="meta-val">${j.party}</span></div>
+      <div class="meta-row"><span class="meta-key">Flow Type</span><span class="meta-val">${flowIcon[j.flow]||''} ${j.flow}</span></div>
+      <div class="meta-row"><span class="meta-key">Period</span><span class="meta-val">${j.period}</span></div>
+      <div class="meta-row"><span class="meta-key">Stage</span><span class="meta-val"><span class="status-pill ${j.stage}">${stageLabel[j.stage]}</span></span></div>
+      <div class="meta-row"><span class="meta-key">ERP Sync</span><span class="meta-val"><span class="erp-pill ${j.erp}">${erpLabel[j.erp]}</span></span></div>
+      <div class="meta-row"><span class="meta-key">Balanced</span><span class="meta-val">${j.balanced?'<span style="color:var(--green)">✓ Yes</span>':'<span style="color:var(--red)">✕ No</span>'}</span></div>
+
+      <div class="section-title">Audit Trail</div>
+      <div class="audit-entry"><div class="audit-dot"></div><div><div class="audit-text">JE generated from accrual ${j.source}</div><div class="audit-time">Mar 14, 2026 · 09:20 AM</div></div></div>
+      ${j.stage!=='draft'?'<div class="audit-entry"><div class="audit-dot" style="background:var(--yellow)"></div><div><div class="audit-text">Submitted for approval</div><div class="audit-time">Mar 14, 2026 · 09:25 AM</div></div></div>':''}
+      ${j.stage==='approved'||j.stage==='synced'||j.stage==='posted'?'<div class="audit-entry"><div class="audit-dot" style="background:var(--accent)"></div><div><div class="audit-text">Approved by Finance Manager</div><div class="audit-time">Mar 14, 2026 · 10:05 AM</div></div></div>':''}
+      ${j.erp==='synced'||j.stage==='posted'?'<div class="audit-entry"><div class="audit-dot" style="background:var(--purple)"></div><div><div class="audit-text">Synced to SAP S/4HANA</div><div class="audit-time">Mar 14, 2026 · 10:30 AM</div></div></div>':''}
+      ${j.stage==='posted'?'<div class="audit-entry"><div class="audit-dot" style="background:var(--green)"></div><div><div class="audit-text">Posted to General Ledger</div><div class="audit-time">Mar 14, 2026 · 11:00 AM</div></div></div>':''}
+
+      <div style="margin-top:12px"><button class="btn btn-secondary" style="width:100%;margin-bottom:6px" onclick="sendAIMessage('Trace ${j.id} back to original contract clause')">🔍 Trace to Contract</button><button class="btn btn-ghost" style="width:100%" onclick="askAIAbout('${j.id}')">✦ Ask AI about this JE</button></div>
+    </div>`;
+  showDetailActions(j);
+}
+
+function renderDetailLines(j) {
+  const lines = accrualLines[j.source] ? accrualLines[j.source].lines : [
+    {acct:'5010',name:'Expense Account',type:'dr',amount:j.amount},
+    {acct:'2410',name:'Accrued Liability',type:'cr',amount:j.amount},
+  ];
+  const totalDr = lines.filter(l=>l.type==='dr').reduce((s,l)=>s+l.amount,0);
+  const totalCr = lines.filter(l=>l.type==='cr').reduce((s,l)=>s+l.amount,0);
+  document.getElementById('detailBody').innerHTML = `
+    <div class="detail-body">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <div style="font-size:12px;font-weight:600">JE Lines (${lines.length})</div>
+        <div class="ai-badge">AI Mapped</div>
+      </div>
+      <div class="je-lines">${lines.map((l,i)=>`
+        <div class="je-line">
+          <div style="font-size:10px;color:var(--text3);width:16px;text-align:center">${i+1}</div>
+          <div class="je-line-acct">
+            <div class="je-line-acct-code">${l.acct}</div>
+            <div class="je-line-acct-name">${l.name}</div>
+          </div>
+          <span class="je-line-type ${l.type}">${l.type.toUpperCase()}</span>
+          <div class="je-line-amount ${l.type==='dr'?'amount-dr':'amount-cr'}">$${l.amount.toLocaleString()}</div>
+        </div>`).join('')}
+      </div>
+      <div class="je-balance-row" style="margin-top:8px">
+        <span class="je-balance-label">Debit</span><span class="je-balance-val">$${totalDr.toLocaleString()}</span>
+        <span class="je-balance-label" style="margin-left:10px">Credit</span><span class="je-balance-val">$${totalCr.toLocaleString()}</span>
+        ${totalDr===totalCr?'<span class="balanced-badge">✓ Balanced</span>':'<span style="color:var(--red);font-size:11px;font-weight:600">✕ Unbalanced</span>'}
+      </div>
+      <div class="section-title">Account Mapping Source</div>
+      <div class="meta-row"><span class="meta-key">Mapping Rule</span><span class="meta-val">ERP Flow → COA</span></div>
+      <div class="meta-row"><span class="meta-key">ERP COA Version</span><span class="meta-val">v2.4 Mar 2026</span></div>
+      <div class="meta-row"><span class="meta-key">AI Confidence</span><span class="meta-val" style="color:var(--green)">96%</span></div>
+      <div style="margin-top:12px"><button class="btn btn-ghost" style="width:100%" onclick="sendAIMessage('Explain account mapping for ${j.id}')">✦ Explain account mapping</button></div>
+    </div>`;
+  showDetailActions(j);
+}
+
+function renderDetailERP(j) {
+  const syncColor = j.erp==='synced'?'var(--green)':j.erp==='failed'?'var(--red)':'var(--yellow)';
+  document.getElementById('detailBody').innerHTML = `
+    <div class="detail-body">
+      <div class="erp-sync-box">
+        <div class="erp-sync-header"><div class="erp-logo">🏢</div><div><div class="erp-sync-title">SAP S/4HANA</div><div style="font-size:10px;color:var(--text2)">Primary ERP Target</div></div></div>
+        <div class="erp-sync-row"><span class="erp-sync-key">Sync Status</span><span class="erp-sync-val" style="color:${syncColor}">${erpLabel[j.erp]}</span></div>
+        <div class="erp-sync-row"><span class="erp-sync-key">ERP Document #</span><span class="erp-sync-val">${j.erp==='synced'||j.stage==='posted'?'SAP-'+j.id.replace('JE','')+'2026':'—'}</span></div>
+        <div class="erp-sync-row"><span class="erp-sync-key">Posting Date</span><span class="erp-sync-val">${j.stage==='posted'?'Mar 14, 2026':'—'}</span></div>
+        <div class="erp-sync-row"><span class="erp-sync-key">Company Code</span><span class="erp-sync-val">1000</span></div>
+        <div class="erp-sync-row"><span class="erp-sync-key">GL Account</span><span class="erp-sync-val">0001-5010</span></div>
+        ${j.erp==='failed'?'<div style="margin-top:8px;padding:8px;background:var(--red-bg);border-radius:6px;font-size:11px;color:var(--red)">✕ Error: Account 5010 mapping not found in ERP CoA v2.4. Check ERP Data Mapping → Reference Tables.</div>':''}
+        ${j.erp==='synced'||j.stage==='posted'?'<div class="erp-progress"><div class="erp-progress-fill" style="width:100%"></div></div>':''}
+      </div>
+      ${j.erp==='failed'?`
+      <div style="background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius);padding:12px;margin-bottom:8px">
+        <div style="font-size:12px;font-weight:600;margin-bottom:8px;color:var(--orange)">⚡ AI Suggested Fix</div>
+        <div style="font-size:11px;color:var(--text2);margin-bottom:8px">Map account 5010-REBATE to SAP GL 522100 in ERP Data Mapping → Reference Tables. Estimated fix time: 5 min.</div>
+        <button class="btn btn-secondary btn-sm">Open ERP Mapping →</button>
+        <button class="btn btn-ghost btn-sm" onclick="sendAIMessage('Fix ERP sync error for ${j.id}')">✦ Fix with AI</button>
+      </div>`:''}
+      <div class="section-title">Sync History</div>
+      <div class="audit-entry"><div class="audit-dot" style="background:${j.erp==='failed'?'var(--red)':'var(--purple)'}"></div><div><div class="audit-text">${j.erp==='failed'?'Sync attempt failed – account mapping error':'Sync initiated to SAP S/4HANA'}</div><div class="audit-time">Mar 14, 2026 · 10:28 AM</div></div></div>
+      ${j.erp==='synced'||j.stage==='posted'?'<div class="audit-entry"><div class="audit-dot" style="background:var(--green)"></div><div><div class="audit-text">ERP confirmed receipt – Document created</div><div class="audit-time">Mar 14, 2026 · 10:31 AM</div></div></div>':''}
+      <div style="margin-top:12px">
+        <button class="btn btn-secondary" style="width:100%;margin-bottom:6px" onclick="sendAIMessage('Check ERP sync status for ${j.id}')">⟳ Check Sync Status</button>
+        ${j.erp==='failed'?'<button class="btn btn-orange" style="width:100%" onclick="sendAIMessage(\'Retry ERP sync for '+j.id+'\')">⚡ Retry Sync</button>':''}
+      </div>
+    </div>`;
+  showDetailActions(j);
+}
+
+function renderDetailRecon(j) {
+  const liqAmt = j.amount;
+  const erpAmt = j.stage === 'posted' ? j.amount : 0;
+  const diff   = liqAmt - erpAmt;
+  document.getElementById('detailBody').innerHTML = `
+    <div class="detail-body">
+      <div style="font-size:12px;font-weight:600;margin-bottom:10px">Reconciliation – ${j.id}</div>
+      <div class="${diff===0?'recon-match':'recon-diff'}">
+        <div class="recon-label" style="color:${diff===0?'var(--green)':'var(--yellow)'}">${diff===0?'✓ Fully Reconciled':'⚠ Reconciliation Gap'}</div>
+        <div class="recon-row"><span>LicenseIQ Accrual</span><span style="font-weight:600">$${liqAmt.toLocaleString()}</span></div>
+        <div class="recon-row"><span>ERP Posted Amount</span><span style="font-weight:600;color:${erpAmt===0?'var(--text3)':''}">$${erpAmt.toLocaleString()}</span></div>
+        ${diff!==0?`<div class="recon-row" style="margin-top:4px;padding-top:4px;border-top:1px solid var(--border)"><span style="font-weight:600;color:var(--yellow)">Gap</span><span style="font-weight:700;color:var(--yellow)">$${diff.toLocaleString()}</span></div>`:''}
+      </div>
+
+      <div class="section-title">Period Summary – Mar 2026</div>
+      <div class="meta-row"><span class="meta-key">Total Accrued (LiQ)</span><span class="meta-val">$1,173,200</span></div>
+      <div class="meta-row"><span class="meta-key">Total Posted (ERP)</span><span class="meta-val">$1,165,000</span></div>
+      <div class="meta-row"><span class="meta-key">Unposted Gap</span><span class="meta-val" style="color:var(--yellow)">$8,200</span></div>
+      <div class="meta-row"><span class="meta-key">Reconciled %</span><span class="meta-val" style="color:var(--green)">99.3%</span></div>
+
+      <div class="section-title">AI Reconciliation Notes</div>
+      <div style="background:var(--surface2);border:1px solid var(--border2);border-radius:6px;padding:10px;font-size:11px;color:var(--text2);margin-bottom:8px">
+        Gap of $8,200 traced to JE2039 (Solar License) not yet posted. ERP sync pending account mapping resolution. All other entries reconcile within $0.
+      </div>
+      <button class="btn btn-secondary" style="width:100%" onclick="sendAIMessage('Generate reconciliation report for Mar 2026')">📄 Generate Recon Report</button>
+    </div>`;
+  showDetailActions(j);
+}
+
+function showDetailActions(j) {
+  const ae = document.getElementById('detailActions');
+  ae.style.display = 'flex';
+  let html = '';
+  if (j.stage === 'draft')    html = `<button class="btn btn-primary btn-sm" style="flex:1">Submit for Approval</button><button class="btn btn-secondary btn-sm">✎ Edit</button>`;
+  else if (j.stage === 'pending') html = `<button class="btn btn-green btn-sm" style="flex:1">✓ Approve</button><button class="btn btn-danger btn-sm">✕ Reject</button><button class="btn btn-secondary btn-sm">✎ Edit</button>`;
+  else if (j.stage === 'approved' && j.erp !== 'synced') html = `<button class="btn btn-purple btn-sm" style="flex:1" onclick="sendAIMessage('Sync ${j.id} to ERP')">⟳ Sync to ERP</button><button class="btn btn-ghost btn-sm">↩ Reverse</button>`;
+  else if (j.erp === 'failed') html = `<button class="btn btn-orange btn-sm" style="flex:1" onclick="sendAIMessage('Retry ERP sync for ${j.id}')">⚡ Retry Sync</button><button class="btn btn-ghost btn-sm">✎ Fix Mapping</button>`;
+  else if (j.stage === 'synced') html = `<button class="btn btn-primary btn-sm" style="flex:1">Post to GL →</button><button class="btn btn-ghost btn-sm">↩ Reverse</button>`;
+  else if (j.stage === 'posted') html = `<button class="btn btn-ghost btn-sm" style="flex:1">📄 View in ERP</button><button class="btn btn-ghost btn-sm">↩ Reversal JE</button>`;
+  ae.innerHTML = html;
+}
+
+function filterStage(s) {
+  document.querySelectorAll('.stage').forEach(el => el.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+  renderTable(s);
+}
+
+function updateAIContext(j) {
+  document.getElementById('aiContextBar').innerHTML = `📌 ${j.id} · ${j.contract} · $${j.amount.toLocaleString()} · ${stageLabel[j.stage]}`;
+}
+
+function toggleSelectAll(cb) {
+  document.querySelectorAll('#jeTable input[type=checkbox]').forEach(c => c.checked = cb.checked);
+}
+
+// ── AI MESSAGING ────────────────────────────────────────────────
+function addMessage(html) {
+  const msgs = document.getElementById('aiMessages');
+  const div  = document.createElement('div'); div.className = 'ai-msg-ai';
+  div.innerHTML = `<div class="ai-msg-label ai-label">✦ LiQ Agent</div>${html}`;
+  msgs.appendChild(div); msgs.scrollTop = msgs.scrollHeight;
+}
+function addUserMessage(txt) {
+  const msgs = document.getElementById('aiMessages');
+  const div  = document.createElement('div'); div.className = 'ai-msg-user';
+  div.innerHTML = `<div class="ai-msg-label user-label">You</div>${txt}`;
+  msgs.appendChild(div); msgs.scrollTop = msgs.scrollHeight;
+}
+function addTyping() {
+  const msgs = document.getElementById('aiMessages');
+  const div  = document.createElement('div'); div.className = 'ai-msg-ai'; div.id = 'typingIndicator';
+  div.innerHTML = '<div class="ai-msg-label ai-label">✦ LiQ Agent</div><span style="color:var(--text3)">● ● ●</span>';
+  msgs.appendChild(div); msgs.scrollTop = msgs.scrollHeight;
+}
+function removeTyping() { const el = document.getElementById('typingIndicator'); if (el) el.remove(); }
+function sendAIMessage(msg) { addUserMessage(msg); addTyping(); setTimeout(() => { removeTyping(); handleAIResponse(msg); }, 900); }
+function handleKey(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendCurrentInput(); } }
+function sendCurrentInput() { const inp = document.getElementById('aiInput'); const v = inp.value.trim(); if (!v) return; inp.value = ''; sendAIMessage(v); }
+function askAIAbout(id) { selectJE(id); setTimeout(() => sendAIMessage(`Explain journal entry ${id} – how was it generated?`), 200); }
+
+function handleAIResponse(msg) {
+  const m = msg.toLowerCase();
+
+  if (m.includes('preview') || m.includes('acc2032') || m.includes('distributor rebate')) {
+    return addMessage(`<strong>JE Preview – ACC2032 Distributor Program A</strong>
+    <div class="ai-draft-box">
+      <div class="ai-draft-row"><span class="ai-draft-key">JE ID (Draft)</span><span class="ai-draft-val" style="color:var(--accent)">JE2038</span></div>
+      <div class="ai-draft-row"><span class="ai-draft-key">Period</span><span class="ai-draft-val">Mar 2026</span></div>
+      <div class="ai-draft-row"><span class="ai-draft-key">Total Amount</span><span class="ai-draft-val" style="color:var(--accent);font-weight:700">$420,000</span></div>
+    </div>
+    <div class="ai-line-preview">
+      <div class="ai-line-row"><span class="ai-line-label">DR 5010 · Rebate Expense</span><span class="ai-line-dr">$420,000</span></div>
+      <div class="ai-line-row"><span class="ai-line-label">CR 2410 · Accrued Rebate Payable</span><span class="ai-line-cr">$420,000</span></div>
+    </div>
+    <div style="margin-top:8px;font-size:11px;color:var(--green)">✓ Balanced · AI Confidence 96% · ERP-ready</div>
+    <div style="display:flex;gap:6px;margin-top:8px">
+      <button class="btn btn-primary btn-sm" style="flex:1">Submit for Approval</button>
+      <button class="btn btn-ghost btn-sm">✎ Edit Lines</button>
+    </div>`);
+  }
+
+  if (m.includes('trace') || m.includes('contract clause')) {
+    const jeId = msg.match(/JE\d+/)?.[0] || 'JE2038';
+    return addMessage(`<strong>Contract Trace – ${jeId}</strong>
+    <div class="ai-analysis-row" style="margin-top:8px"><div class="ai-analysis-icon">📓</div><div class="ai-analysis-text">${jeId} – Rebate JE</div></div>
+    <div class="ai-analysis-row"><div class="ai-analysis-icon">↓</div><div class="ai-analysis-text" style="color:var(--text3)">Generated from accrual</div></div>
+    <div class="ai-analysis-row"><div class="ai-analysis-icon">📋</div><div class="ai-analysis-text">ACC2032 – $420,000 accrual</div></div>
+    <div class="ai-analysis-row"><div class="ai-analysis-icon">↓</div><div class="ai-analysis-text" style="color:var(--text3)">Calculated from</div></div>
+    <div class="ai-analysis-row"><div class="ai-analysis-icon">💰</div><div class="ai-analysis-text">$8.4M net sales × 5.0% (Tier 3)</div></div>
+    <div class="ai-analysis-row"><div class="ai-analysis-icon">↓</div><div class="ai-analysis-text" style="color:var(--text3)">Based on contract clause</div></div>
+    <div class="ai-analysis-row" style="background:var(--accent-glow)"><div class="ai-analysis-icon">📜</div><div class="ai-analysis-text" style="color:var(--accent)">Section 7.2 – Distributor Program A · Tier 3 Rebate</div></div>
+    <div style="margin-top:8px;font-size:11px;color:var(--text2)">Full lineage: Contract → Accrual → JE → ERP posting</div>`);
+  }
+
+  if (m.includes('erp sync fail') || m.includes('je2041') || m.includes('sync fail')) {
+    return addMessage(`<div class="ai-insight-box">
+      <div class="ai-insight-title">🔴 ERP Sync Failure – JE2041</div>
+      <div class="ai-insight-detail">Error: GL Account 5010 not found in SAP CoA v2.4</div>
+      <div class="ai-insight-detail">Mapped account in LicenseIQ: <strong>5010-REBATE-NOR</strong></div>
+      <div class="ai-insight-detail">Expected SAP account: <strong>522100</strong></div>
+      <div class="ai-insight-estimate">Impact: $64,200 unposted</div>
+    </div>
+    <strong>Recommended Fix:</strong>
+    <div class="ai-analysis-row" style="margin-top:6px"><div class="ai-analysis-icon">1️⃣</div><div class="ai-analysis-text">Navigate to ERP Data Mapping → Reference Tables</div></div>
+    <div class="ai-analysis-row"><div class="ai-analysis-icon">2️⃣</div><div class="ai-analysis-text">Map 5010-REBATE-NOR → SAP 522100</div></div>
+    <div class="ai-analysis-row"><div class="ai-analysis-icon">3️⃣</div><div class="ai-analysis-text">Retry sync for JE2041</div></div>
+    <div style="display:flex;gap:6px;margin-top:8px">
+      <button class="btn btn-orange btn-sm" style="flex:1">Open ERP Mapping</button>
+      <button class="btn btn-ghost btn-sm">Retry Sync</button>
+    </div>`);
+  }
+
+  if (m.includes('recon') || m.includes('gap') || m.includes('reconcil')) {
+    return addMessage(`<strong>Reconciliation Report – Mar 2026</strong>
+    <div class="ai-analysis-row" style="margin-top:8px"><div class="ai-analysis-icon">📋</div><div class="ai-analysis-text">LicenseIQ Total Accrued</div><div class="ai-analysis-val">$1,173,200</div></div>
+    <div class="ai-analysis-row"><div class="ai-analysis-icon">🏢</div><div class="ai-analysis-text">SAP Posted Total</div><div class="ai-analysis-val">$1,165,000</div></div>
+    <div class="ai-analysis-row" style="background:var(--yellow-bg)"><div class="ai-analysis-icon">⚡</div><div class="ai-analysis-text" style="color:var(--yellow)">Unreconciled Gap</div><div class="ai-analysis-val" style="color:var(--yellow)">$8,200</div></div>
+    <div style="margin-top:8px;padding:8px;background:var(--surface3);border-radius:6px;font-size:11px;color:var(--text2)">Gap traced to: JE2039 (Solar License, $75k) – pending account fix · JE2041 (NorTech, $64.2k) – ERP sync failed</div>
+    <div style="margin-top:8px;font-size:11px;color:var(--green)">✓ Reconciliation: 99.3% · 9/11 JEs fully reconciled</div>`);
+  }
+
+  if (m.includes('unbalanc')) {
+    return addMessage(`Found <strong>2 unbalanced journal entries</strong>:
+    <div class="ai-analysis-row" style="margin-top:8px"><div class="ai-analysis-icon">⚠️</div><div class="ai-analysis-text">JE2039 – Solar License</div><div class="ai-analysis-val" style="color:var(--red)">Line 2 missing</div></div>
+    <div class="ai-analysis-row"><div class="ai-analysis-icon">⚠️</div><div class="ai-analysis-text">JE2042 – Premium OEM Royalty</div><div class="ai-analysis-val" style="color:var(--red)">DR ≠ CR</div></div>
+    <div style="margin-top:8px;padding:8px;background:var(--red-bg);border-radius:6px;font-size:11px;color:var(--red)">Unbalanced JEs cannot be posted. Fix before syncing to ERP.</div>
+    <div style="display:flex;gap:6px;margin-top:8px">
+      <button class="btn btn-secondary btn-sm" onclick="selectJE('JE2039')">Fix JE2039</button>
+      <button class="btn btn-secondary btn-sm" onclick="selectJE('JE2042')">Fix JE2042</button>
+    </div>`);
+  }
+
+  if (m.includes('sync all') || m.includes('sync to sap') || m.includes('sync to erp')) {
+    return addMessage(`<strong>ERP Sync – Mar 2026 Approved JEs</strong>
+    <div class="ai-analysis-row" style="margin-top:8px"><div class="ai-analysis-icon">✅</div><div class="ai-analysis-text">JE2046 – Manual Reversal</div><div class="ai-analysis-val" style="color:var(--green)">Synced</div></div>
+    <div class="ai-analysis-row"><div class="ai-analysis-icon">✅</div><div class="ai-analysis-text">JE2048 – Commission</div><div class="ai-analysis-val" style="color:var(--green)">Synced</div></div>
+    <div class="ai-analysis-row"><div class="ai-analysis-icon">🔄</div><div class="ai-analysis-text">JE2038 – Distributor Rebate</div><div class="ai-analysis-val" style="color:var(--accent)">In progress…</div></div>
+    <div class="ai-analysis-row"><div class="ai-analysis-icon">⚠️</div><div class="ai-analysis-text">JE2041 – NorTech Rebate</div><div class="ai-analysis-val" style="color:var(--red)">Failed – mapping</div></div>
+    <div style="margin-top:8px;font-size:11px;color:var(--text2)">3/5 synced successfully · 1 in progress · 1 needs account fix</div>`);
+  }
+
+  if (m.includes('generate') && m.includes('je')) {
+    return addMessage(`<strong>✦ Generating JEs for Approved Accruals</strong>
+    <div class="ai-analysis-row" style="margin-top:8px"><div class="ai-analysis-icon">✅</div><div class="ai-analysis-text">ACC2032 → JE2038</div><div class="ai-analysis-val" style="color:var(--green)">Generated</div></div>
+    <div class="ai-analysis-row"><div class="ai-analysis-icon">✅</div><div class="ai-analysis-text">ACC2034 → JE2040</div><div class="ai-analysis-val" style="color:var(--green)">Generated</div></div>
+    <div class="ai-analysis-row"><div class="ai-analysis-icon">✅</div><div class="ai-analysis-text">ACC2035 → JE2041</div><div class="ai-analysis-val" style="color:var(--green)">Generated</div></div>
+    <div class="ai-analysis-row"><div class="ai-analysis-icon">⚠️</div><div class="ai-analysis-text">ACC2033 – Solar License</div><div class="ai-analysis-val" style="color:var(--yellow)">Low confidence 65%</div></div>
+    <div style="margin-top:8px;font-size:11px;color:var(--text2)">7 JEs generated · 1 needs manual review · Total: $887,200</div>
+    <button class="btn btn-primary btn-sm" style="margin-top:8px;width:100%">Submit All for Approval →</button>`);
+  }
+
+  if (m.includes('approval') || m.includes('overdue') || m.includes('48h')) {
+    return addMessage(`<strong>Approval Overdue – 3 JEs (&gt;48h pending)</strong>
+    <div class="ai-analysis-row" style="margin-top:8px"><div class="ai-analysis-icon">🕐</div><div class="ai-analysis-text">JE2038 – Distributor Rebate</div><div class="ai-analysis-val" style="color:var(--yellow)">51h pending</div></div>
+    <div class="ai-analysis-row"><div class="ai-analysis-icon">🕐</div><div class="ai-analysis-text">JE2042 – OEM Royalty</div><div class="ai-analysis-val" style="color:var(--yellow)">49h pending</div></div>
+    <div class="ai-analysis-row"><div class="ai-analysis-icon">🕐</div><div class="ai-analysis-text">JE2046 – Manual Reversal</div><div class="ai-analysis-val" style="color:var(--red)">72h pending</div></div>
+    <div style="margin-top:8px;font-size:11px;color:var(--text2)">Assigned to: Finance Manager · Sarah K.</div>
+    <button class="btn btn-secondary btn-sm" style="margin-top:8px">📧 Send Reminder</button>`);
+  }
+
+  addMessage(`I can help you with journal entry workflow:<br/><br/>
+  <div class="ai-analysis-row"><div class="ai-analysis-icon">📓</div><div class="ai-analysis-text">Preview &amp; draft JEs from accruals</div></div>
+  <div class="ai-analysis-row"><div class="ai-analysis-icon">🔍</div><div class="ai-analysis-text">Trace JE back to contract clause</div></div>
+  <div class="ai-analysis-row"><div class="ai-analysis-icon">🏢</div><div class="ai-analysis-text">Diagnose ERP sync failures</div></div>
+  <div class="ai-analysis-row"><div class="ai-analysis-icon">⚖️</div><div class="ai-analysis-text">Reconciliation gap analysis</div></div>
+  <br/>Select a JE or use a quick action below.`);
+}
+
+// ── DRAFT MODAL ────────────────────────────────────────────────
+function openDraftModal()  { document.getElementById('draftModal').classList.add('show'); }
+function closeDraftModal() { document.getElementById('draftModal').classList.remove('show'); }
+document.getElementById('draftModal').addEventListener('click', function(e){ if(e.target===this) closeDraftModal(); });
+
+function autofillFromAccrual(val) {
+  const noLinesMsg = document.getElementById('noLinesMsg');
+  const jeDraftLines = document.getElementById('jeDraftLines');
+  const jeLinesList  = document.getElementById('jeLinesList');
+  if (!val || val === 'MANUAL') { noLinesMsg.style.display='block'; jeDraftLines.style.display='none'; return; }
+  const data = accrualLines[val];
+  if (!data) { noLinesMsg.style.display='block'; jeDraftLines.style.display='none'; return; }
+  noLinesMsg.style.display = 'none'; jeDraftLines.style.display = 'block';
+  document.getElementById('jeDescription').value = data.desc;
+  const totalDr = data.lines.filter(l=>l.type==='dr').reduce((s,l)=>s+l.amount,0);
+  const totalCr = data.lines.filter(l=>l.type==='cr').reduce((s,l)=>s+l.amount,0);
+  jeLinesList.innerHTML = data.lines.map((l,i) => `
+    <div class="je-draft-line">
+      <div class="je-draft-line-num">${i+1}</div>
+      <div class="je-draft-line-info">
+        <div class="je-draft-line-acct">${l.acct} · ${l.name}</div>
+        <div class="je-draft-line-desc">AI mapped · ERP CoA v2.4 · 96% confidence</div>
+      </div>
+      <span class="je-draft-line-type ${l.type}">${l.type.toUpperCase()}</span>
+      <div class="je-draft-line-amount ${l.type==='dr'?'amount-dr':'amount-cr'}">$${l.amount.toLocaleString()}</div>
+    </div>`).join('');
+  document.getElementById('jeTotalDr').textContent = '$' + totalDr.toLocaleString();
+  document.getElementById('jeTotalCr').textContent = '$' + totalCr.toLocaleString();
+  document.getElementById('balancedBadge').innerHTML = totalDr===totalCr ? '<span class="balanced-badge">✓ Balanced</span>' : '<span style="color:var(--red);font-size:11px;font-weight:600">✕ Unbalanced</span>';
+}
+
+function addManualLine() { alert('Add line dialog – would open account picker with ERP COA lookup'); }
+function saveAsDraft()   { closeDraftModal(); sendAIMessage('Save JE draft for selected accrual'); }
+function submitForApproval() { closeDraftModal(); addMessage(`<strong style="color:var(--accent)">✓ JE Submitted for Approval</strong><div style="margin-top:8px;font-size:12px;color:var(--text2)">Assigned to Finance Manager · Sarah K. · Email notification sent.<br/>JE will appear in Pending Approval queue.</div>`); }
+
+// ── APPROVAL BATCH MODAL ────────────────────────────────────────
+function openApprovalBatch() {
+  const pending = journalEntries.filter(j => j.stage === 'pending');
+  document.getElementById('approvalList').innerHTML = pending.map(j => `
+    <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px">
+      <input type="checkbox" checked/>
+      <span style="color:var(--accent);font-weight:600;font-size:11px">${j.id}</span>
+      <span style="flex:1">${j.contract}</span>
+      <span style="font-weight:600">$${j.amount.toLocaleString()}</span>
+      ${j.balanced?'<span style="color:var(--green);font-size:11px">✓</span>':'<span style="color:var(--red);font-size:11px">⚠</span>'}
+    </div>`).join('');
+  document.getElementById('approvalModal').classList.add('show');
+}
+function closeApprovalModal() { document.getElementById('approvalModal').classList.remove('show'); }
+document.getElementById('approvalModal').addEventListener('click', function(e){ if(e.target===this) closeApprovalModal(); });
+
+// ── INIT ────────────────────────────────────────────────────────
+renderTable();
+</script>
+</body>
+</html>

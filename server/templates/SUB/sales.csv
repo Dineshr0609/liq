@@ -1,0 +1,4 @@
+date,txnId,productCode,productName,planTier,territory,channel,qty,unitPrice,grossAmount,netAmount,subscriberCode
+2026-01-09,SUB-S-4001,SAAS-PRO-MO,Pro Monthly,Pro,United States,Online,1,49.00,49.00,49.00,SUB-401
+2026-02-09,SUB-S-4002,SAAS-PRO-MO,Pro Monthly,Pro,United States,Online,1,49.00,49.00,49.00,SUB-401
+2026-03-09,SUB-S-4003,SAAS-ENT-AN,Enterprise Annual,Enterprise,Canada,Direct,1,12000.00,12000.00,12000.00,SUB-402

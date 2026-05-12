@@ -1,0 +1,117 @@
+transaction_date,invoice_number,customer_name,customer_code,product_name,product_code,product_category,quantity,unit_price,total_amount,territory,sales_channel,business_unit,currency
+2026-01-05,INV-20001,Charlie's Produce,CUST-CP01,Russet Potatoes 50lb,POT-50-RUS,Potatoes,120,18.50,2220.00,US West,Wholesale,Produce Division,USD
+2026-01-07,INV-20002,Charlie's Produce,CUST-CP01,Yellow Onions 50lb,ONI-50-YLW,Onions,85,16.00,1360.00,US West,Wholesale,Produce Division,USD
+2026-01-09,INV-20003,Charlie's Produce,CUST-CP01,Red Potatoes 50lb,POT-50-RED,Potatoes,60,22.00,1320.00,North America,Direct,Produce Division,USD
+2026-01-10,INV-20004,Charlie's Produce,CUST-CP01,4350-20 Box Potatoes,4350-20,Potatoes,45,15.00,675.00,US West,Wholesale,Produce Division,USD
+2026-01-12,INV-20005,Charlie's Produce,CUST-CP01,Red Onions 50lb,ONI-50-RED,Onions,70,20.00,1400.00,US East,Wholesale,Produce Division,USD
+2026-01-14,INV-20006,Charlie's Produce,CUST-CP01,Apples Case,FRT-CS-APP,Fruits,90,28.00,2520.00,US West,Direct,Produce Division,USD
+2026-01-15,INV-20007,Charlie's Produce,CUST-CP01,Lettuce Case,GEN-CS-LET,General,110,18.00,1980.00,US Central,Wholesale,Produce Division,USD
+2026-01-17,INV-20008,Charlie's Produce,CUST-CP01,Yellow Potatoes 50lb,POT-50-YLW,Potatoes,55,24.50,1347.50,Canada,Wholesale,Produce Division,USD
+2026-01-19,INV-20009,Charlie's Produce,CUST-CP01,White Onions 50lb,ONI-50-WHT,Onions,40,18.50,740.00,US West,Direct,Produce Division,USD
+2026-01-20,INV-20010,Charlie's Produce,CUST-CP01,Tomatoes Case,GEN-CS-TOM,General,95,25.00,2375.00,North America,Wholesale,Produce Division,USD
+2026-01-22,INV-20011,Charlie's Produce,CUST-CP01,Fingerling Potatoes 50lb,POT-50-FNG,Potatoes,30,32.00,960.00,US West,Wholesale,Produce Division,USD
+2026-01-23,INV-20012,Charlie's Produce,CUST-CP01,Sweet Onions 50lb,ONI-50-SWT,Onions,65,22.00,1430.00,US East,Direct,Produce Division,USD
+2026-01-25,INV-20013,Charlie's Produce,CUST-CP01,Carrots Case,GEN-CS-CAR,General,130,14.00,1820.00,US Central,Wholesale,Produce Division,USD
+2026-01-27,INV-20014,Charlie's Produce,CUST-CP01,Bell Peppers Case,GEN-CS-PEP,General,50,30.00,1500.00,US West,Direct,Produce Division,USD
+2026-01-28,INV-20015,Charlie's Produce,CUST-CP01,Russet Potatoes 50lb,POT-50-RUS,Potatoes,140,18.50,2590.00,North America,Wholesale,Produce Division,USD
+2026-01-29,INV-20016,Charlie's Produce,CUST-CP01,Bananas Case,FRT-CS-BAN,Fruits,75,22.00,1650.00,US West,Online,Produce Division,USD
+2026-01-30,INV-20017,Charlie's Produce,CUST-CP01,4350-20 Box Potatoes,4350-20,Potatoes,35,15.00,525.00,US East,Wholesale,Produce Division,USD
+2026-01-31,INV-20018,Charlie's Produce,CUST-CP01,Yellow Onions 50lb,ONI-50-YLW,Onions,95,16.00,1520.00,US Central,Wholesale,Produce Division,USD
+2026-02-03,INV-20019,Charlie's Produce,CUST-CP01,Russet Potatoes 50lb,POT-50-RUS,Potatoes,110,18.50,2035.00,US West,Wholesale,Produce Division,USD
+2026-02-04,INV-20020,Charlie's Produce,CUST-CP01,Red Onions 50lb,ONI-50-RED,Onions,80,20.00,1600.00,US East,Direct,Produce Division,USD
+2026-02-06,INV-20021,Charlie's Produce,CUST-CP01,Cucumbers Case,GEN-CS-CUC,General,100,16.00,1600.00,North America,Wholesale,Produce Division,USD
+2026-02-07,INV-20022,Charlie's Produce,CUST-CP01,Yellow Potatoes 50lb,POT-50-YLW,Potatoes,65,24.50,1592.50,US West,Wholesale,Produce Division,USD
+2026-02-09,INV-20023,Charlie's Produce,CUST-CP01,4350-20 Box Potatoes,4350-20,Potatoes,50,15.00,750.00,US Central,Wholesale,Produce Division,USD
+2026-02-10,INV-20024,Charlie's Produce,CUST-CP01,Grapes Case,FRT-CS-GRP,Fruits,40,35.00,1400.00,US West,Direct,Produce Division,USD
+2026-02-12,INV-20025,Charlie's Produce,CUST-CP01,White Onions 50lb,ONI-50-WHT,Onions,55,18.50,1017.50,Canada,Wholesale,Produce Division,USD
+2026-02-13,INV-20026,Charlie's Produce,CUST-CP01,Lettuce Case,GEN-CS-LET,General,120,18.00,2160.00,US West,Wholesale,Produce Division,USD
+2026-02-15,INV-20027,Charlie's Produce,CUST-CP01,Red Potatoes 50lb,POT-50-RED,Potatoes,75,22.00,1650.00,US East,Wholesale,Produce Division,USD
+2026-02-17,INV-20028,Charlie's Produce,CUST-CP01,Sweet Onions 50lb,ONI-50-SWT,Onions,50,22.00,1100.00,US Central,Direct,Produce Division,USD
+2026-02-18,INV-20029,Charlie's Produce,CUST-CP01,Tomatoes Case,GEN-CS-TOM,General,85,25.00,2125.00,North America,Wholesale,Produce Division,USD
+2026-02-20,INV-20030,Charlie's Produce,CUST-CP01,Fingerling Potatoes 50lb,POT-50-FNG,Potatoes,25,32.00,800.00,US West,Wholesale,Produce Division,USD
+2026-02-21,INV-20031,Charlie's Produce,CUST-CP01,Yellow Onions 50lb,ONI-50-YLW,Onions,100,16.00,1600.00,US West,Wholesale,Produce Division,USD
+2026-02-23,INV-20032,Charlie's Produce,CUST-CP01,Apples Case,FRT-CS-APP,Fruits,60,28.00,1680.00,US East,Online,Produce Division,USD
+2026-02-24,INV-20033,Charlie's Produce,CUST-CP01,Bell Peppers Case,GEN-CS-PEP,General,45,30.00,1350.00,US West,Direct,Produce Division,USD
+2026-02-25,INV-20034,Charlie's Produce,CUST-CP01,Russet Potatoes 50lb,POT-50-RUS,Potatoes,130,18.50,2405.00,North America,Wholesale,Produce Division,USD
+2026-02-26,INV-20035,Charlie's Produce,CUST-CP01,4350-20 Box Potatoes,4350-20,Potatoes,40,15.00,600.00,US West,Wholesale,Produce Division,USD
+2026-02-27,INV-20036,Charlie's Produce,CUST-CP01,Carrots Case,GEN-CS-CAR,General,115,14.00,1610.00,US Central,Wholesale,Produce Division,USD
+2026-02-28,INV-20037,Charlie's Produce,CUST-CP01,Red Onions 50lb,ONI-50-RED,Onions,60,20.00,1200.00,US East,Wholesale,Produce Division,USD
+2026-03-02,INV-20038,Charlie's Produce,CUST-CP01,Russet Potatoes 50lb,POT-50-RUS,Potatoes,150,18.50,2775.00,US West,Wholesale,Produce Division,USD
+2026-03-04,INV-20039,Charlie's Produce,CUST-CP01,Yellow Onions 50lb,ONI-50-YLW,Onions,90,16.00,1440.00,US Central,Wholesale,Produce Division,USD
+2026-03-05,INV-20040,Charlie's Produce,CUST-CP01,Red Potatoes 50lb,POT-50-RED,Potatoes,80,22.00,1760.00,Canada,Direct,Produce Division,USD
+2026-03-07,INV-20041,Charlie's Produce,CUST-CP01,4350-20 Box Potatoes,4350-20,Potatoes,55,15.00,825.00,US East,Wholesale,Produce Division,USD
+2026-03-09,INV-20042,Charlie's Produce,CUST-CP01,Sweet Onions 50lb,ONI-50-SWT,Onions,70,22.00,1540.00,US West,Wholesale,Produce Division,USD
+2026-03-10,INV-20043,Charlie's Produce,CUST-CP01,Tomatoes Case,GEN-CS-TOM,General,100,25.00,2500.00,North America,Wholesale,Produce Division,USD
+2026-03-12,INV-20044,Charlie's Produce,CUST-CP01,Bananas Case,FRT-CS-BAN,Fruits,80,22.00,1760.00,US West,Wholesale,Produce Division,USD
+2026-03-13,INV-20045,Charlie's Produce,CUST-CP01,Fingerling Potatoes 50lb,POT-50-FNG,Potatoes,35,32.00,1120.00,US East,Direct,Produce Division,USD
+2026-03-15,INV-20046,Charlie's Produce,CUST-CP01,White Onions 50lb,ONI-50-WHT,Onions,45,18.50,832.50,US Central,Wholesale,Produce Division,USD
+2026-03-17,INV-20047,Charlie's Produce,CUST-CP01,Lettuce Case,GEN-CS-LET,General,105,18.00,1890.00,US West,Wholesale,Produce Division,USD
+2026-03-18,INV-20048,Charlie's Produce,CUST-CP01,Grapes Case,FRT-CS-GRP,Fruits,35,35.00,1225.00,US East,Online,Produce Division,USD
+2026-03-20,INV-20049,Charlie's Produce,CUST-CP01,Cucumbers Case,GEN-CS-CUC,General,90,16.00,1440.00,US West,Direct,Produce Division,USD
+2026-03-22,INV-20050,Charlie's Produce,CUST-CP01,Yellow Potatoes 50lb,POT-50-YLW,Potatoes,70,24.50,1715.00,North America,Wholesale,Produce Division,USD
+2026-03-24,INV-20051,Charlie's Produce,CUST-CP01,Red Onions 50lb,ONI-50-RED,Onions,85,20.00,1700.00,US West,Wholesale,Produce Division,USD
+2026-03-25,INV-20052,Charlie's Produce,CUST-CP01,Apples Case,FRT-CS-APP,Fruits,70,28.00,1960.00,Canada,Direct,Produce Division,USD
+2026-03-26,INV-20053,Charlie's Produce,CUST-CP01,Bell Peppers Case,GEN-CS-PEP,General,55,30.00,1650.00,US Central,Wholesale,Produce Division,USD
+2026-03-27,INV-20054,Charlie's Produce,CUST-CP01,4350-20 Box Potatoes,4350-20,Potatoes,30,15.00,450.00,US West,Wholesale,Produce Division,USD
+2026-03-28,INV-20055,Charlie's Produce,CUST-CP01,Russet Potatoes 50lb,POT-50-RUS,Potatoes,125,18.50,2312.50,US East,Wholesale,Produce Division,USD
+2026-03-30,INV-20056,Charlie's Produce,CUST-CP01,Carrots Case,GEN-CS-CAR,General,100,14.00,1400.00,US West,Wholesale,Produce Division,USD
+2026-03-31,INV-20057,Charlie's Produce,CUST-CP01,Yellow Onions 50lb,ONI-50-YLW,Onions,110,16.00,1760.00,US West,Wholesale,Produce Division,USD
+2026-04-02,INV-20058,Charlie's Produce,CUST-CP01,Red Potatoes 50lb,POT-50-RED,Potatoes,70,22.00,1540.00,US West,Direct,Produce Division,USD
+2026-04-04,INV-20059,Charlie's Produce,CUST-CP01,Sweet Onions 50lb,ONI-50-SWT,Onions,55,22.00,1210.00,US East,Wholesale,Produce Division,USD
+2026-04-06,INV-20060,Charlie's Produce,CUST-CP01,Tomatoes Case,GEN-CS-TOM,General,90,25.00,2250.00,North America,Wholesale,Produce Division,USD
+2026-04-07,INV-20061,Charlie's Produce,CUST-CP01,4350-20 Box Potatoes,4350-20,Potatoes,60,15.00,900.00,US Central,Wholesale,Produce Division,USD
+2026-04-09,INV-20062,Charlie's Produce,CUST-CP01,Fingerling Potatoes 50lb,POT-50-FNG,Potatoes,40,32.00,1280.00,US West,Wholesale,Produce Division,USD
+2026-04-10,INV-20063,Charlie's Produce,CUST-CP01,White Onions 50lb,ONI-50-WHT,Onions,60,18.50,1110.00,US East,Direct,Produce Division,USD
+2026-04-12,INV-20064,Charlie's Produce,CUST-CP01,Lettuce Case,GEN-CS-LET,General,95,18.00,1710.00,US West,Wholesale,Produce Division,USD
+2026-04-14,INV-20065,Charlie's Produce,CUST-CP01,Bananas Case,FRT-CS-BAN,Fruits,65,22.00,1430.00,US Central,Online,Produce Division,USD
+2026-04-15,INV-20066,Charlie's Produce,CUST-CP01,Yellow Onions 50lb,ONI-50-YLW,Onions,80,16.00,1280.00,US West,Wholesale,Produce Division,USD
+2026-04-17,INV-20067,Charlie's Produce,CUST-CP01,Russet Potatoes 50lb,POT-50-RUS,Potatoes,135,18.50,2497.50,North America,Wholesale,Produce Division,USD
+2026-04-19,INV-20068,Charlie's Produce,CUST-CP01,Cucumbers Case,GEN-CS-CUC,General,80,16.00,1280.00,US East,Wholesale,Produce Division,USD
+2026-04-20,INV-20069,Charlie's Produce,CUST-CP01,Grapes Case,FRT-CS-GRP,Fruits,45,35.00,1575.00,US West,Direct,Produce Division,USD
+2026-04-22,INV-20070,Charlie's Produce,CUST-CP01,Red Onions 50lb,ONI-50-RED,Onions,75,20.00,1500.00,Canada,Wholesale,Produce Division,USD
+2026-04-24,INV-20071,Charlie's Produce,CUST-CP01,Yellow Potatoes 50lb,POT-50-YLW,Potatoes,50,24.50,1225.00,US West,Wholesale,Produce Division,USD
+2026-04-25,INV-20072,Charlie's Produce,CUST-CP01,4350-20 Box Potatoes,4350-20,Potatoes,35,15.00,525.00,US East,Wholesale,Produce Division,USD
+2026-04-27,INV-20073,Charlie's Produce,CUST-CP01,Bell Peppers Case,GEN-CS-PEP,General,60,30.00,1800.00,US West,Wholesale,Produce Division,USD
+2026-04-28,INV-20074,Charlie's Produce,CUST-CP01,Apples Case,FRT-CS-APP,Fruits,55,28.00,1540.00,US East,Direct,Produce Division,USD
+2026-04-30,INV-20075,Charlie's Produce,CUST-CP01,Carrots Case,GEN-CS-CAR,General,120,14.00,1680.00,US Central,Wholesale,Produce Division,USD
+2026-05-02,INV-20076,Charlie's Produce,CUST-CP01,Russet Potatoes 50lb,POT-50-RUS,Potatoes,145,18.50,2682.50,US West,Wholesale,Produce Division,USD
+2026-05-04,INV-20077,Charlie's Produce,CUST-CP01,Yellow Onions 50lb,ONI-50-YLW,Onions,105,16.00,1680.00,US East,Wholesale,Produce Division,USD
+2026-05-05,INV-20078,Charlie's Produce,CUST-CP01,Red Potatoes 50lb,POT-50-RED,Potatoes,65,22.00,1430.00,North America,Direct,Produce Division,USD
+2026-05-07,INV-20079,Charlie's Produce,CUST-CP01,4350-20 Box Potatoes,4350-20,Potatoes,45,15.00,675.00,US West,Wholesale,Produce Division,USD
+2026-05-08,INV-20080,Charlie's Produce,CUST-CP01,Sweet Onions 50lb,ONI-50-SWT,Onions,60,22.00,1320.00,US Central,Wholesale,Produce Division,USD
+2026-05-10,INV-20081,Charlie's Produce,CUST-CP01,Tomatoes Case,GEN-CS-TOM,General,110,25.00,2750.00,US West,Wholesale,Produce Division,USD
+2026-05-12,INV-20082,Charlie's Produce,CUST-CP01,Fingerling Potatoes 50lb,POT-50-FNG,Potatoes,30,32.00,960.00,US East,Wholesale,Produce Division,USD
+2026-05-13,INV-20083,Charlie's Produce,CUST-CP01,White Onions 50lb,ONI-50-WHT,Onions,50,18.50,925.00,US West,Direct,Produce Division,USD
+2026-05-15,INV-20084,Charlie's Produce,CUST-CP01,Lettuce Case,GEN-CS-LET,General,100,18.00,1800.00,Canada,Wholesale,Produce Division,USD
+2026-05-16,INV-20085,Charlie's Produce,CUST-CP01,Bananas Case,FRT-CS-BAN,Fruits,70,22.00,1540.00,US West,Wholesale,Produce Division,USD
+2026-05-18,INV-20086,Charlie's Produce,CUST-CP01,Red Onions 50lb,ONI-50-RED,Onions,90,20.00,1800.00,US East,Wholesale,Produce Division,USD
+2026-05-20,INV-20087,Charlie's Produce,CUST-CP01,Yellow Potatoes 50lb,POT-50-YLW,Potatoes,60,24.50,1470.00,US Central,Wholesale,Produce Division,USD
+2026-05-22,INV-20088,Charlie's Produce,CUST-CP01,Grapes Case,FRT-CS-GRP,Fruits,50,35.00,1750.00,US West,Online,Produce Division,USD
+2026-05-23,INV-20089,Charlie's Produce,CUST-CP01,Cucumbers Case,GEN-CS-CUC,General,85,16.00,1360.00,North America,Wholesale,Produce Division,USD
+2026-05-25,INV-20090,Charlie's Produce,CUST-CP01,Russet Potatoes 50lb,POT-50-RUS,Potatoes,115,18.50,2127.50,US West,Direct,Produce Division,USD
+2026-05-26,INV-20091,Charlie's Produce,CUST-CP01,4350-20 Box Potatoes,4350-20,Potatoes,40,15.00,600.00,US East,Wholesale,Produce Division,USD
+2026-05-28,INV-20092,Charlie's Produce,CUST-CP01,Bell Peppers Case,GEN-CS-PEP,General,50,30.00,1500.00,US West,Wholesale,Produce Division,USD
+2026-05-29,INV-20093,Charlie's Produce,CUST-CP01,Apples Case,FRT-CS-APP,Fruits,80,28.00,2240.00,US East,Direct,Produce Division,USD
+2026-05-30,INV-20094,Charlie's Produce,CUST-CP01,Carrots Case,GEN-CS-CAR,General,105,14.00,1470.00,US Central,Wholesale,Produce Division,USD
+2026-05-31,INV-20095,Charlie's Produce,CUST-CP01,Yellow Onions 50lb,ONI-50-YLW,Onions,120,16.00,1920.00,US West,Wholesale,Produce Division,USD
+2026-06-01,INV-20096,Charlie's Produce,CUST-CP01,Red Potatoes 50lb,POT-50-RED,Potatoes,85,22.00,1870.00,US West,Wholesale,Produce Division,USD
+2026-06-03,INV-20097,Charlie's Produce,CUST-CP01,Sweet Onions 50lb,ONI-50-SWT,Onions,75,22.00,1650.00,North America,Wholesale,Produce Division,USD
+2026-06-04,INV-20098,Charlie's Produce,CUST-CP01,4350-20 Box Potatoes,4350-20,Potatoes,50,15.00,750.00,US West,Wholesale,Produce Division,USD
+2026-06-06,INV-20099,Charlie's Produce,CUST-CP01,Tomatoes Case,GEN-CS-TOM,General,95,25.00,2375.00,US East,Wholesale,Produce Division,USD
+2026-06-07,INV-20100,Charlie's Produce,CUST-CP01,Fingerling Potatoes 50lb,POT-50-FNG,Potatoes,45,32.00,1440.00,US West,Direct,Produce Division,USD
+2026-06-09,INV-20101,Charlie's Produce,CUST-CP01,White Onions 50lb,ONI-50-WHT,Onions,65,18.50,1202.50,US Central,Wholesale,Produce Division,USD
+2026-06-10,INV-20102,Charlie's Produce,CUST-CP01,Lettuce Case,GEN-CS-LET,General,115,18.00,2070.00,US West,Wholesale,Produce Division,USD
+2026-06-12,INV-20103,Charlie's Produce,CUST-CP01,Bananas Case,FRT-CS-BAN,Fruits,85,22.00,1870.00,Canada,Wholesale,Produce Division,USD
+2026-06-13,INV-20104,Charlie's Produce,CUST-CP01,Red Onions 50lb,ONI-50-RED,Onions,95,20.00,1900.00,US East,Wholesale,Produce Division,USD
+2026-06-15,INV-20105,Charlie's Produce,CUST-CP01,Yellow Potatoes 50lb,POT-50-YLW,Potatoes,75,24.50,1837.50,US West,Wholesale,Produce Division,USD
+2026-06-17,INV-20106,Charlie's Produce,CUST-CP01,Russet Potatoes 50lb,POT-50-RUS,Potatoes,160,18.50,2960.00,North America,Wholesale,Produce Division,USD
+2026-06-18,INV-20107,Charlie's Produce,CUST-CP01,4350-20 Box Potatoes,4350-20,Potatoes,55,15.00,825.00,US East,Wholesale,Produce Division,USD
+2026-06-20,INV-20108,Charlie's Produce,CUST-CP01,Yellow Onions 50lb,ONI-50-YLW,Onions,130,16.00,2080.00,US West,Wholesale,Produce Division,USD
+2026-06-22,INV-20109,Charlie's Produce,CUST-CP01,Grapes Case,FRT-CS-GRP,Fruits,55,35.00,1925.00,US East,Direct,Produce Division,USD
+2026-06-23,INV-20110,Charlie's Produce,CUST-CP01,Cucumbers Case,GEN-CS-CUC,General,95,16.00,1520.00,US West,Wholesale,Produce Division,USD
+2026-06-25,INV-20111,Charlie's Produce,CUST-CP01,Bell Peppers Case,GEN-CS-PEP,General,65,30.00,1950.00,US Central,Wholesale,Produce Division,USD
+2026-06-26,INV-20112,Charlie's Produce,CUST-CP01,Apples Case,FRT-CS-APP,Fruits,75,28.00,2100.00,US West,Online,Produce Division,USD
+2026-06-27,INV-20113,Charlie's Produce,CUST-CP01,Carrots Case,GEN-CS-CAR,General,110,14.00,1540.00,US East,Wholesale,Produce Division,USD
+2026-06-28,INV-20114,Charlie's Produce,CUST-CP01,Russet Potatoes 50lb,POT-50-RUS,Potatoes,140,18.50,2590.00,US West,Wholesale,Produce Division,USD
+2026-06-29,INV-20115,Charlie's Produce,CUST-CP01,Sweet Onions 50lb,ONI-50-SWT,Onions,80,22.00,1760.00,US East,Wholesale,Produce Division,USD
+2026-06-30,INV-20116,Charlie's Produce,CUST-CP01,Red Potatoes 50lb,POT-50-RED,Potatoes,90,22.00,1980.00,North America,Direct,Produce Division,USD

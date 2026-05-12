@@ -1,0 +1,6 @@
+contract_id,period,net_sales_amount,royalty_rate,calculated_royalty,minimum_guarantee_applies,minimum_guarantee_amount,true_up_amount,payment_due_date,notes
+RLA-TSA-ATM-2026,2026-Q1,375000.0,5.0%,18750.0,FALSE,100000.0,0.0,2026-04-30,Quarterly royalty based on reported net sales.
+RLA-TSA-ATM-2026,2026-Q2,375000.0,5.0%,18750.0,FALSE,100000.0,0.0,2026-07-30,Quarterly royalty based on reported net sales.
+RLA-TSA-ATM-2026,2026-Q3,270000.0,5.0%,13500.0,FALSE,100000.0,0.0,2026-10-30,Quarterly royalty based on reported net sales.
+RLA-TSA-ATM-2026,2026-Q4,390000.0,5.0%,19500.0,FALSE,100000.0,0.0,2027-01-30,Quarterly royalty based on reported net sales.
+RLA-TSA-ATM-2026,2026-Annual,1410000.0,5.0%,70500.0,TRUE,100000.0,29500.0,2027-01-30,"Annual minimum royalty guarantee true-up required because calculated royalties are below $100,000."

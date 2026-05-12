@@ -1,0 +1,77 @@
+Task: Update product dropdown behavior so product classifications are global, but product hierarchy remains company-specific.
+
+Context:
+The current product dropdown logic is implemented in:
+  - server/routes.ts
+  - client/src/pages/licenseiq-schema.tsx
+Product form has two kinds of dropdowns:
+  1. Hierarchy fields
+  2. Classification fields
+
+Required behavior:
+
+1. Product hierarchy must remain company-specific
+These fields:
+product_category_id
+product_family_id
+product_line_id
+
+Rules:
+Load values only from product_hierarchy
+Filter by selected company_id
+product_family_id should optionally filter by selected category parent
+product_line_id should optionally filter by selected family parent
+If selected company has no hierarchy rows, return empty array
+Do not use global fallback for hierarchy
+Dropdown should display hierarchy_value
+Saved value should remain hierarchy_id
+
+2. Product classifications must be global/shared
+These fields:
+product_classification
+asset_type
+durability_class
+revenue_type
+tax_category
+regulatory_class
+
+Rules:
+Load from product_classifications
+Do NOT gate by company
+Do NOT require selected company to exist in product master
+Return the same classification options for all companies, including newly created companies
+Keep existing dimension mapping:
+  - product_classification -> Product Type
+  - asset_type -> Asset Type
+  - durability_class -> Durability
+  - revenue_type -> Revenue Type
+  - tax_category -> Tax Category
+  - regulatory_class -> Regulatory Class
+
+Backend changes required:
+In server/routes.ts:
+  - /api/dropdowns/products/hierarchy
+    - require company_id
+    - filter product_hierarchy by company_id + level
+    - keep optional parent_id filtering for family/line
+  - /api/dropdowns/products/classifications
+    - remove company gating entirely
+    - return global values from product_classifications
+
+Frontend behavior:
+Keep current dropdown wiring unchanged
+Keep current label/value mapping unchanged
+Do not change unrelated product save logic
+
+Expected result:
+For a brand-new company with no hierarchy rows:
+  - hierarchy dropdowns are empty
+  - classification dropdowns still show values
+For an existing company with hierarchy rows:
+  - hierarchy dropdowns show company-specific values
+  - classification dropdowns show global values
+
+Deliverables:
+1. exact file changed
+2. exact routes updated
+3. concise verification steps

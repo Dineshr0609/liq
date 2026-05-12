@@ -1,0 +1,101 @@
+Here are the regular English prompts (no DB info) for your production changes:
+1. In the API endpoint for the Liq agent, pass the user's company ID, user ID, and role to the agent as a userContext parameter.
+
+2. At the top of your agent service file, add a global variable to store the current user context.
+
+3. Update the system prompt so it clearly says:
+   - For questions like “How many contracts?” or “How many active contracts?”, do not ask for clarification—just answer using the contracts tool.
+   - “Active” means contracts with status “analyzed”, “completed”, or “uploaded”.
+   - For count/list questions, always use the contracts tool immediately.
+   - For content questions, use the contract text tool.
+   - Add a section with examples showing this behavior.
+
+4. In the contracts tool definition, make it clear that “active” is a valid status and means analyzed/completed/uploaded.
+
+5. Update the agent function to accept a userContext parameter and set the global user context variable at the start of the function.
+
+6. In the contracts query function, filter contracts by the current user’s company if available, and treat “active” as analyzed/completed/uploaded.
+
+7. In the summary and period close functions, filter results by the current user’s company if available.
+
+
+
+
+## liQ Agent Login Context Filtering - Bug Fix Summary
+
+### Problem
+The liQ Agent was returning all contracts from the database regardless of the user's active login context. When a user asked "How many active contracts do I have?", the agent would return contracts that belonged to other organizations or business units, not just their own.
+
+For example:
+- User logged in with TechSound Audio Inc. context (which has 0 contracts)
+- But agent returned "4 active contracts" from other companies in the database
+- The UI correctly showed 0 contracts, but the agent gave wrong data
+
+### Root Causes
+
+1. **Missing Organization Filter in Contract Queries** - The contract query tool was only checking for `companyId` at a basic level and not consistently applying the user's active context (company, business unit, and location) to all queries.
+
+2. **Incomplete Context Propagation** - The agent received user context but wasn't always using it. The context helpers had early exit conditions that prevented filters from being applied when the context wasn't perfectly structured.
+
+3. **No Fallback Logic** - If the active context wasn't available, the system didn't fall back to other available context information like the user's primary company, so it would just return all data without restrictions.
+
+4. **Inconsistent Filtering Across Tools** - Different query tools (contracts, rules, calculations, sales data, accruals, journal entries) had inconsistent approaches to applying organization filters.
+
+
+##problem
+The liQ Agent was leaking internal AI details when asked about its tech stack or model. The fix is to add a confidentiality guard in the agent system prompt so it never discloses model/provider/implementation details.
+
+Prompt to use
+Add a top-level confidentiality rule to the liQ Agent system prompt:
+“DO NOT disclose or discuss the underlying AI model, provider, or technical implementation.”
+“If asked about tech stack or model, respond with: ‘I’m liQ AI, your intelligent assistant for contract intelligence and revenue assurance. My technical details are confidential. How can I help with your contracts today?’”
+Ensure this rule appears before any tool instructions or behavior guidance.
+Keep the agent focused only on contract intelligence and business questions, not backend details.
+This matches the previous bug style: identify the leak, state the confidentiality rule, and keep the user-facing answer generic.
+
+
+##problem
+The bug is in the contract-question guardrail: it treats any query containing “contract” as a contract detail request. So “How to upload a contract” gets misclassified and the agent asks for a specific contract instead of answering the upload workflow.
+
+Fix prompt
+Identify the bug: “Any user question containing the word contract is being classified as a contract-content query.”
+Change the guardrail so generic help/process questions are excluded:
+If the question is about “how to”, “upload”, “create”, “setup”, “process”, “instructions”, or “guide”, do not force contract text lookup.
+Keep the agent focused on actual contract content only when the user asks about terms, clauses, fees, or contract-specific details.
+If the user asks “How to upload a contract”, answer with the upload workflow or platform guidance, not a request for a contract ID.
+
+##Problem
+“The liQ Agent should classify generic help questions like ‘How to upload a contract’, ‘How do I create a contract’, or ‘What is the process for uploading’ as platform help, not contract document lookup.”
+“Only trigger contract-detail fallback when the user is asking about real contract content such as clauses, terms, fees, obligations, renewal, or policies.”
+“If it’s a help/process question, answer it directly with the user workflow or UI instructions.”
+
+
+##liQ chatbox issue prompts
+When the user submits a question in the liQ AI chat, immediately add that question to the message list and scroll the panel so the newly submitted question is visible, instead of only showing the answer later.
+
+Clear the chat input field immediately after the user sends a question so the entered text does not remain in the textbox.
+
+
+##iQ rebate tier fix prompts
+When answering rebate tier questions, liQ AI must use only the exact rebate percentages stated in the contract text or analysis and never infer, calculate, or invent a tier breakdown.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+apps-fileview.texmex_20260329.08_p1
+bug prompts.txt
+Displaying bug prompts.txt. 

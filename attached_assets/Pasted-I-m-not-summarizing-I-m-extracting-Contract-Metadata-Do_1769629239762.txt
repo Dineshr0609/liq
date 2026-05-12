@@ -1,0 +1,261 @@
+I’m not summarizing — I’m extracting.
+
+📄 Contract Metadata
+
+Document Title: Plant Variety License & Royalty Agreement
+
+License Agreement No: PVP-2024-NUR-1205
+
+Effective Date: February 12, 2024
+
+License Type: Exclusive Regional Plant Variety Rights
+
+Industry: Agriculture / Nursery / Plant Genetics
+
+Governing Law: State of California
+
+Jurisdiction: Sacramento County Superior Court
+
+👥 Contracting Parties
+Licensor
+
+Legal Name: Green Innovation Genetics LLC
+
+Address:
+4825 Agricultural Sciences Drive
+Davis, CA 95616
+
+Federal EIN: 94-7382946
+
+California LLC License: 202300847392
+
+USDA Plant Breeder ID: PB-94-7382
+
+Licensor Contacts
+
+Primary Contact: Dr. Elena Rodriguez
+
+Title: Chief Plant Geneticist
+
+Phone: (530) 555-0264
+
+Email: e.rodriguez@greeninnovation.com
+
+Emergency Phone: (530) 555-0265
+
+Licensee
+
+Legal Name: Heritage Gardens Nursery & Landscaping
+
+Address:
+12847 Nursery Row
+Wilsonville, OR 97070
+
+Federal EIN: 93-2847391
+
+Oregon Nursery License: NUR-2019-4738
+
+Nursery Certification: ODA-CER-8472
+
+Licensee Contacts
+
+Primary Contact: Robert Kim
+
+Title: Operations Director
+
+Phone: (503) 555-0198
+
+Email: r.kim@heritagegardens.com
+
+Production Manager: Sarah Chen
+
+Email: s.chen@heritagegardens.com
+
+🌱 Licensed Plant Varieties (IP Assets)
+Variety Name	Scientific Name	Protection Type	Protection Expiry
+Aurora Flame™ Maple	Acer rubrum 'GIG-AF-2019'	US Plant Patent 32,847	Sept 15, 2039
+Pacific Sunset® Rose	Rosa hybrida 'GIG-PS-2020'	US Plant Patent 33,291	Mar 22, 2040
+Emerald Crown™ Hosta	Hosta fortunei 'GIG-EC-2021'	US Plant Patent 33,756	Jul 8, 2041
+Cascade Blue® Hydrangea	Hydrangea macrophylla 'GIG-CB-2022'	US Plant Patent 34,128	Nov 30, 2042
+Golden Spire™ Juniper	Juniperus chinensis 'GIG-GS-2023'	PVP Certificate	Apr 15, 2043
+🧪 Propagation Technology IP
+
+US Patent 11,456,892
+Advanced Root Development System for Ornamental Plants
+
+Expiry: January 12, 2041
+
+US Patent 11,234,567
+Controlled Environment Propagation Protocol for Woody Plants
+
+Expiry: June 8, 2040
+
+Trade Secret:
+GreenGrow™ Nutrient Formula and Application Methods
+
+Protection: Perpetual
+
+📍 Territorial Rights
+Primary Territory (Exclusive)
+
+Oregon
+
+Washington
+
+Northern California (counties north of Fresno)
+
+Idaho
+
+Secondary Territory (Non-Exclusive, Premium Royalty)
+
+Montana
+
+Wyoming
+
+Utah
+
+Nevada
+
+Restricted Territory (Separate License Required)
+
+Southern California
+
+Arizona
+
+Texas
+
+Florida
+
+⏳ License Term
+
+Initial Term: 8 years
+
+Start: February 12, 2024
+
+Renewal: Automatic 4-year renewals
+
+Non-Renewal Notice: 24 months written notice
+
+💰 Royalty Structure
+Tier 1 – Trees & Shrubs
+
+(Aurora Flame Maple, Golden Spire Juniper)
+
+Container Size	Base Royalty	Discount Threshold	Discounted Rate
+1-gallon	$1.25	5,000+ units	$1.10
+3-gallon	$2.85	2,000+ units	$2.50
+5-gallon	$4.50	1,000+ units	$3.95
+15-gallon+	$12.75	200+ units	$11.25
+Tier 2 – Perennials & Roses
+
+(Pacific Sunset Rose, Emerald Crown Hosta)
+
+Container Size	Base Royalty	Multiplier	Seasonal Adjustment
+4-inch pots	$0.75	1.0x	+15% Spring
+6-inch pots	$1.15	1.2x	+10% Spring
+1-gallon	$1.85	1.3x	Standard
+2-gallon+	$3.25	1.5x	−5% Fall
+Tier 3 – Flowering Shrubs
+
+(Cascade Blue Hydrangea)
+
+Annual Units	Rate	Minimum Annual
+1–2,500	$2.25	$8,500
+2,501–7,500	$1.95	$12,000
+7,501–15,000	$1.70	$18,500
+15,001+	$1.45	$25,000
+Seasonal Adjustments
+
+Spring (Mar–May): +10% to +15%
+
+Fall (Sep–Nov): −5%
+
+December Holidays: +20%
+
+Off-Season: Standard
+
+Minimum Annual Royalty
+
+Total: $85,000
+
+Payment Frequency: Quarterly
+
+Quarterly Amount: $21,250
+
+💵 Fees & Startup Costs
+
+Initial License Fee: $125,000 (one-time)
+
+Mother Stock Investment: $38,875
+
+Technology Transfer & Training: $35,000
+
+Annual Certification Fee: $12,500
+
+🏭 Production Requirements
+
+Years 1–2: 15,000 plants minimum
+
+Years 3–4: 35,000 plants + 20% YoY growth
+
+Year 5+: 50,000 plants or market saturation
+
+✅ Quality Standards
+
+Genetic Purity: ≥ 99.8%
+
+Customer Survival Rate: ≥ 95% (90 days)
+
+DNA Testing: Annual
+
+Labeling: Mandatory patent & variety labels
+
+Failure for 2 consecutive quarters → suspension + remedial training.
+
+📊 Reporting & Payments
+
+Reports: Quarterly (within 30 days)
+
+Royalty Payment Due: Within 45 days of quarter end
+
+Late Fee: 1.25% per month + collection costs
+
+Audit Rights: Annual, 45-day notice
+
+Record Retention: 7 years
+
+📣 Marketing & Branding
+
+Trademark usage allowed per guidelines
+
+Retail pricing must stay within ±15% of recommended pricing
+
+Patent notice required on all labels
+
+🌍 Compliance
+
+Environmental laws
+
+Plant health & phytosanitary rules
+
+Organic sales → +25% royalty premium
+
+❌ Termination
+
+For Cause:
+
+180 days’ notice
+
+90-day cure period
+
+For Convenience:
+
+12 months’ notice
+
+Post-Termination
+
+Sell finished inventory: 18 months
+
+Cease propagation: 60 days
+
+Destroy or transfer mother stock

@@ -1,0 +1,4 @@
+date,storeId,storeRegion,productCode,productName,qty,unitPrice,grossSales,channel
+2026-01-15,STORE-CHI-03,Midwest,SKU-A100,Aurora Tea Blend,72,11.99,863.28,Retail
+2026-02-22,STORE-LA-08,West,SKU-A200,Sunset Coffee,55,14.99,824.45,Retail
+2026-03-12,STORE-MIA-04,Southeast,SKU-A100,Aurora Tea Blend,88,11.99,1055.12,Retail

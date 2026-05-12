@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>LicenseIQ – Financial Control Center</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0a0f;--surface:#111118;--surface2:#1a1a24;--surface3:#2d2d3a;
+  --border:#2a2830;--border2:#3a3848;
+  --text:#fafaf8;--text2:#8a8578;--text3:#5a584f;
+  --accent:#c85a2a;--accent-light:#e8734a;--accent-glow:rgba(200,90,42,.12);
+  --ok:#1a9b7a;--ok-glow:rgba(26,155,122,.12);
+  --warn:#c47a1a;--critical:#d94040;--purple:#7a5af8;--orange:#c85a2a;
+  --ai-from:#c85a2a;--ai-to:#1a9b7a;
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Inter','Segoe UI',sans-serif;background:var(--bg);color:var(--text);height:100vh;overflow:hidden;display:flex;flex-direction:column}
+
+/* ── TOPNAV ── */
+.topnav{height:48px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:14px;flex-shrink:0;z-index:100}
+.brand{display:flex;align-items:center;gap:8px;font-weight:700;font-size:15px;text-decoration:none;color:inherit}
+.brand-icon{width:28px;height:28px;border-radius:6px;background:linear-gradient(135deg,var(--ai-from),var(--ai-to));display:flex;align-items:center;justify-content:center;font-size:14px}
+.brand em{color:var(--accent);font-style:normal}
+.nav-sep{flex:1}
+.topnav-search{display:flex;align-items:center;gap:7px;background:var(--surface2);border:1px solid var(--border2);border-radius:6px;padding:5px 12px;width:210px;color:var(--text2);font-size:12px}
+.topnav-search input{background:none;border:none;outline:none;color:var(--text);width:100%;font-size:12px}
+.topnav-search kbd{font-size:9px;background:var(--surface3);border:1px solid var(--border2);border-radius:3px;padding:1px 4px;color:var(--text3)}
+.nav-actions{display:flex;align-items:center;gap:8px}
+.icon-btn{width:30px;height:30px;border-radius:6px;background:transparent;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text2);font-size:14px;position:relative}
+.notif-dot{position:absolute;top:5px;right:5px;width:6px;height:6px;border-radius:50%;background:var(--red);border:1px solid var(--surface)}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:6px;font-size:12px;font-weight:500;cursor:pointer;border:1px solid transparent;transition:all .15s;white-space:nowrap}
+.btn-primary{background:var(--accent);color:#fff;border-color:var(--accent2)}
+.btn-primary:hover{background:var(--accent2)}
+.btn-secondary{background:var(--surface2);color:var(--text);border-color:var(--border2)}
+.btn-secondary:hover{background:var(--surface3)}
+.btn-ghost{background:transparent;color:var(--text2);border-color:var(--border)}
+.btn-ghost:hover{background:var(--surface2);color:var(--text)}
+.btn-sm{padding:4px 10px;font-size:11px}
+.avatar{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#4f8ef7,#a371f7);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;cursor:pointer}
+.ai-badge{background:var(--accent-glow);color:var(--accent);font-size:9px;font-weight:600;padding:2px 7px;border-radius:10px;text-transform:uppercase;letter-spacing:.5px;flex-shrink:0}
+.select-filter{background:var(--surface2);border:1px solid var(--border2);border-radius:6px;padding:5px 10px;color:var(--text);font-size:12px;cursor:pointer;outline:none}
+
+/* ── LAYOUT ── */
+.layout{display:flex;flex:1;overflow:hidden}
+.sidebar{width:200px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto;padding:12px 8px;gap:2px}
+.sidebar-section{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;padding:8px 8px 4px}
+.sidebar-item{display:flex;align-items:center;gap:9px;padding:7px 10px;border-radius:6px;color:var(--text2);cursor:pointer;font-size:12.5px;transition:all .15s;text-decoration:none}
+.sidebar-item:hover{background:var(--surface2);color:var(--text)}
+.sidebar-item.active{background:var(--accent-glow);color:var(--accent);font-weight:500}
+.sidebar-item .icon{font-size:14px;width:16px;text-align:center}
+.sidebar-badge{margin-left:auto;background:var(--yellow-bg);color:var(--yellow);font-size:10px;font-weight:600;padding:1px 6px;border-radius:10px}
+.main{flex:1;display:flex;overflow:hidden}
+.workarea{flex:1;display:flex;flex-direction:column;overflow:hidden}
+
+/* ── PAGE HEADER ── */
+.page-header{padding:14px 24px 0;background:var(--surface);border-bottom:1px solid var(--border);flex-shrink:0}
+.page-title-row{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.page-title{font-size:18px;font-weight:700}
+.page-subtitle{color:var(--text2);font-size:12px}
+.header-actions{display:flex;gap:8px;margin-left:auto;align-items:center}
+.period-badge{background:var(--surface3);border:1px solid var(--border2);border-radius:6px;padding:3px 10px;font-size:12px;color:var(--text2);display:flex;align-items:center;gap:6px}
+
+/* ── TAB BAR ── */
+.tabs{display:flex;gap:0;overflow-x:auto;margin-bottom:-1px}
+.tab{display:flex;align-items:center;gap:6px;padding:10px 16px;font-size:12px;font-weight:500;color:var(--text2);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;white-space:nowrap;flex-shrink:0}
+.tab:hover{color:var(--text)}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.tab-icon{font-size:13px}
+.tab-badge{background:var(--red-bg);color:var(--red);font-size:9px;font-weight:700;padding:1px 5px;border-radius:8px}
+
+/* ── PIPELINE BAR ── */
+.pipeline-strip{display:flex;align-items:center;padding:10px 24px;background:var(--surface);border-bottom:1px solid var(--border);gap:0;overflow-x:auto;flex-shrink:0}
+.pipe-step{display:flex;align-items:center;gap:7px;padding:6px 12px;border-radius:6px;cursor:pointer;transition:all .15s;flex-shrink:0}
+.pipe-step:hover{background:var(--surface2)}
+.pipe-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.pipe-label{font-size:11px;font-weight:500;color:var(--text2)}
+.pipe-val{font-size:11px;font-weight:600}
+.pipe-arrow{color:var(--text3);font-size:14px;margin:0 2px;flex-shrink:0}
+.pipe-step.done .pipe-label{color:var(--text)}
+.pipe-step.done .pipe-dot{background:var(--green)}
+.pipe-step.warn .pipe-dot{background:var(--yellow)}
+.pipe-step.warn .pipe-label{color:var(--yellow)}
+.pipe-step.block .pipe-dot{background:var(--red)}
+.pipe-step.block .pipe-label{color:var(--red)}
+.pipe-step.idle .pipe-dot{background:var(--text3)}
+
+/* ── SCROLL AREA ── */
+.tab-content{flex:1;overflow-y:auto;padding:20px 24px;display:none}
+.tab-content.active{display:block}
+
+/* ── STAT CARDS ── */
+.cards-grid{display:grid;gap:12px}
+.cards-grid.col2{grid-template-columns:1fr 1fr}
+.cards-grid.col3{grid-template-columns:1fr 1fr 1fr}
+.cards-grid.col4{grid-template-columns:1fr 1fr 1fr 1fr}
+.card{background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:16px;transition:all .15s;cursor:pointer}
+.card:hover{border-color:var(--accent);background:var(--surface2)}
+.card-header{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.card-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.card-icon.blue{background:var(--accent-glow)}
+.card-icon.green{background:var(--green-bg)}
+.card-icon.yellow{background:var(--yellow-bg)}
+.card-icon.red{background:var(--red-bg)}
+.card-icon.purple{background:var(--purple-bg)}
+.card-icon.orange{background:var(--orange-bg)}
+.card-title{font-size:12px;font-weight:600;color:var(--text2)}
+.card-sub{font-size:10px;color:var(--text3);margin-top:1px}
+.card-val{font-size:28px;font-weight:800;line-height:1;margin-bottom:4px}
+.card-val.accent{color:var(--accent)}
+.card-val.green{color:var(--green)}
+.card-val.yellow{color:var(--yellow)}
+.card-val.red{color:var(--red)}
+.card-val.gradient{background:linear-gradient(135deg,var(--ai-from),var(--ai-to));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.card-meta{font-size:11px;color:var(--text3);margin-top:6px}
+.card-footer{margin-top:10px;padding-top:10px;border-top:1px solid var(--border);display:flex;align-items:center;gap:8px}
+.mini-chip{font-size:10px;font-weight:600;padding:2px 7px;border-radius:8px}
+.mini-chip.up{background:var(--green-bg);color:var(--green)}
+.mini-chip.down{background:var(--red-bg);color:var(--red)}
+.mini-chip.warn{background:var(--yellow-bg);color:var(--yellow)}
+.mini-chip.ok{background:var(--green-bg);color:var(--green)}
+.mini-chip.info{background:var(--accent-glow);color:var(--accent)}
+
+/* ── METRIC ROWS ── */
+.metric-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);font-size:12px}
+.metric-row:last-child{border:none}
+.metric-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.metric-label{flex:1;color:var(--text2)}
+.metric-val{font-weight:600}
+.metric-status{font-size:10px;padding:2px 7px;border-radius:8px;font-weight:600}
+.metric-status.ok{background:var(--green-bg);color:var(--green)}
+.metric-status.warn{background:var(--yellow-bg);color:var(--yellow)}
+.metric-status.block{background:var(--red-bg);color:var(--red)}
+.metric-status.idle{background:var(--surface3);color:var(--text3)}
+.metric-bar{flex:1;height:4px;background:var(--border2);border-radius:2px;overflow:hidden}
+.metric-bar-fill{height:100%;border-radius:2px}
+
+/* ── SECTION HEADERS ── */
+.section-hdr{display:flex;align-items:center;gap:10px;margin-bottom:12px;margin-top:20px}
+.section-hdr:first-child{margin-top:0}
+.section-hdr h3{font-size:13px;font-weight:700}
+.section-hdr .sub{font-size:11px;color:var(--text2)}
+.section-hdr-actions{margin-left:auto;display:flex;gap:6px}
+
+/* ── DONUT ── */
+.donut-wrap{position:relative;width:80px;height:80px;flex-shrink:0}
+.donut-wrap svg{transform:rotate(-90deg)}
+.donut-track{fill:none;stroke:var(--border2);stroke-width:9}
+.donut-fill-el{fill:none;stroke-width:9;stroke-linecap:round;transition:stroke-dashoffset .8s ease}
+.donut-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.donut-pct{font-size:18px;font-weight:800;background:linear-gradient(135deg,var(--ai-from),var(--ai-to));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.donut-lbl{font-size:9px;color:var(--text3);font-weight:600;text-transform:uppercase}
+
+/* ── CHECKLIST ── */
+.check-item{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:6px;cursor:pointer;font-size:12px;transition:background .1s;border-bottom:1px solid var(--border)}
+.check-item:last-child{border:none}
+.check-item:hover{background:var(--surface2)}
+.check-ico{width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0}
+.check-ico.done{background:var(--green-bg);color:var(--green)}
+.check-ico.warn{background:var(--yellow-bg);color:var(--yellow)}
+.check-ico.block{background:var(--red-bg);color:var(--red)}
+.check-ico.idle{background:var(--surface3);color:var(--text3)}
+.check-lbl{flex:1}
+.check-val{font-size:11px;font-weight:500;color:var(--text3)}
+
+/* ── BLOCKER CARDS ── */
+.blocker-list{display:flex;flex-direction:column;gap:8px}
+.blocker{background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius);padding:12px 14px;cursor:pointer;transition:all .15s;display:flex;gap:12px;align-items:flex-start}
+.blocker:hover{background:var(--surface2)}
+.blocker.critical{border-left:3px solid var(--red)}
+.blocker.high{border-left:3px solid var(--orange)}
+.blocker.medium{border-left:3px solid var(--yellow)}
+.blocker-sev{font-size:10px;font-weight:700;padding:2px 7px;border-radius:8px;flex-shrink:0;margin-top:1px}
+.blocker-sev.critical{background:var(--red-bg);color:var(--red)}
+.blocker-sev.high{background:var(--orange-bg);color:var(--orange)}
+.blocker-sev.medium{background:var(--yellow-bg);color:var(--yellow)}
+.blocker-name{font-size:12px;font-weight:600;margin-bottom:2px}
+.blocker-desc{font-size:11px;color:var(--text2)}
+.blocker-action{font-size:11px;color:var(--accent);margin-top:4px}
+
+/* ── STATUS TABLE ── */
+.status-table{width:100%;border-collapse:collapse}
+.status-table th{padding:8px 14px;text-align:left;font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;background:var(--surface);border-bottom:1px solid var(--border);white-space:nowrap}
+.status-table td{padding:9px 14px;font-size:12px;border-bottom:1px solid var(--border);vertical-align:middle}
+.status-table tr:hover td{background:var(--surface2);cursor:pointer}
+.status-pill{display:inline-flex;align-items:center;gap:4px;font-size:11px;padding:2px 9px;border-radius:10px;font-weight:500}
+.status-pill.ok{background:var(--green-bg);color:var(--green)}
+.status-pill.warn{background:var(--yellow-bg);color:var(--yellow)}
+.status-pill.block{background:var(--red-bg);color:var(--red)}
+.status-pill.info{background:var(--accent-glow);color:var(--accent)}
+.status-pill.idle{background:var(--surface3);color:var(--text3)}
+.tag{display:inline-flex;align-items:center;gap:3px;background:var(--surface3);border:1px solid var(--border2);border-radius:4px;padding:2px 7px;font-size:11px;color:var(--text2)}
+
+/* ── AI CHAT (liQ Agent tab) ── */
+.agent-layout{display:flex;gap:0;height:100%;overflow:hidden}
+.agent-sidebar{width:220px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;flex-shrink:0}
+.agent-sidebar-header{padding:12px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
+.agent-sidebar-header h4{font-size:12px;font-weight:600;flex:1}
+.agent-conv-list{flex:1;overflow-y:auto;padding:8px}
+.agent-conv-empty{padding:30px 14px;text-align:center;color:var(--text3);font-size:12px}
+.agent-conv-empty div:first-child{font-size:28px;margin-bottom:8px}
+.agent-main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.agent-welcome{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:30px;text-align:center}
+.agent-logo-big{width:56px;height:56px;border-radius:14px;background:linear-gradient(135deg,var(--ai-from),var(--ai-to));display:flex;align-items:center;justify-content:center;font-size:26px;margin-bottom:14px;box-shadow:0 0 24px rgba(79,142,247,.3)}
+.agent-welcome h2{font-size:20px;font-weight:700;margin-bottom:6px}
+.agent-welcome p{font-size:13px;color:var(--text2);max-width:400px;margin-bottom:24px}
+.agent-prompts-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;width:100%;max-width:580px;margin-bottom:24px}
+.agent-prompt{background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius);padding:10px 12px;text-align:left;cursor:pointer;transition:all .15s;font-size:11px;color:var(--text2)}
+.agent-prompt:hover{border-color:var(--accent);background:var(--accent-glow);color:var(--text)}
+.agent-prompt-icon{font-size:14px;margin-bottom:4px}
+.agent-prompt-text{font-size:11px;line-height:1.4}
+.agent-upload-zone{width:100%;max-width:480px;border:1px dashed var(--border2);border-radius:var(--radius);padding:14px 20px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:all .15s;font-size:12px}
+.agent-upload-zone:hover{border-color:var(--accent);background:var(--accent-glow)}
+.agent-upload-icon{width:32px;height:32px;border-radius:8px;background:var(--accent-glow);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.agent-input-bar{padding:14px 20px;border-top:1px solid var(--border);display:flex;gap:10px;align-items:flex-end}
+.agent-input{flex:1;background:var(--surface2);border:1px solid var(--border2);border-radius:10px;padding:10px 14px;color:var(--text);font-size:13px;outline:none;resize:none;min-height:42px;max-height:100px;font-family:inherit;line-height:1.5}
+.agent-input:focus{border-color:var(--accent)}
+.agent-send{width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,var(--ai-from),var(--ai-to));border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+
+/* ── AI RIGHT PANEL ── */
+.ai-panel{width:320px;flex-shrink:0;display:flex;flex-direction:column;background:var(--surface);border-left:1px solid var(--border);overflow:hidden}
+.ai-panel-header{padding:12px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;background:linear-gradient(180deg,var(--surface2),var(--surface))}
+.ai-logo{width:28px;height:28px;border-radius:7px;background:linear-gradient(135deg,var(--ai-from),var(--ai-to));display:flex;align-items:center;justify-content:center;font-size:14px}
+.ai-header-text h3{font-size:13px;font-weight:700}
+.ai-header-text p{font-size:10px;color:var(--text2)}
+.ai-online{margin-left:auto;display:flex;align-items:center;gap:5px;font-size:11px;color:var(--green)}
+.ai-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.ai-context-bar{padding:7px 12px;background:var(--accent-glow);border-bottom:1px solid rgba(79,142,247,.2);font-size:11px;color:var(--accent);display:flex;align-items:center;gap:5px}
+.ai-messages{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:10px}
+.ai-msg-ai{background:var(--surface2);border:1px solid var(--border2);border-radius:10px;border-top-left-radius:2px;padding:10px 12px;font-size:12px;line-height:1.6}
+.ai-msg-user{background:var(--accent-glow);border:1px solid rgba(79,142,247,.25);border-radius:10px;border-top-right-radius:2px;padding:9px 12px;font-size:12px;align-self:flex-end;max-width:88%;color:var(--text)}
+.ai-msg-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;display:flex;align-items:center;gap:5px}
+.ai-msg-label.ai-label{color:var(--accent)}
+.ai-msg-label.user-label{color:var(--text3);flex-direction:row-reverse}
+.ai-row{display:flex;align-items:center;gap:8px;margin-bottom:5px;background:var(--surface3);border-radius:5px;padding:6px 9px;font-size:11px}
+.ai-row-icon{font-size:13px}
+.ai-row-text{flex:1;color:var(--text2)}
+.ai-row-val{font-weight:600;white-space:nowrap}
+.ai-action-box{background:var(--accent-glow);border:1px solid rgba(79,142,247,.25);border-radius:7px;padding:10px 12px;margin-top:8px}
+.ai-action-title{font-size:11px;font-weight:600;color:var(--accent);margin-bottom:5px}
+.ai-action-detail{font-size:11px;color:var(--text2);margin-bottom:7px}
+.ai-suggestions{padding:10px 12px;border-top:1px solid var(--border);background:var(--surface);flex-shrink:0}
+.ai-suggestions-label{font-size:10px;color:var(--text3);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
+.ai-chips{display:flex;flex-wrap:wrap;gap:4px}
+.ai-chip{background:var(--surface2);border:1px solid var(--border2);border-radius:20px;padding:3px 9px;font-size:11px;color:var(--text2);cursor:pointer;transition:all .15s;white-space:nowrap}
+.ai-chip:hover{background:var(--accent-glow);border-color:rgba(79,142,247,.4);color:var(--accent)}
+.ai-input-area{padding:10px 12px;border-top:1px solid var(--border);display:flex;align-items:flex-end;gap:7px}
+.ai-input{flex:1;background:var(--surface2);border:1px solid var(--border2);border-radius:7px;padding:7px 11px;color:var(--text);font-size:12px;outline:none;resize:none;min-height:34px;max-height:70px;font-family:inherit;line-height:1.4}
+.ai-input:focus{border-color:var(--accent)}
+.ai-send-btn{width:32px;height:32px;border-radius:7px;flex-shrink:0;background:linear-gradient(135deg,var(--ai-from),var(--ai-to));border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px}
+
+/* ── MISC ── */
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+.divider{border:none;border-top:1px solid var(--border);margin:4px 0}
+.progress-bar{height:4px;background:var(--border2);border-radius:2px;overflow:hidden;margin-top:6px}
+.progress-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--ai-from),var(--ai-to))}
+.insight-row{display:flex;align-items:center;gap:6px;padding:5px 0;font-size:11px;color:var(--text2)}
+.insight-row .dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+</style>
+</head>
+<body>
+
+<!-- TOP NAV -->
+<nav class="topnav">
+  <a class="brand" href="#"><div class="brand-icon">⚡</div><span>License<em>IQ</em></span></a>
+  <div class="topnav-search"><span>🔍</span><input placeholder="Search contracts, accruals, JEs…"/><kbd>⌘K</kbd></div>
+  <div class="nav-sep"></div>
+  <div class="nav-actions">
+    <div class="icon-btn">🔔<div class="notif-dot"></div></div>
+    <button class="btn btn-primary btn-sm">+ New Contract</button>
+    <select class="select-filter"><option>Super Lenses</option><option>Default View</option><option>Controller View</option></select>
+    <div class="avatar" title="PT">CT</div>
+  </div>
+</nav>
+
+<div class="layout">
+
+  <!-- SIDEBAR -->
+    <aside class="sidebar">
+    <div class="sidebar-section">Financial Control</div>
+    <div class="sidebar-item active"><span class="icon">🏠</span> Control Center</div>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-section">Contract Intelligence</div>
+    <a class="sidebar-item" href="licenseiq-contract-intelligence.html"><span class="icon">🔍</span> Search &amp; Manage</a>
+    <a class="sidebar-item" href="licenseiq-term-mapping.html"><span class="icon">🗺️</span> Term Mapping</a>
+    <a class="sidebar-item" href="licenseiq-pending-queue.html"><span class="icon">🕐</span> Pending Queue <span class="sidebar-badge">7</span></a>
+    <div class="sidebar-item"><span class="icon">⬆️</span> Upload &amp; Process</div>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-section">Contract Execution</div>
+    <div class="sidebar-item"><span class="icon">📊</span> Sales Data</div>
+    <div class="sidebar-item"><span class="icon">⚙️</span> Calculation Engine</div>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-section">Finance Hub</div>
+    <a class="sidebar-item" href="licenseiq-accrual-management.html"><span class="icon">📋</span> Accrual Management</a>
+    <a class="sidebar-item" href="licenseiq-journal-entry-hub.html"><span class="icon">📓</span> Journal Entry Hub</a>
+    <a class="sidebar-item" href="licenseiq-period-close.html"><span class="icon">🗂️</span> Period Close <span class="sidebar-badge ok">2</span></a>
+    <div class="sidebar-item"><span class="icon">⚖️</span> Adjustments &amp; Disputes</div>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-section">Financial Intelligence</div>
+    <div class="sidebar-item"><span class="icon">📈</span> Analytics</div>
+    <div class="sidebar-item"><span class="icon">📄</span> Reports</div>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-section">Financial Data Layer</div>
+    <div class="sidebar-item"><span class="icon">🗄️</span> Enterprise Data Mgmt</div>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-section">System Administration</div>
+    <div class="sidebar-item"><span class="icon">🏢</span> Enterprise Master</div>
+    <div class="sidebar-item"><span class="icon">⚙️</span> Enterprise Config</div>
+    <div class="sidebar-item"><span class="icon">👤</span> User Management</div>
+    <div class="sidebar-item"><span class="icon">🔐</span> Access &amp; Roles</div>
+    <div class="sidebar-item"><span class="icon">🔗</span> Integrations</div>
+    <div class="sidebar-item"><span class="icon">🕵️</span> Audit Trail</div>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-section">Advanced AI</div>
+    <div class="sidebar-item"><span class="icon">🧠</span> Knowledge Base</div>
+    <div class="sidebar-item"><span class="icon">🤖</span> RAG Management</div>
+    <div class="sidebar-item"><span class="icon">✦</span> System Settings</div>
+  </aside>
+
+  <div class="main">
+    <div class="workarea">
+
+      <!-- PAGE HEADER + TABS -->
+      <div class="page-header">
+        <div class="page-title-row">
+          <div>
+            <div class="page-title">Financial Control Center</div>
+            <div class="page-subtitle">Revenue assurance and contract intelligence — real-time operational view</div>
+          </div>
+          <div class="period-badge">📅 <select style="background:none;border:none;outline:none;color:var(--text2);font-size:12px;cursor:pointer"><option>Mar 2026</option><option>Feb 2026</option><option>Jan 2026</option></select></div>
+          <div class="header-actions">
+            <button class="btn btn-ghost btn-sm" onclick="sendAI('What is the overall financial health for Mar 2026?')">✦ AI Health Check</button>
+            <button class="btn btn-secondary btn-sm">📄 Export Report</button>
+          </div>
+        </div>
+        <div class="tabs">
+          <div class="tab active" onclick="switchTab('agent',this)"><span class="tab-icon">🤖</span> liQ Agent</div>
+          <div class="tab" onclick="switchTab('snapshot',this)"><span class="tab-icon">📊</span> Financial Control Snapshot</div>
+          <div class="tab" onclick="switchTab('close',this)"><span class="tab-icon">🗂️</span> Period Close Readiness</div>
+          <div class="tab" onclick="switchTab('risk',this)"><span class="tab-icon">🛡️</span> Risk &amp; Exception Monitor <span class="tab-badge">3</span></div>
+          <div class="tab" onclick="switchTab('execution',this)"><span class="tab-icon">⚡</span> Execution Status</div>
+        </div>
+      </div>
+
+      <!-- PIPELINE STRIP (always visible) -->
+      <div class="pipeline-strip">
+        <div class="pipe-step done" onclick="sendAI('Sales and POS data ingestion status for Mar 2026')">
+          <div class="pipe-dot"></div><span class="pipe-label">Data Ingestion</span><span class="pipe-val" style="color:var(--green);margin-left:4px">✓</span>
+        </div>
+        <div class="pipe-arrow">›</div>
+        <div class="pipe-step done" onclick="sendAI('Contract intelligence status — mappings and term extraction')">
+          <div class="pipe-dot"></div><span class="pipe-label">Contract Intelligence</span><span class="pipe-val" style="color:var(--green);margin-left:4px">✓</span>
+        </div>
+        <div class="pipe-arrow">›</div>
+        <div class="pipe-step done" onclick="sendAI('Calculation engine run status for Mar 2026')">
+          <div class="pipe-dot"></div><span class="pipe-label">Calculation Engine</span><span class="pipe-val" style="color:var(--green);margin-left:4px">16 runs</span>
+        </div>
+        <div class="pipe-arrow">›</div>
+        <div class="pipe-step warn" onclick="sendAI('Accrual management status — what is pending?')">
+          <div class="pipe-dot"></div><span class="pipe-label">Accrual Management</span><span class="pipe-val" style="color:var(--yellow);margin-left:4px">2 pending</span>
+        </div>
+        <div class="pipe-arrow">›</div>
+        <div class="pipe-step warn" onclick="sendAI('Journal entry hub status — which JEs are still open?')">
+          <div class="pipe-dot"></div><span class="pipe-label">Journal Entries</span><span class="pipe-val" style="color:var(--yellow);margin-left:4px">3 unposted</span>
+        </div>
+        <div class="pipe-arrow">›</div>
+        <div class="pipe-step block" onclick="sendAI('ERP sync status — what is the reconciliation gap?')">
+          <div class="pipe-dot"></div><span class="pipe-label">ERP Sync</span><span class="pipe-val" style="color:var(--red);margin-left:4px">$8.2k gap</span>
+        </div>
+        <div class="pipe-arrow">›</div>
+        <div class="pipe-step idle">
+          <div class="pipe-dot"></div><span class="pipe-label">Period Close</span><span class="pipe-val" style="color:var(--yellow);margin-left:4px">78% ready</span>
+        </div>
+        <div style="flex:1"></div>
+        <button class="btn btn-sm" style="background:var(--green-bg);color:var(--green);border-color:rgba(63,185,80,.3);flex-shrink:0" onclick="window.location='licenseiq-period-close.html'">🔒 Go to Period Close →</button>
+      </div>
+
+      <!-- TAB CONTENT AREAS -->
+      <div style="flex:1;overflow:hidden;display:flex">
+        <div style="flex:1;overflow:hidden;position:relative">
+
+          <!-- TAB: liQ AGENT -->
+          <div class="tab-content active" id="tab-agent" style="padding:0;height:100%">
+            <div class="agent-layout" style="height:100%">
+              <!-- conversation sidebar -->
+              <div class="agent-sidebar">
+                <div class="agent-sidebar-header">
+                  <div class="ai-logo" style="width:22px;height:22px;font-size:11px;border-radius:5px">🤖</div>
+                  <h4>Conversations</h4>
+                  <button class="btn btn-ghost btn-sm" style="padding:2px 8px;font-size:10px">+ New</button>
+                </div>
+                <div class="agent-conv-empty">
+                  <div>💬</div>
+                  <div>No conversations yet</div>
+                  <div style="font-size:10px;color:var(--text3);margin-top:4px">Start a chat below</div>
+                </div>
+              </div>
+              <!-- chat main -->
+              <div class="agent-main">
+                <div class="agent-welcome" id="agentWelcome">
+                  <div class="agent-logo-big">✦</div>
+                  <h2>How can I help you today?</h2>
+                  <p>Ask about your contracts, run analysis, explain accruals, diagnose exceptions, or upload a contract PDF</p>
+                  <div class="agent-prompts-grid">
+                    <div class="agent-prompt" onclick="sendAI('What are my active contracts by flow type?')"><div class="agent-prompt-icon">📋</div><div class="agent-prompt-text">What are my active contracts?</div></div>
+                    <div class="agent-prompt" onclick="sendAI('Show me pending calculations and their status')"><div class="agent-prompt-icon">🧮</div><div class="agent-prompt-text">Show pending calculations</div></div>
+                    <div class="agent-prompt" onclick="sendAI('Summarize license fee rules for Distributor Program A')"><div class="agent-prompt-icon">📜</div><div class="agent-prompt-text">Summarize license fee rules</div></div>
+                    <div class="agent-prompt" onclick="sendAI('What is blocking the Mar 2026 period close?')"><div class="agent-prompt-icon">🔒</div><div class="agent-prompt-text">What is blocking close?</div></div>
+                    <div class="agent-prompt" onclick="sendAI('Detect anomalies and exceptions in Mar 2026 accruals')"><div class="agent-prompt-icon">⚠️</div><div class="agent-prompt-text">Detect anomalies in accruals</div></div>
+                    <div class="agent-prompt" onclick="sendAI('Explain why total rebate exposure is up 68% vs last period')"><div class="agent-prompt-icon">📈</div><div class="agent-prompt-text">Explain period variance</div></div>
+                  </div>
+                  <div class="agent-upload-zone">
+                    <div class="agent-upload-icon">⬆</div>
+                    <div>
+                      <div style="font-size:12px;font-weight:500;color:var(--accent)">Click to upload a PDF contract</div>
+                      <div style="font-size:11px;color:var(--text3);margin-top:2px">Uses same processing pipeline as Upload &amp; Process</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="agent-input-bar">
+                  <textarea class="agent-input" placeholder="Ask a question, type 'Create a contract…', or upload a PDF" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendAI(this.value);this.value=''}"></textarea>
+                  <button class="agent-send">➤</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB: FINANCIAL CONTROL SNAPSHOT -->
+          <div class="tab-content" id="tab-snapshot">
+
+            <!-- Summary row -->
+            <div class="section-hdr" style="margin-top:0">
+              <h3>📊 Financial Snapshot — Mar 2026</h3>
+              <div class="sub">All values reflect current calculation engine output</div>
+              <div class="section-hdr-actions"><button class="btn btn-ghost btn-sm" onclick="sendAI('Summarize the financial control snapshot for Mar 2026')">✦ AI Summary</button></div>
+            </div>
+
+            <div class="cards-grid col4" style="margin-bottom:16px">
+              <div class="card" onclick="window.location='licenseiq-accrual-management.html'">
+                <div class="card-header"><div class="card-icon blue">📋</div><div><div class="card-title">Active Contracts</div><div class="card-sub">By flow type</div></div></div>
+                <div class="card-val accent">16</div>
+                <div class="card-footer">
+                  <div style="flex:1;font-size:11px;color:var(--text2)">Rebate <strong style="color:var(--text)">5</strong> · Royalty <strong style="color:var(--text)">6</strong> · Commission <strong style="color:var(--text)">3</strong></div>
+                </div>
+                <div class="progress-bar"><div class="progress-fill" style="width:80%"></div></div>
+              </div>
+              <div class="card" onclick="sendAI('Show pending new contracts in the queue')">
+                <div class="card-header"><div class="card-icon yellow">🕐</div><div><div class="card-title">Pending New Contracts</div><div class="card-sub">Awaiting processing</div></div></div>
+                <div class="card-val yellow">7</div>
+                <div class="card-footer">
+                  <span class="mini-chip warn">3 In Review</span>
+                  <span class="mini-chip info">4 Processing</span>
+                </div>
+                <div class="progress-bar"><div class="progress-fill" style="width:35%"></div></div>
+              </div>
+              <div class="card" onclick="window.location='licenseiq-accrual-management.html'">
+                <div class="card-header"><div class="card-icon purple">💼</div><div><div class="card-title">Total Accrual Exposure</div><div class="card-sub">Mar 2026 · all flows</div></div></div>
+                <div class="card-val gradient">$7.71M</div>
+                <div class="card-footer">
+                  <span class="mini-chip up">+28% vs Feb</span>
+                  <div style="flex:1;text-align:right;font-size:11px;color:var(--text3)">Approved $6.63M · Pending $1.08M</div>
+                </div>
+                <div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div>
+              </div>
+              <div class="card" onclick="window.location='licenseiq-period-close.html'">
+                <div class="card-header"><div class="card-icon green">🔒</div><div><div class="card-title">Period Readiness Score</div><div class="card-sub">Mar 2026</div></div></div>
+                <div style="display:flex;align-items:center;gap:12px">
+                  <div class="donut-wrap">
+                    <svg width="80" height="80" viewBox="0 0 80 80">
+                      <circle class="donut-track" cx="40" cy="40" r="33"/>
+                      <circle class="donut-fill-el" cx="40" cy="40" r="33" stroke="url(#g1)" stroke-dasharray="207.3" stroke-dashoffset="45.6" id="donut1"/>
+                      <defs><linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" style="stop-color:#4f8ef7"/><stop offset="100%" style="stop-color:#a371f7"/></linearGradient></defs>
+                    </svg>
+                    <div class="donut-center"><div class="donut-pct">78%</div><div class="donut-lbl">Ready</div></div>
+                  </div>
+                  <div style="flex:1">
+                    <div class="insight-row"><div class="dot" style="background:var(--green)"></div>6 Complete</div>
+                    <div class="insight-row"><div class="dot" style="background:var(--yellow)"></div>2 Pending</div>
+                    <div class="insight-row"><div class="dot" style="background:var(--red)"></div>1 Blocked</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="cards-grid col2" style="margin-bottom:16px">
+              <div class="card" onclick="window.location='licenseiq-accrual-management.html'">
+                <div class="card-header"><div class="card-icon blue">📊</div><div><div class="card-title">Accrual Exposure by Flow</div><div class="card-sub">Mar 2026</div></div><div class="ai-badge" style="margin-left:auto">AI</div></div>
+                <div class="metric-row"><div class="metric-dot" style="background:var(--accent)"></div><span class="metric-label">Rebates</span><span class="metric-val">$1,850,000</span><span class="mini-chip up" style="margin-left:8px">+68%</span></div>
+                <div class="metric-row"><div class="metric-dot" style="background:var(--purple)"></div><span class="metric-label">Royalties</span><span class="metric-val">$2,340,000</span><span class="mini-chip up" style="margin-left:8px">+17%</span></div>
+                <div class="metric-row"><div class="metric-dot" style="background:var(--green)"></div><span class="metric-label">Commissions</span><span class="metric-val">$420,000</span><span class="mini-chip up" style="margin-left:8px">+5%</span></div>
+                <div class="metric-row"><div class="metric-dot" style="background:var(--orange)"></div><span class="metric-label">Subscriptions</span><span class="metric-val">$3,100,000</span><span class="mini-chip down" style="margin-left:8px">-3%</span></div>
+              </div>
+              <div class="card" onclick="window.location='licenseiq-journal-entry-hub.html'">
+                <div class="card-header"><div class="card-icon purple">📓</div><div><div class="card-title">Journal Entries &amp; ERP</div><div class="card-sub">Mar 2026 posting status</div></div></div>
+                <div class="metric-row"><div class="metric-dot" style="background:var(--text3)"></div><span class="metric-label">Total JEs Generated</span><span class="metric-val">10</span><span class="metric-status idle" style="margin-left:8px">All flows</span></div>
+                <div class="metric-row"><div class="metric-dot" style="background:var(--green)"></div><span class="metric-label">Posted to GL</span><span class="metric-val">7</span><span class="metric-status ok" style="margin-left:8px">ERP synced</span></div>
+                <div class="metric-row"><div class="metric-dot" style="background:var(--yellow)"></div><span class="metric-label">Pending Approval / Post</span><span class="metric-val">3</span><span class="metric-status warn" style="margin-left:8px">Action needed</span></div>
+                <div class="metric-row"><div class="metric-dot" style="background:var(--red)"></div><span class="metric-label">ERP Reconciliation Gap</span><span class="metric-val">$8,200</span><span class="metric-status block" style="margin-left:8px">Blocker</span></div>
+              </div>
+            </div>
+
+            <div class="section-hdr">
+              <h3>🤖 AI Accrual Insights</h3><div class="sub">Active flags requiring review</div>
+              <div class="section-hdr-actions"><button class="btn btn-ghost btn-sm" onclick="sendAI('Show all AI-detected anomalies and insights for Mar 2026')">View All</button></div>
+            </div>
+            <div class="cards-grid col3">
+              <div class="card" onclick="sendAI('Explain the potential over-accrual detected for 3 contracts')">
+                <div class="card-header"><div class="card-icon red">⚠️</div><div><div class="card-title">Potential Over-accruals</div></div><div class="ai-badge" style="margin-left:auto">AI</div></div>
+                <div class="card-val red">3</div>
+                <div class="card-meta">Contracts with detected over-accrual risk</div>
+                <div class="card-footer"><span class="mini-chip warn">Solar License –$8k</span></div>
+              </div>
+              <div class="card" onclick="sendAI('Which contracts have missing data inputs?')">
+                <div class="card-header"><div class="card-icon yellow">📂</div><div><div class="card-title">Missing Data Inputs</div></div><div class="ai-badge" style="margin-left:auto">AI</div></div>
+                <div class="card-val yellow">2</div>
+                <div class="card-meta">Contracts with incomplete ingestion data</div>
+                <div class="card-footer"><span class="mini-chip warn">POS file · Currency map</span></div>
+              </div>
+              <div class="card" onclick="sendAI('Show high risk contracts flagged this period')">
+                <div class="card-header"><div class="card-icon purple">🎯</div><div><div class="card-title">High Risk Contracts</div></div><div class="ai-badge" style="margin-left:auto">AI</div></div>
+                <div class="card-val" style="color:var(--purple)">1</div>
+                <div class="card-meta">Confidence below 65% threshold</div>
+                <div class="card-footer"><span class="mini-chip warn">APAC License 58%</span></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB: PERIOD CLOSE READINESS -->
+          <div class="tab-content" id="tab-close">
+            <div class="section-hdr" style="margin-top:0">
+              <h3>🗂️ Period Close Readiness — Mar 2026</h3>
+              <div class="sub">Summary view — open Period Close Workspace for full controls</div>
+              <div class="section-hdr-actions">
+                <button class="btn btn-ghost btn-sm" onclick="sendAI('What is the fastest path to close Mar 2026?')">✦ AI Close Path</button>
+                <button class="btn btn-primary btn-sm" onclick="window.location='licenseiq-period-close.html'">Open Workspace →</button>
+              </div>
+            </div>
+
+            <div class="cards-grid col2" style="margin-bottom:16px">
+              <div class="card" style="display:flex;gap:16px;align-items:center">
+                <div class="donut-wrap" style="width:90px;height:90px">
+                  <svg width="90" height="90" viewBox="0 0 90 90">
+                    <circle class="donut-track" cx="45" cy="45" r="37" stroke-width="10"/>
+                    <circle class="donut-fill-el" cx="45" cy="45" r="37" stroke="url(#g2)" stroke-width="10" stroke-dasharray="232.5" stroke-dashoffset="51.1"/>
+                    <defs><linearGradient id="g2" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" style="stop-color:#4f8ef7"/><stop offset="100%" style="stop-color:#a371f7"/></linearGradient></defs>
+                  </svg>
+                  <div class="donut-center"><div class="donut-pct" style="font-size:22px">78%</div><div class="donut-lbl">Ready</div></div>
+                </div>
+                <div style="flex:1">
+                  <div style="font-size:14px;font-weight:700;margin-bottom:4px">Close Readiness Score</div>
+                  <div style="font-size:12px;color:var(--text2);margin-bottom:10px">2 blockers preventing hard close</div>
+                  <div style="display:flex;gap:12px;font-size:12px">
+                    <div><span style="font-size:16px;font-weight:700;color:var(--green)">6</span> <span style="color:var(--text3)">Complete</span></div>
+                    <div><span style="font-size:16px;font-weight:700;color:var(--yellow)">2</span> <span style="color:var(--text3)">Pending</span></div>
+                    <div><span style="font-size:16px;font-weight:700;color:var(--red)">1</span> <span style="color:var(--text3)">Blocked</span></div>
+                  </div>
+                </div>
+              </div>
+              <div class="card">
+                <div class="card-header"><div class="card-icon red">🚧</div><div class="card-title">Critical Blockers</div></div>
+                <div class="blocker-list">
+                  <div class="blocker critical" onclick="sendAI('How do I resolve the Solar Royalty accrual approval blocker?')">
+                    <span class="blocker-sev critical">Critical</span>
+                    <div><div class="blocker-name">Solar Royalty – ACC2033</div><div class="blocker-desc">Accrual unapproved · Confidence 65% · $75,000 at risk</div><div class="blocker-action">✦ AI can suggest approval path</div></div>
+                  </div>
+                  <div class="blocker critical" onclick="sendAI('Diagnose ERP sync failure for JE2041')">
+                    <span class="blocker-sev critical">Critical</span>
+                    <div><div class="blocker-name">JE2041 – ERP Sync Failed</div><div class="blocker-desc">Account mapping error · $64,200 unposted</div><div class="blocker-action">✦ AI can fix account mapping</div></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-header"><div class="card-icon blue">✅</div><div class="card-title">Close Checklist — Mar 2026</div><div class="ai-badge" style="margin-left:auto">AI Monitored</div></div>
+              <div class="check-item"><div class="check-ico done">✓</div><div class="check-lbl">Sales Data Ingested</div><div class="check-val" style="color:var(--green)">Complete · Mar 14</div></div>
+              <div class="check-item"><div class="check-ico done">✓</div><div class="check-lbl">POS Data Ingested</div><div class="check-val" style="color:var(--green)">Complete · Mar 14</div></div>
+              <div class="check-item"><div class="check-ico done">✓</div><div class="check-lbl">Calculations Executed</div><div class="check-val" style="color:var(--green)">16 accruals · Done</div></div>
+              <div class="check-item" onclick="sendAI('Which accruals are still pending approval?')"><div class="check-ico warn">⚠</div><div class="check-lbl">Accrual Approvals</div><div class="check-val" style="color:var(--yellow)">2 of 16 pending</div></div>
+              <div class="check-item" onclick="sendAI('Which journal entries are still unposted?')"><div class="check-ico warn">⚠</div><div class="check-lbl">Journal Entries Posted</div><div class="check-val" style="color:var(--yellow)">7 of 10 posted</div></div>
+              <div class="check-item" onclick="sendAI('Why is ERP reconciliation blocked?')"><div class="check-ico block">✕</div><div class="check-lbl">ERP Reconciliation Cleared</div><div class="check-val" style="color:var(--red)">$8.2k gap · Blocked</div></div>
+              <div class="check-item"><div class="check-ico done">✓</div><div class="check-lbl">Variance Review Signed Off</div><div class="check-val" style="color:var(--green)">Complete · Mar 14</div></div>
+              <div class="check-item"><div class="check-ico done">✓</div><div class="check-lbl">Audit Trail Complete</div><div class="check-val" style="color:var(--green)">100% traced</div></div>
+              <div class="check-item"><div class="check-ico idle">–</div><div class="check-lbl">Statements Generated</div><div class="check-val">Not started</div></div>
+            </div>
+          </div>
+
+          <!-- TAB: RISK & EXCEPTION MONITOR -->
+          <div class="tab-content" id="tab-risk">
+            <div class="section-hdr" style="margin-top:0">
+              <h3>🛡️ Risk &amp; Exception Monitor — Mar 2026</h3>
+              <div class="sub">All AI-detected exceptions and compliance issues</div>
+              <div class="section-hdr-actions"><button class="btn btn-ghost btn-sm" onclick="sendAI('Give me a full risk assessment for Mar 2026')">✦ AI Risk Assessment</button></div>
+            </div>
+
+            <div class="cards-grid col4" style="margin-bottom:16px">
+              <div class="card" onclick="sendAI('Show all contracts stuck with exceptions')">
+                <div class="card-header"><div class="card-icon red">⛔</div><div><div class="card-title">Contracts w/ Exceptions</div></div></div>
+                <div class="card-val red">2</div>
+                <div class="card-meta">Blocking further processing</div>
+                <div class="card-footer"><span class="mini-chip warn">Solar · NorTech</span></div>
+              </div>
+              <div class="card" onclick="sendAI('Which contracts have missing data mappings?')">
+                <div class="card-header"><div class="card-icon yellow">🗺️</div><div><div class="card-title">Missing Data Mappings</div></div></div>
+                <div class="card-val yellow">2</div>
+                <div class="card-meta">Contracts not fully mapped</div>
+                <div class="card-footer"><span class="mini-chip ok">6 Fully Mapped</span></div>
+              </div>
+              <div class="card" onclick="sendAI('Show failed ERP interfaces and errors')">
+                <div class="card-header"><div class="card-icon orange">🔌</div><div><div class="card-title">Failed Interfaces</div></div></div>
+                <div class="card-val" style="color:var(--orange)">1</div>
+                <div class="card-meta">ERP sync failure — JE2041</div>
+                <div class="card-footer"><span class="mini-chip warn">SAP account map</span></div>
+              </div>
+              <div class="card" onclick="sendAI('Show overrides applied this period and who approved them')">
+                <div class="card-header"><div class="card-icon purple">⚖️</div><div><div class="card-title">Overrides Applied</div></div></div>
+                <div class="card-val" style="color:var(--purple)">0</div>
+                <div class="card-meta">No manual overrides this period</div>
+                <div class="card-footer"><span class="mini-chip ok">Clean period</span></div>
+              </div>
+            </div>
+
+            <div class="section-hdr"><h3>Active Exceptions</h3><div class="sub">Items requiring controller attention</div></div>
+            <div class="blocker-list" style="margin-bottom:16px">
+              <div class="blocker critical" onclick="sendAI('Explain the Solar Royalty Agreement exception and how to resolve it')">
+                <span class="blocker-sev critical">Critical</span>
+                <div style="flex:1">
+                  <div class="blocker-name">Solar Royalty Agreement — ACC2033</div>
+                  <div class="blocker-desc">Confidence score 65% · Missing POS data file · Currency mapping gap detected</div>
+                  <div class="blocker-action">✦ AI can investigate and suggest resolution</div>
+                </div>
+                <button class="btn btn-ghost btn-sm">Investigate</button>
+              </div>
+              <div class="blocker critical" onclick="sendAI('Diagnose and fix the ERP sync failure for JE2041 North Region Rebate')">
+                <span class="blocker-sev critical">Critical</span>
+                <div style="flex:1">
+                  <div class="blocker-name">JE2041 — North Region Rebate ERP Sync</div>
+                  <div class="blocker-desc">SAP account 5010-REBATE-NOR not found in CoA v2.4 · $64,200 unposted</div>
+                  <div class="blocker-action">✦ AI: map 5010-REBATE-NOR → SAP 522100 in Reference Tables</div>
+                </div>
+                <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();window.location='licenseiq-journal-entry-hub.html'">Fix in JE Hub</button>
+              </div>
+              <div class="blocker high" onclick="sendAI('Explain the APAC License low confidence score and what data is missing')">
+                <span class="blocker-sev high">High</span>
+                <div style="flex:1">
+                  <div class="blocker-name">APAC License Royalty — ACC2039</div>
+                  <div class="blocker-desc">Confidence score 58% · AI flagged for manual review before approval</div>
+                  <div class="blocker-action">✦ AI can trace the confidence gap</div>
+                </div>
+                <button class="btn btn-ghost btn-sm">Review</button>
+              </div>
+              <div class="blocker medium" onclick="sendAI('Which accrual approvals are overdue and who needs to sign off?')">
+                <span class="blocker-sev medium">Medium</span>
+                <div style="flex:1">
+                  <div class="blocker-name">3 Approval Reminders Overdue</div>
+                  <div class="blocker-desc">JE2038, JE2042, JE2046 — pending Finance Manager sign-off for 48h+</div>
+                  <div class="blocker-action">✦ AI can draft reminder</div>
+                </div>
+                <button class="btn btn-ghost btn-sm">📧 Remind</button>
+              </div>
+            </div>
+
+            <div class="section-hdr"><h3>Low Confidence Accruals</h3><div class="ai-badge">AI Flagged</div></div>
+            <table class="status-table">
+              <thead><tr><th>Accrual</th><th>Contract</th><th>Flow</th><th>Amount</th><th>Confidence</th><th>AI Issue</th><th></th></tr></thead>
+              <tbody>
+                <tr onclick="sendAI('Explain low confidence score for ACC2033 Solar License')"><td style="color:var(--accent);font-weight:600;font-size:11px">ACC2033</td><td>Solar License Agreement</td><td><span class="tag">📜 Royalty</span></td><td style="font-weight:600">$75,000</td><td><span style="color:var(--yellow);font-weight:700">65% ⚠</span></td><td style="font-size:11px;color:var(--text2)">Missing POS · Currency gap</td><td><button class="btn btn-ghost btn-sm">✦ AI</button></td></tr>
+                <tr onclick="sendAI('Explain low confidence score for ACC2039 APAC License')"><td style="color:var(--accent);font-weight:600;font-size:11px">ACC2039</td><td>APAC License Royalty</td><td><span class="tag">📜 Royalty</span></td><td style="font-weight:600">$155,000</td><td><span style="color:var(--red);font-weight:700">58% ⚠</span></td><td style="font-size:11px;color:var(--text2)">Rate mapping unclear</td><td><button class="btn btn-ghost btn-sm">✦ AI</button></td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- TAB: EXECUTION STATUS -->
+          <div class="tab-content" id="tab-execution">
+            <div class="section-hdr" style="margin-top:0">
+              <h3>⚡ Execution Status — Mar 2026</h3>
+              <div class="sub">Pipeline execution from data ingestion through ERP posting</div>
+              <div class="section-hdr-actions"><button class="btn btn-ghost btn-sm" onclick="sendAI('Summarize the execution pipeline status for Mar 2026')">✦ AI Summary</button></div>
+            </div>
+
+            <div class="cards-grid col4" style="margin-bottom:16px">
+              <div class="card" onclick="sendAI('Show me all transactions received for Mar 2026')">
+                <div class="card-header"><div class="card-icon green">📥</div><div><div class="card-title">Transactions Received</div><div class="card-sub">Sales + POS data</div></div></div>
+                <div class="card-val green">35</div>
+                <div class="card-footer">
+                  <span class="mini-chip ok">Sales 28</span><span class="mini-chip ok">POS 7</span>
+                </div>
+                <div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div>
+              </div>
+              <div class="card" onclick="sendAI('Show calculations completed by the engine for Mar 2026')">
+                <div class="card-header"><div class="card-icon blue">🧮</div><div><div class="card-title">Calculations Complete</div><div class="card-sub">Engine runs</div></div></div>
+                <div class="card-val accent">16</div>
+                <div class="card-footer">
+                  <span class="mini-chip ok">$7.71M calculated</span>
+                  <span style="margin-left:auto;font-size:11px;color:var(--text2)">1 pending</span>
+                </div>
+                <div class="progress-bar"><div class="progress-fill" style="width:94%"></div></div>
+              </div>
+              <div class="card" onclick="sendAI('Show all exceptions detected in the execution pipeline')">
+                <div class="card-header"><div class="card-icon yellow">⚠️</div><div><div class="card-title">Exceptions Detected</div><div class="card-sub">AI-flagged anomalies</div></div></div>
+                <div class="card-val yellow">3</div>
+                <div class="card-footer">
+                  <span class="mini-chip warn">2 Data</span><span class="mini-chip warn">1 Mapping</span>
+                </div>
+                <div class="progress-bar" style="background:var(--yellow-bg)"><div class="progress-fill" style="width:18%;background:var(--yellow)"></div></div>
+              </div>
+              <div class="card" onclick="window.location='licenseiq-journal-entry-hub.html'">
+                <div class="card-header"><div class="card-icon purple">📓</div><div><div class="card-title">Journals Generated</div><div class="card-sub">JE hub output</div></div></div>
+                <div class="card-val" style="color:var(--purple)">10</div>
+                <div class="card-footer">
+                  <span class="mini-chip ok">7 Posted</span><span class="mini-chip warn">3 Pending</span>
+                </div>
+                <div class="progress-bar"><div class="progress-fill" style="width:70%"></div></div>
+              </div>
+            </div>
+
+            <div class="section-hdr"><h3>Execution Progress</h3></div>
+            <div class="card" style="margin-bottom:16px">
+              <div class="metric-row"><div class="metric-dot" style="background:var(--green)"></div><span class="metric-label">Sales Data Ingestion</span><div class="metric-bar"><div class="metric-bar-fill" style="width:100%;background:var(--green)"></div></div><span class="metric-val" style="margin-left:8px;color:var(--green)">100%</span><span class="metric-status ok" style="margin-left:8px">Done</span></div>
+              <div class="metric-row"><div class="metric-dot" style="background:var(--green)"></div><span class="metric-label">POS Data Ingestion</span><div class="metric-bar"><div class="metric-bar-fill" style="width:100%;background:var(--green)"></div></div><span class="metric-val" style="margin-left:8px;color:var(--green)">100%</span><span class="metric-status ok" style="margin-left:8px">Done</span></div>
+              <div class="metric-row"><div class="metric-dot" style="background:var(--green)"></div><span class="metric-label">Contract Term Mapping</span><div class="metric-bar"><div class="metric-bar-fill" style="width:88%;background:var(--green)"></div></div><span class="metric-val" style="margin-left:8px;color:var(--green)">88%</span><span class="metric-status warn" style="margin-left:8px">2 gaps</span></div>
+              <div class="metric-row"><div class="metric-dot" style="background:var(--green)"></div><span class="metric-label">Calculation Engine</span><div class="metric-bar"><div class="metric-bar-fill" style="width:94%;background:var(--green)"></div></div><span class="metric-val" style="margin-left:8px;color:var(--green)">94%</span><span class="metric-status ok" style="margin-left:8px">16/17</span></div>
+              <div class="metric-row"><div class="metric-dot" style="background:var(--yellow)"></div><span class="metric-label">Accrual Approval</span><div class="metric-bar"><div class="metric-bar-fill" style="width:88%;background:var(--yellow)"></div></div><span class="metric-val" style="margin-left:8px;color:var(--yellow)">88%</span><span class="metric-status warn" style="margin-left:8px">14/16</span></div>
+              <div class="metric-row"><div class="metric-dot" style="background:var(--yellow)"></div><span class="metric-label">JE Posted to GL</span><div class="metric-bar"><div class="metric-bar-fill" style="width:70%;background:var(--yellow)"></div></div><span class="metric-val" style="margin-left:8px;color:var(--yellow)">70%</span><span class="metric-status warn" style="margin-left:8px">7/10</span></div>
+              <div class="metric-row"><div class="metric-dot" style="background:var(--red)"></div><span class="metric-label">ERP Reconciliation</span><div class="metric-bar"><div class="metric-bar-fill" style="width:99%;background:var(--red)"></div></div><span class="metric-val" style="margin-left:8px;color:var(--red)">99.3%</span><span class="metric-status block" style="margin-left:8px">$8.2k gap</span></div>
+            </div>
+
+            <div class="section-hdr"><h3>Targeted Contracts</h3></div>
+            <table class="status-table">
+              <thead><tr><th>Contract</th><th>Flow</th><th>Data</th><th>Calc</th><th>Accrual</th><th>JE</th><th>ERP</th></tr></thead>
+              <tbody>
+                <tr onclick="window.location='licenseiq-accrual-management.html'"><td><strong>Distributor Program A</strong><br/><span style="font-size:10px;color:var(--text3)">ACC2032</span></td><td><span class="tag">💰 Rebate</span></td><td><span class="status-pill ok">✓</span></td><td><span class="status-pill ok">✓</span></td><td><span class="status-pill warn">Pending</span></td><td><span class="status-pill warn">Pending</span></td><td><span class="status-pill warn">Pending</span></td></tr>
+                <tr onclick="window.location='licenseiq-accrual-management.html'"><td><strong>Solar License Agreement</strong><br/><span style="font-size:10px;color:var(--text3)">ACC2033</span></td><td><span class="tag">📜 Royalty</span></td><td><span class="status-pill block">Missing</span></td><td><span class="status-pill warn">Low conf</span></td><td><span class="status-pill block">Blocked</span></td><td><span class="status-pill idle">Draft</span></td><td><span class="status-pill idle">N/A</span></td></tr>
+                <tr><td><strong>Retail Commission Plan</strong><br/><span style="font-size:10px;color:var(--text3)">ACC2034</span></td><td><span class="tag">🤝 Comm</span></td><td><span class="status-pill ok">✓</span></td><td><span class="status-pill ok">✓</span></td><td><span class="status-pill ok">Approved</span></td><td><span class="status-pill ok">Posted</span></td><td><span class="status-pill ok">Synced</span></td></tr>
+                <tr onclick="window.location='licenseiq-journal-entry-hub.html'"><td><strong>North Region Rebate</strong><br/><span style="font-size:10px;color:var(--text3)">ACC2035</span></td><td><span class="tag">💰 Rebate</span></td><td><span class="status-pill ok">✓</span></td><td><span class="status-pill ok">✓</span></td><td><span class="status-pill ok">Approved</span></td><td><span class="status-pill warn">Approved</span></td><td><span class="status-pill block">Failed</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+
+        </div><!-- inner flex -->
+
+        <!-- PERSISTENT AI PANEL (visible on all tabs except liQ Agent tab) -->
+        <div class="ai-panel" id="aiPanel">
+          <div class="ai-panel-header">
+            <div class="ai-logo">🤖</div>
+            <div class="ai-header-text"><h3>LiQ AI Agent</h3><p>Control Center context</p></div>
+            <div class="ai-online"><div class="ai-dot"></div>Active</div>
+          </div>
+          <div class="ai-context-bar" id="aiCtxBar">
+            📌 Mar 2026 · 78% ready · 2 blockers · $7.71M
+          </div>
+          <div class="ai-messages" id="aiMessages">
+            <div class="ai-msg-ai">
+              <div class="ai-msg-label ai-label">✦ LiQ Agent</div>
+              <strong>Financial Control Center</strong> — Mar 2026.<br/><br/>
+              Current status:
+              <div class="ai-row" style="margin-top:6px"><div class="ai-row-icon">✅</div><div class="ai-row-text">Data ingestion &amp; calculations</div><div class="ai-row-val" style="color:var(--green)">Complete</div></div>
+              <div class="ai-row"><div class="ai-row-icon">⚠️</div><div class="ai-row-text">2 accruals pending approval</div><div class="ai-row-val" style="color:var(--yellow)">Action needed</div></div>
+              <div class="ai-row"><div class="ai-row-icon">❌</div><div class="ai-row-text">JE2041 ERP sync failed</div><div class="ai-row-val" style="color:var(--red)">Blocker</div></div>
+              <div class="ai-action-box">
+                <div class="ai-action-title">✦ Recommended Next Action</div>
+                <div class="ai-action-detail">Fix JE2041 account mapping → retry sync → close period in ~15 min.</div>
+                <div style="display:flex;gap:6px;margin-top:6px">
+                  <button class="btn btn-primary btn-sm" onclick="sendAI('Walk me through the fastest close path for Mar 2026')">Show close path →</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="ai-suggestions">
+            <div class="ai-suggestions-label">Quick Actions</div>
+            <div class="ai-chips">
+              <div class="ai-chip" onclick="sendAI('What is blocking the Mar 2026 period close?')">Show blockers</div>
+              <div class="ai-chip" onclick="sendAI('Explain rebate variance +68% vs Feb')">Rebate variance</div>
+              <div class="ai-chip" onclick="sendAI('Diagnose JE2041 ERP sync failure')">ERP fix</div>
+              <div class="ai-chip" onclick="sendAI('What is my overall financial health for Mar 2026?')">Health check</div>
+              <div class="ai-chip" onclick="sendAI('Generate period close summary report for Mar 2026')">Close report</div>
+            </div>
+          </div>
+          <div class="ai-input-area">
+            <textarea class="ai-input" id="aiSideInput" rows="1" placeholder="Ask anything…" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendAI(this.value);this.value=''}"></textarea>
+            <button class="ai-send-btn" onclick="const v=document.getElementById('aiSideInput');sendAI(v.value);v.value=''">➤</button>
+          </div>
+        </div>
+
+      </div><!-- flex wrapper -->
+    </div><!-- workarea -->
+  </div><!-- main -->
+</div><!-- layout -->
+
+<script>
+// ── TAB SWITCHING ─────────────────────────────────────────────
+function switchTab(id, el) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  el.classList.add('active');
+  // Hide/show AI panel — on agent tab it's built-in
+  const aiPanel = document.getElementById('aiPanel');
+  aiPanel.style.display = id === 'agent' ? 'none' : 'flex';
+  // Update context bar
+  const ctx = {
+    agent:'📌 Mar 2026 · liQ Agent mode · Full platform context',
+    snapshot:'📌 Financial Snapshot – Mar 2026 · $7.71M exposure · 78% close ready',
+    close:'📌 Period Close – Mar 2026 · 78% ready · 2 critical blockers',
+    risk:'📌 Risk Monitor – Mar 2026 · 3 active exceptions · 2 low-confidence accruals',
+    execution:'📌 Execution – Mar 2026 · 35 transactions · 16 calculations · 3 JEs pending'
+  };
+  document.getElementById('aiCtxBar').textContent = ctx[id] || ctx.snapshot;
+}
+
+// ── AI MESSAGING ─────────────────────────────────────────────
+function addMessage(html, user=false) {
+  const msgs = document.getElementById('aiMessages');
+  const div  = document.createElement('div');
+  div.className = user ? 'ai-msg-user' : 'ai-msg-ai';
+  div.innerHTML = user
+    ? `<div class="ai-msg-label user-label">You</div>${html}`
+    : `<div class="ai-msg-label ai-label">✦ LiQ Agent</div>${html}`;
+  msgs.appendChild(div); msgs.scrollTop = msgs.scrollHeight;
+}
+function addTyping(){const msgs=document.getElementById('aiMessages');const d=document.createElement('div');d.className='ai-msg-ai';d.id='typ';d.innerHTML='<div class="ai-msg-label ai-label">✦ LiQ Agent</div><span style="color:var(--text3)">● ● ●</span>';msgs.appendChild(d);msgs.scrollTop=msgs.scrollHeight;}
+function rmTyping(){const e=document.getElementById('typ');if(e)e.remove();}
+
+function sendAI(msg) {
+  if (!msg || !msg.trim()) return;
+  addMessage(msg, true);
+  addTyping();
+  setTimeout(() => { rmTyping(); handleResponse(msg); }, 850);
+}
+
+function handleResponse(msg) {
+  const m = msg.toLowerCase();
+
+  if (m.includes('block') || m.includes('prevent') || m.includes('closest'))
+    return addMessage(`<strong>2 Critical Blockers — Mar 2026</strong>
+    <div class="ai-row" style="margin-top:6px"><div class="ai-row-icon">❌</div><div class="ai-row-text">Solar Royalty – ACC2033 unapproved</div><div class="ai-row-val" style="color:var(--red)">$75k</div></div>
+    <div class="ai-row"><div class="ai-row-icon">❌</div><div class="ai-row-text">JE2041 ERP sync failed</div><div class="ai-row-val" style="color:var(--red)">$64.2k</div></div>
+    <div class="ai-action-box"><div class="ai-action-title">✦ Fastest Path to Close</div><div class="ai-action-detail">1. Override-approve ACC2033<br/>2. Fix SAP mapping 5010 → 522100<br/>3. Retry JE2041 sync<br/>Total: ~13 min</div></div>`);
+
+  if (m.includes('close path') || m.includes('fastest') || m.includes('walk me'))
+    return addMessage(`<strong>✦ Guided Close — Mar 2026</strong>
+    <div class="ai-row" style="margin-top:6px"><div class="ai-row-icon">1️⃣</div><div class="ai-row-text">Approve ACC2033 (override)</div><div class="ai-row-val" style="color:var(--yellow)">~2 min</div></div>
+    <div class="ai-row"><div class="ai-row-icon">2️⃣</div><div class="ai-row-text">Map 5010-REBATE → SAP 522100</div><div class="ai-row-val" style="color:var(--yellow)">~5 min</div></div>
+    <div class="ai-row"><div class="ai-row-icon">3️⃣</div><div class="ai-row-text">Retry JE2041 ERP sync</div><div class="ai-row-val" style="color:var(--yellow)">~3 min</div></div>
+    <div class="ai-row"><div class="ai-row-icon">4️⃣</div><div class="ai-row-text">Post 3 remaining JEs</div><div class="ai-row-val" style="color:var(--yellow)">~2 min</div></div>
+    <div class="ai-row" style="background:var(--green-bg)"><div class="ai-row-icon">5️⃣</div><div class="ai-row-text" style="color:var(--green)">Close period → readiness 100%</div><div class="ai-row-val" style="color:var(--green)">~1 min</div></div>
+    <div style="font-size:11px;color:var(--text2);margin-top:6px">Total: <strong style="color:var(--green)">~13 minutes</strong></div>`);
+
+  if (m.includes('rebate') && (m.includes('68') || m.includes('variance') || m.includes('explain')))
+    return addMessage(`<strong>Rebate Variance +68% — Mar vs Feb</strong>
+    <div class="ai-row" style="margin-top:6px"><div class="ai-row-icon">📈</div><div class="ai-row-text">Distributor Corp volume +38%</div><div class="ai-row-val" style="color:var(--green)">Tier 3 crossed</div></div>
+    <div class="ai-row"><div class="ai-row-icon">📊</div><div class="ai-row-text">Rate escalation 3% → 5%</div><div class="ai-row-val">+$84k rate impact</div></div>
+    <div class="ai-row"><div class="ai-row-icon">🌍</div><div class="ai-row-text">Euro Distributor Q1 ramp</div><div class="ai-row-val" style="color:var(--green)">+22%</div></div>
+    <div style="font-size:11px;color:var(--text2);margin-top:6px">Consistent with contract terms. No anomalies. ✓</div>`);
+
+  if (m.includes('health') || m.includes('overall') || m.includes('summary'))
+    return addMessage(`<strong>Financial Health — Mar 2026</strong>
+    <div class="ai-row" style="margin-top:6px"><div class="ai-row-icon">💼</div><div class="ai-row-text">Total accrual exposure</div><div class="ai-row-val" style="color:var(--accent)">$7.71M</div></div>
+    <div class="ai-row"><div class="ai-row-icon">📊</div><div class="ai-row-text">Period-over-period change</div><div class="ai-row-val" style="color:var(--green)">+28%</div></div>
+    <div class="ai-row"><div class="ai-row-icon">✅</div><div class="ai-row-text">Accruals approved</div><div class="ai-row-val">14 / 16</div></div>
+    <div class="ai-row"><div class="ai-row-icon">📓</div><div class="ai-row-text">JEs posted to GL</div><div class="ai-row-val">7 / 10</div></div>
+    <div class="ai-row"><div class="ai-row-icon">🔒</div><div class="ai-row-text">Close readiness</div><div class="ai-row-val" style="color:var(--yellow)">78%</div></div>
+    <div class="ai-row" style="background:var(--red-bg)"><div class="ai-row-icon">⚠️</div><div class="ai-row-text" style="color:var(--red)">Active blockers</div><div class="ai-row-val" style="color:var(--red)">2 critical</div></div>`);
+
+  if (m.includes('erp') || m.includes('sync') || m.includes('je2041'))
+    return addMessage(`<strong>JE2041 — ERP Sync Failure</strong>
+    <div class="ai-row" style="margin-top:6px"><div class="ai-row-icon">🔴</div><div class="ai-row-text">Error: GL 5010-REBATE-NOR not in SAP CoA v2.4</div></div>
+    <div class="ai-row"><div class="ai-row-icon">💡</div><div class="ai-row-text">Fix: ERP Mapping → map 5010 → 522100</div><div class="ai-row-val" style="color:var(--orange)">~5 min</div></div>
+    <div style="display:flex;gap:6px;margin-top:8px">
+      <button class="btn btn-secondary btn-sm" onclick="window.location='licenseiq-journal-entry-hub.html'">Open JE Hub →</button>
+    </div>`);
+
+  if (m.includes('report') || m.includes('generate'))
+    return addMessage(`<strong>✦ Close Summary — Mar 2026</strong>
+    <div class="ai-row" style="margin-top:6px"><div class="ai-row-icon">📋</div><div class="ai-row-text">Accruals processed</div><div class="ai-row-val">16</div></div>
+    <div class="ai-row"><div class="ai-row-icon">💼</div><div class="ai-row-text">Total exposure</div><div class="ai-row-val" style="color:var(--accent)">$7.71M</div></div>
+    <div class="ai-row"><div class="ai-row-icon">📓</div><div class="ai-row-text">JEs created / posted</div><div class="ai-row-val">10 / 7</div></div>
+    <div class="ai-row"><div class="ai-row-icon">⚠️</div><div class="ai-row-text">Close readiness</div><div class="ai-row-val" style="color:var(--yellow)">78% · 2 blockers</div></div>
+    <div style="display:flex;gap:6px;margin-top:8px">
+      <button class="btn btn-secondary btn-sm">📄 Export PDF</button>
+      <button class="btn btn-ghost btn-sm">📧 Email</button>
+    </div>`);
+
+  addMessage(`I have full context of your <strong>Mar 2026</strong> financial operations. I can help with:<br/>
+  <div class="ai-row" style="margin-top:6px"><div class="ai-row-icon">🔒</div><div class="ai-row-text">Period close guidance &amp; blockers</div></div>
+  <div class="ai-row"><div class="ai-row-icon">📊</div><div class="ai-row-text">Variance &amp; anomaly explanation</div></div>
+  <div class="ai-row"><div class="ai-row-icon">🏢</div><div class="ai-row-text">ERP sync &amp; reconciliation fixes</div></div>
+  <div class="ai-row"><div class="ai-row-icon">📋</div><div class="ai-row-text">Contract &amp; accrual deep-dives</div></div>`);
+}
+
+// ── DONUT ANIMATION ──────────────────────────────────────────
+setTimeout(() => {
+  document.getElementById('donut1')?.style && (document.getElementById('donut1').style.strokeDashoffset = '45.6');
+}, 400);
+</script>
+</body>
+</html>

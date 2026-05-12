@@ -1,0 +1,233 @@
+Login to the application.
+
+Navigate to Upload Document under the Contracts module.
+
+Upload a contract PDF Electronics Patent License & Component Royalty Agreement that includes Tier 1 Component Royalty Rates with:
+
+Discount rate rules based on unit thresholds
+(Example: “If units exceed X, apply discounted rate Y”)
+
+Submit the PDF for AI Contract Analysis.
+
+Wait until the system generates the Analysis Report.
+
+Open the Financial Terms → Component Royalty Rates (Tier 1) section in the results.
+
+
+Actual Results:
+The AI-generated report does NOT show the discount rate even though the contract contains discount logic.
+
+The threshold-based discount rule is missing from the explanation and formula.
+
+The price changes incorrectly, and the displayed formula does NOT include:
+
+Discount rate
+
+Threshold logic
+
+Adjusted price calculation
+
+The system applies a price change but does not show it in the formula, causing incorrect financial output.
+
+Expected Results:
+Extract and display the discount rate correctly.
+
+Include threshold conditions (e.g., “If units > X, apply discount rate Y”).
+
+Show accurate pricing formulas reflecting the discount.
+
+Apply discount logic only when threshold is crossed, not always.
+
+Provide complete and consistent financial formulas in Tier 1 Royalty Rates.
+-----------------------------------
+Login to the application with a user that can upload contracts.
+
+Navigate to Contracts → Upload Document.
+
+Upload  contract Electronics Patent License & Component Royalty Agreement.
+
+Allow the AI Analysis process to complete.
+
+Open the generated Analysis Report and go to Manage License Fee Rules.
+
+Inspect each milestone’s formula and the displayed base rate values.
+
+Repeat upload once or twice to confirm reproducibility.
+
+
+Actual Result:
+Several auto-generated base rate values are incorrect (do not match the contract).
+Volume milestone formulas are wrong in multiple ways:
+
+Some formulas multiply quantity when the clause specifies no multiplication.
+
+Some formulas apply the wrong base rate (e.g., using an earlier/later tier’s base rate).
+
+Some milestone thresholds or boundaries are mis-applied (shifted by one tier).
+
+Downstream totals and milestone payouts are therefore incorrect.
+
+Expected Result:
+The AI Analysis should extract exact base rates from the contract and display them verbatim (or with a clear normalized numeric equivalent).
+Volume milestone formulas should reflect the contract’s logic exactly:
+
+Apply multiplication only when contract specifies (e.g., quantity × unit price only if clause defines unit pricing).
+
+Use the correct base rate for the specific milestone/tier.
+
+Respect milestone boundaries and any inclusivity/exclusivity rules.
+-------------------------------
+
+Login to the application.
+
+Navigate to Contracts → Upload Document.
+
+Upload a contract that includes Tier 3 – Premium Multipliers, specifically:
+
++15% for Automotive applications
+
++25% for Medical applications
+
+Submit the document for AI Analysis.
+
+Wait for the Analysis Report to generate.
+
+Open the section: Financial Terms → Tier 3 – Specialized Applications.
+
+Observe the extracted Tier 3 Premium Rates and formulas.
+
+
+Actual Result:
+The AI Analysis displays only the final percentage (e.g., 2.88%, 3.00%, etc.).
+
+The report does NOT show or apply the premium multipliers:
+
++15% for Automotive
+
++25% for Medical
+
+The formula does not include:
+
+Base Tier 3 rate × (1 + Premium %)
+
+The result is an incorrect effective rate because the premium was not added mathematically.
+
+Expected Result:
+The analysis report should include the full Tier 3 formula, showing:
+
+Base Tier 3 rate
+
+Premium multiplier (+15% or +25%)
+
+Final effective rate
+
+Correct formula examples:
+
+Automotive:
+Effective Rate = Base Rate × 1.15
+
+Medical:
+Effective Rate = Base Rate × 1.25
+
+The extracted result must transparently show all steps, not just the final percent.
+------------------------------------
+
+Login to the application.
+
+Navigate to Upload Document → Contracts.
+
+Upload a contract that contains Tier 2 ASP-Based Rates with minimum and maximum per-unit price ranges.
+
+Submit the contract for AI Analysis.
+
+Wait for the Analysis Report to be generated.
+
+Open Financial Terms → Tier 2 — ASP-Based Rates section.
+
+Observe the formula for Tier 2 rates.
+
+
+Actual Results:
+The AI Analysis report shows Tier 2 rates, but the formula does not include the min/max per-unit price ranges.
+
+Only a single value is displayed in the formula or calculation, ignoring the contract’s min and max thresholds.
+
+Downstream calculations do not account for price variability.
+
+Expected Results:
+The analysis report must display the full Tier 2 formula including min and max price per unit.
+
+Price calculations should dynamically respect the contract-specified price range.
+
+The formula must clearly indicate:
+
+Minimum unit price
+
+Maximum unit price
+
+ASP × percentage / adjustment within the specified range
+
+
+------------------------------------------
+
+Login to the application.
+
+Navigate to Upload Document → Contracts.
+
+Upload a contract containing Tier 3 – Specialized Applications (Premium Markets) with a specified rate of 0.02875.
+
+Wait for the AI Analysis to complete.
+
+Open the Analysis Report → Tier 3 section.
+
+Observe the displayed rate in the report.
+
+Actual Result:
+The system displays the Tier 3 rate as 2.88 instead of the contract-specified 0.02875.
+
+The value is rounded incorrectly, losing precision.
+
+Downstream calculations and formulas use the wrong number due to rounding.
+
+Expected Result:
+The analysis report should display the exact value 0.02875 as specified in the contract.
+
+No rounding should occur unless explicitly defined in the contract.
+
+Calculations for Tier 3 revenue/royalties should use the precise rate for accurate financial reporting.
+---------------------------
+
+Login to the application.
+
+Navigate to Contracts → Upload Document.
+
+Upload a contract that includes Tier 2 – ASP-Based Rates, where the pricing is defined as a percentage (e.g., 0.025) and NOT a fixed dollar amount.
+
+Submit the contract for AI Analysis.
+
+Wait for the system to generate the Analysis Report.
+
+Go to Financial Terms → Tier 2 — ASP-Based Rates in the report.
+
+Actual Result:
+The system displays the rate as a fixed value: “$2.50”.
+
+The extracted rate is incorrect and not matching the contract.
+
+The AI converted 0.025 (2.5%) to $2.50, which is wrong.
+
+The unit price is not recalculated based on percentage of ASP
+
+
+Expected Result:
+The analysis report should extract and show the correct percentage rate:
+
+0.025 (2.5%), NOT $2.50.
+
+The formula should reflect:
+
+Unit Price = ASP × 0.025
+
+The pricing must dynamically adjust based on the ASP value provided in the contract.
+
+No conversion to fixed dollar value unless explicitly stated in the contract.

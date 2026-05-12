@@ -1,0 +1,35 @@
+contracts	11	The main contract record — all metadata, dates, parties, status, file info, and business fields
+contract_analysis	11	AI-generated summary, risk analysis, insights, key terms
+contract_rules	89	Extracted pricing/fee rules with rates, tiers, formulas
+contract_qualifiers	187	Conditions on terms (which product, territory, channel applies)
+contract_partner_assignments	26	Partners assigned to the contract (licensor, licensee, distributor)
+contract_clauses	97	Pipeline-extracted clause segments
+contract_embeddings	30	Vector embeddings for liQ AI search
+contract_calculations	5	Payment calculation results
+contract_versions	2	Version history
+contract_approvals	1	Approval workflow records
+extraction_runs	10	Pipeline execution history per contract
+extraction_stage_results	30	Results from each pipeline stage
+rule_conflicts	1	Detected conflicts between rules
+
+Master/Reference Tables they link to:
+
+Master Table	Rows	Used by contracts for...
+companies	18	contracts.companyId — which company owns the contract
+business_units	19	contracts.businessUnitId — which BU it belongs to
+locations	31	contracts.locationId — which location
+users	58	contracts.uploadedBy, contracts.contractOwnerId — who uploaded/owns it
+territory_master	30	contract_qualifiers / contract_rules.territories — territory values
+customer_segments	10	contract_qualifiers / contract_rules — segment filtering
+sales_channels	22	contract_qualifiers / contract_rules.channel — channel values
+products	158	contract_rules.productCategories — product references
+contract_type_definitions	7	Determines which tabs/fields show for each contract type
+flow_types	9	Pipeline: which flow type a contract uses (royalty, rebate, OEM...)
+subflows	11	Pipeline: sub-steps within each flow type
+clause_execution_groups	3	Pipeline: how clauses are grouped for execution
+rule_templates	12	Pipeline: template rules per flow type
+base_metrics	8	Pipeline: base metric definitions
+clause_categories	6	Pipeline: clause category definitions
+calculation_blueprints	58	Calculation formula definitions
+erp_systems	6	ERP system references for mapping
+

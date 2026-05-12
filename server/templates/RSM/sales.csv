@@ -1,0 +1,4 @@
+date,txnId,productCode,productName,category,territory,channel,qty,unitPrice,grossAmount,netAmount,resellerCode
+2026-01-11,RSM-S-5001,RES-WIDGET-A,Widget Alpha,Hardware,United States,Reseller,180,55.00,9900.00,9108.00,RES-501
+2026-02-17,RSM-S-5002,RES-WIDGET-B,Widget Beta,Hardware,Canada,Reseller,95,72.00,6840.00,6292.80,RES-502
+2026-03-24,RSM-S-5003,RES-WIDGET-A,Widget Alpha,Hardware,Latin America,Reseller,220,55.00,12100.00,11132.00,RES-503

@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LicenseIQ — Lead-to-Account Process Flow</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: #f8f9fa; color: #1a1a1a; line-height: 1.6; }
+
+    .header { background: #111; color: #fff; padding: 32px 0; text-align: center; border-bottom: 4px solid #ea580c; }
+    .header h1 { font-size: 28px; font-weight: 700; letter-spacing: -0.5px; }
+    .header h1 span { color: #ea580c; }
+    .header p { color: #999; font-size: 14px; margin-top: 6px; }
+
+    .container { max-width: 1100px; margin: 0 auto; padding: 40px 24px 60px; }
+
+    .section-title {
+      font-size: 22px; font-weight: 700; margin: 48px 0 8px;
+      padding-bottom: 10px; border-bottom: 3px solid #ea580c; display: inline-block;
+    }
+    .section-subtitle { color: #666; font-size: 14px; margin-bottom: 28px; }
+
+    /* Pipeline */
+    .pipeline { display: flex; gap: 0; margin: 32px 0 40px; flex-wrap: wrap; }
+    .pipeline-step {
+      flex: 1; min-width: 160px; padding: 18px 16px; text-align: center; position: relative;
+      color: #fff; font-size: 13px;
+    }
+    .pipeline-step::after {
+      content: ''; position: absolute; right: -12px; top: 50%; transform: translateY(-50%);
+      border: 12px solid transparent; border-left-color: inherit; z-index: 2;
+    }
+    .pipeline-step:last-child::after { display: none; }
+    .pipeline-step .step-num { font-size: 11px; opacity: 0.8; text-transform: uppercase; letter-spacing: 1px; }
+    .pipeline-step .step-label { font-size: 15px; font-weight: 700; margin-top: 2px; }
+    .ps-1 { background: #3b82f6; } .ps-1::after { border-left-color: #3b82f6; }
+    .ps-2 { background: #ea580c; } .ps-2::after { border-left-color: #ea580c; }
+    .ps-3 { background: #059669; } .ps-3::after { border-left-color: #059669; }
+    .ps-4 { background: #7c3aed; } .ps-4::after { border-left-color: #7c3aed; }
+    .ps-5 { background: #16a34a; } .ps-5::after { border-left-color: #16a34a; }
+
+    /* Flow diagram */
+    .flow { display: flex; flex-direction: column; gap: 0; margin: 24px 0; }
+    .flow-row { display: flex; align-items: stretch; gap: 0; }
+    .flow-actor {
+      width: 120px; min-width: 120px; padding: 12px 10px; font-size: 12px; font-weight: 700;
+      text-align: center; display: flex; align-items: center; justify-content: center;
+      border: 1px solid #ddd; background: #f1f5f9;
+    }
+    .flow-actor.visitor { background: #dbeafe; color: #1e40af; border-color: #93c5fd; }
+    .flow-actor.system { background: #111; color: #fff; border-color: #333; }
+    .flow-actor.admin { background: #fef3c7; color: #92400e; border-color: #fcd34d; }
+    .flow-actor.lead { background: #d1fae5; color: #065f46; border-color: #6ee7b7; }
+    .flow-actor.new-user { background: #ede9fe; color: #5b21b6; border-color: #c4b5fd; }
+
+    .flow-steps { flex: 1; display: flex; flex-direction: column; }
+    .flow-step {
+      padding: 14px 20px; border: 1px solid #ddd; border-top: none; display: flex; align-items: center; gap: 14px;
+      font-size: 13px; min-height: 52px;
+    }
+    .flow-step:first-child { border-top: 1px solid #ddd; }
+    .flow-step .step-icon {
+      width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      font-size: 14px; flex-shrink: 0;
+    }
+    .flow-step .step-detail { flex: 1; }
+    .flow-step .step-detail strong { display: block; font-size: 13px; }
+    .flow-step .step-detail small { color: #666; font-size: 11px; }
+    .flow-step .api-badge {
+      background: #111; color: #ea580c; font-family: 'Courier New', monospace; font-size: 10px;
+      padding: 3px 8px; border-radius: 4px; white-space: nowrap;
+    }
+
+    .arrow-down {
+      text-align: center; padding: 6px 0; font-size: 24px; color: #ea580c; line-height: 1;
+    }
+
+    /* Swimlane diagram */
+    .swimlane { border: 2px solid #ddd; border-radius: 12px; overflow: hidden; margin: 24px 0; }
+    .swimlane-header {
+      background: #111; color: #fff; padding: 14px 20px; font-weight: 700; font-size: 15px;
+      border-bottom: 3px solid #ea580c;
+    }
+    .swimlane-body { display: flex; min-height: 200px; }
+    .swim-lane {
+      flex: 1; border-right: 1px solid #e5e7eb; padding: 0; position: relative;
+    }
+    .swim-lane:last-child { border-right: none; }
+    .swim-lane-title {
+      text-align: center; padding: 10px; font-size: 12px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid #e5e7eb;
+    }
+    .swim-lane-title.t-visitor { background: #dbeafe; color: #1e40af; }
+    .swim-lane-title.t-system { background: #f3f4f6; color: #111; }
+    .swim-lane-title.t-admin { background: #fef3c7; color: #92400e; }
+    .swim-lane-title.t-lead { background: #d1fae5; color: #065f46; }
+
+    .swim-item {
+      margin: 12px 10px; padding: 10px 12px; border-radius: 8px; font-size: 12px;
+      border: 1px solid #ddd; background: #fff; position: relative;
+    }
+    .swim-item strong { font-size: 12px; display: block; margin-bottom: 2px; }
+    .swim-item.highlight { border-color: #ea580c; background: #fff7ed; }
+    .swim-item .badge {
+      display: inline-block; font-size: 9px; padding: 2px 6px; border-radius: 3px;
+      font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px;
+    }
+    .badge-email { background: #fee2e2; color: #991b1b; }
+    .badge-db { background: #dbeafe; color: #1e40af; }
+    .badge-ui { background: #fef3c7; color: #92400e; }
+    .badge-api { background: #111; color: #ea580c; }
+
+    /* Data tables */
+    .data-table { width: 100%; border-collapse: collapse; margin: 16px 0 28px; font-size: 13px; }
+    .data-table th {
+      background: #111; color: #fff; padding: 10px 14px; text-align: left; font-size: 12px;
+      text-transform: uppercase; letter-spacing: 0.5px;
+    }
+    .data-table td { padding: 10px 14px; border-bottom: 1px solid #e5e7eb; vertical-align: top; }
+    .data-table tr:hover { background: #fff7ed; }
+    .data-table code {
+      background: #f1f5f9; padding: 2px 6px; border-radius: 3px; font-size: 11px; color: #ea580c;
+    }
+
+    /* Info cards */
+    .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; margin: 20px 0; }
+    .info-card {
+      background: #fff; border: 1px solid #e5e7eb; border-radius: 10px; padding: 20px;
+      border-left: 4px solid #ea580c;
+    }
+    .info-card h4 { font-size: 14px; margin-bottom: 8px; }
+    .info-card ul { padding-left: 18px; font-size: 13px; color: #555; }
+    .info-card ul li { margin-bottom: 4px; }
+
+    /* Sequence diagram */
+    .sequence { margin: 24px 0; background: #fff; border: 1px solid #ddd; border-radius: 10px; overflow: hidden; }
+    .seq-header { display: flex; border-bottom: 2px solid #ea580c; }
+    .seq-col-header {
+      flex: 1; text-align: center; padding: 12px; font-weight: 700; font-size: 13px;
+      border-right: 1px solid #eee;
+    }
+    .seq-col-header:last-child { border-right: none; }
+    .seq-row { display: flex; border-bottom: 1px solid #f0f0f0; min-height: 48px; align-items: center; }
+    .seq-row:last-child { border-bottom: none; }
+    .seq-cell { flex: 1; padding: 8px 12px; text-align: center; font-size: 12px; position: relative; }
+    .seq-arrow {
+      background: #ea580c; color: #fff; padding: 4px 10px; border-radius: 4px;
+      font-size: 11px; display: inline-block; position: relative;
+    }
+    .seq-arrow::after {
+      content: '→'; margin-left: 4px; font-weight: bold;
+    }
+    .seq-arrow.left::after { content: '←'; }
+    .seq-note {
+      background: #f8f9fa; border: 1px dashed #ccc; padding: 4px 10px; border-radius: 4px;
+      font-size: 11px; display: inline-block; color: #555;
+    }
+
+    /* Status legend */
+    .status-legend { display: flex; gap: 16px; flex-wrap: wrap; margin: 20px 0; }
+    .legend-item { display: flex; align-items: center; gap: 6px; font-size: 13px; }
+    .legend-dot { width: 12px; height: 12px; border-radius: 50%; }
+
+    /* Wizard steps */
+    .wizard { display: flex; gap: 0; margin: 24px 0; }
+    .wizard-step {
+      flex: 1; background: #fff; border: 2px solid #e5e7eb; padding: 20px; position: relative;
+    }
+    .wizard-step.active { border-color: #ea580c; }
+    .wizard-step::after {
+      content: '→'; position: absolute; right: -16px; top: 50%; transform: translateY(-50%);
+      font-size: 24px; color: #ea580c; font-weight: bold; z-index: 2;
+    }
+    .wizard-step:last-child::after { display: none; }
+    .wizard-step h4 { font-size: 14px; margin-bottom: 8px; color: #ea580c; }
+    .wizard-step ul { font-size: 12px; padding-left: 16px; color: #555; }
+    .wizard-step ul li { margin-bottom: 3px; }
+    .wizard-num {
+      display: inline-flex; width: 26px; height: 26px; border-radius: 50%;
+      background: #ea580c; color: #fff; font-size: 13px; font-weight: 700;
+      align-items: center; justify-content: center; margin-bottom: 8px;
+    }
+
+    /* DB schema */
+    .db-schema { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin: 20px 0; }
+    .db-table {
+      background: #fff; border: 2px solid #333; border-radius: 8px; overflow: hidden;
+    }
+    .db-table-header {
+      background: #111; color: #ea580c; padding: 10px 14px; font-weight: 700; font-size: 13px;
+      font-family: 'Courier New', monospace;
+    }
+    .db-table-body { padding: 10px 14px; }
+    .db-field { font-size: 12px; padding: 3px 0; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; }
+    .db-field:last-child { border-bottom: none; }
+    .db-field .fname { font-family: 'Courier New', monospace; color: #333; }
+    .db-field .ftype { font-size: 10px; color: #888; }
+    .db-field.pk .fname { color: #ea580c; font-weight: 700; }
+
+    .footer { background: #111; color: #666; text-align: center; padding: 24px; font-size: 12px; margin-top: 60px; }
+    .footer span { color: #ea580c; }
+
+    @media (max-width: 768px) {
+      .pipeline { flex-direction: column; }
+      .pipeline-step::after { display: none; }
+      .swimlane-body { flex-direction: column; }
+      .swim-lane { border-right: none; border-bottom: 1px solid #e5e7eb; }
+      .wizard { flex-direction: column; }
+      .wizard-step::after { content: '↓'; right: 50%; transform: translateX(50%); top: auto; bottom: -18px; }
+      .flow-row { flex-direction: column; }
+      .flow-actor { width: 100%; min-width: auto; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <h1>License<span>IQ</span> — Lead-to-Account Process Flow</h1>
+  <p>End-to-End Onboarding Pipeline: From Landing Page to Active Company Account</p>
+</div>
+
+<div class="container">
+
+  <!-- ==================== SECTION 1: OVERVIEW ==================== -->
+  <h2 class="section-title">1. Pipeline Overview</h2>
+  <p class="section-subtitle">Every lead flows through these 5 stages. Status updates happen automatically at key transitions.</p>
+
+  <div class="pipeline">
+    <div class="pipeline-step ps-1"><div class="step-num">Stage 1</div><div class="step-label">New</div></div>
+    <div class="pipeline-step ps-2"><div class="step-num">Stage 2</div><div class="step-label">Verification Sent</div></div>
+    <div class="pipeline-step ps-3"><div class="step-num">Stage 3</div><div class="step-label">Verified</div></div>
+    <div class="pipeline-step ps-4"><div class="step-num">Stage 4</div><div class="step-label">Contacted</div></div>
+    <div class="pipeline-step ps-5"><div class="step-num">Stage 5</div><div class="step-label">Account Created</div></div>
+  </div>
+
+  <div class="status-legend">
+    <div class="legend-item"><div class="legend-dot" style="background:#3b82f6"></div> New — Lead just submitted a form</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#ea580c"></div> Verification Sent — Admin sent verification email</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#059669"></div> Verified — Lead completed verification form</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#7c3aed"></div> Contacted — Personal follow-up sent</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#16a34a"></div> Account Created — Company + user created, welcome email sent</div>
+  </div>
+
+  <!-- ==================== SECTION 2: ENTRY POINTS ==================== -->
+  <h2 class="section-title">2. Entry Points — How Leads Enter the System</h2>
+  <p class="section-subtitle">Leads enter through 4 different channels on the public landing page. All leads start at "New" status.</p>
+
+  <div class="swimlane">
+    <div class="swimlane-header">Lead Capture Channels</div>
+    <div class="swimlane-body">
+      <div class="swim-lane">
+        <div class="swim-lane-title t-visitor">Early Access Form</div>
+        <div class="swim-item">
+          <strong>Landing Page Bottom</strong>
+          Section: "Early Adopter Program"
+          <br><span class="badge badge-ui">Fields</span>
+          <br>Name, Email, Company, Position, Phone, Message
+          <br><span class="badge badge-api">POST /api/early-access-signup</span>
+        </div>
+        <div class="swim-item">
+          <strong>Dedicated /early-adopter Page</strong>
+          Full application form
+          <br><span class="badge badge-ui">Fields</span>
+          <br>Name, Email, Company, Role, Message
+          <br><span class="badge badge-api">POST /api/early-access-signup</span>
+        </div>
+      </div>
+      <div class="swim-lane">
+        <div class="swim-lane-title t-system">Demo Request</div>
+        <div class="swim-item">
+          <strong>Pricing Section Cards</strong>
+          Three plan tiers with "Schedule Demo" buttons
+          <br><span class="badge badge-ui">Fields</span>
+          <br>Email + Plan Tier (auto-detected)
+          <br><span class="badge badge-api">POST /api/demo-request</span>
+        </div>
+        <div class="swim-item">
+          <strong>Plan Tiers</strong>
+          <br>• LicenseIQ (Basic)
+          <br>• LicenseIQ Plus
+          <br>• LicenseIQ Ultra
+        </div>
+      </div>
+      <div class="swim-lane">
+        <div class="swim-lane-title t-lead">AI Chatbot</div>
+        <div class="swim-item">
+          <strong>liQ Assistant (Floating)</strong>
+          Conversational signup via chat widget
+          <br><span class="badge badge-ui">Fields</span>
+          <br>Email (required), Name, Company (optional)
+          <br><span class="badge badge-api">POST /api/early-access-signup</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SECTION 3: AUTOMATED EMAILS ==================== -->
+  <h2 class="section-title">3. Automatic Emails on Signup</h2>
+  <p class="section-subtitle">When a lead submits a form, the system immediately sends confirmation emails — no admin action needed.</p>
+
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Entry Channel</th>
+        <th>Email to Customer</th>
+        <th>Email to Admin Team</th>
+        <th>Template Key</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Early Access Signup</strong></td>
+        <td>"Welcome to LicenseIQ Early Access" — Confirms interest, lists features, promises 1-2 day follow-up</td>
+        <td>"New Early Access Signup" — Lead details sent to <code>info@licenseiq.ai</code></td>
+        <td><code>early_access_confirmation</code><br><code>early_access_admin_notification</code></td>
+      </tr>
+      <tr>
+        <td><strong>Demo Request</strong></td>
+        <td>"Your LicenseIQ {{planName}} Demo Request" — Plan-specific features, promises 24hr follow-up</td>
+        <td>"New Demo Request" — Email + plan tier sent to admin</td>
+        <td><code>demo_request_confirmation</code><br><code>demo_request_admin_notification</code></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ==================== SECTION 4: FULL FLOW DIAGRAM ==================== -->
+  <h2 class="section-title">4. Complete End-to-End Flow</h2>
+  <p class="section-subtitle">Step-by-step sequence from visitor landing on the site to becoming an active company admin user.</p>
+
+  <!-- Phase 1: Visitor Signs Up -->
+  <div class="flow">
+    <div class="flow-row">
+      <div class="flow-actor visitor">VISITOR<br>(Public)</div>
+      <div class="flow-steps">
+        <div class="flow-step">
+          <div class="step-icon" style="background:#dbeafe;color:#1e40af">1</div>
+          <div class="step-detail">
+            <strong>Visits licenseiq.ai landing page</strong>
+            <small>Browses features, pricing plans, and early adopter program</small>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="step-icon" style="background:#dbeafe;color:#1e40af">2</div>
+          <div class="step-detail">
+            <strong>Fills out Early Access form OR requests a Demo</strong>
+            <small>Provides name, email, company info + optional details</small>
+          </div>
+          <span class="api-badge">POST /api/early-access-signup</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="arrow-down">▼</div>
+
+  <!-- Phase 2: System Auto-Response -->
+  <div class="flow">
+    <div class="flow-row">
+      <div class="flow-actor system">SYSTEM<br>(Automatic)</div>
+      <div class="flow-steps">
+        <div class="flow-step">
+          <div class="step-icon" style="background:#111;color:#ea580c">3</div>
+          <div class="step-detail">
+            <strong>Saves lead to database</strong>
+            <small>Stored in <code>early_access_signups</code> or <code>demo_requests</code> table → Status: NEW</small>
+          </div>
+          <span class="api-badge">DB INSERT</span>
+        </div>
+        <div class="flow-step">
+          <div class="step-icon" style="background:#111;color:#ea580c">4</div>
+          <div class="step-detail">
+            <strong>Sends confirmation email to visitor</strong>
+            <small>"Welcome to LicenseIQ Early Access" or "Your Demo Request" — via Zoho Mail</small>
+          </div>
+          <span class="api-badge">ZOHO SMTP</span>
+        </div>
+        <div class="flow-step">
+          <div class="step-icon" style="background:#111;color:#ea580c">5</div>
+          <div class="step-detail">
+            <strong>Sends notification to admin team</strong>
+            <small>Alert to info@licenseiq.ai with lead details</small>
+          </div>
+          <span class="api-badge">ZOHO SMTP</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="arrow-down">▼</div>
+
+  <!-- Phase 3: Admin Reviews -->
+  <div class="flow">
+    <div class="flow-row">
+      <div class="flow-actor admin">ADMIN<br>(Dashboard)</div>
+      <div class="flow-steps">
+        <div class="flow-step">
+          <div class="step-icon" style="background:#fef3c7;color:#92400e">6</div>
+          <div class="step-detail">
+            <strong>Opens Admin → Lead Management page</strong>
+            <small>Sees all leads in pipeline table with status, source, date. Filters by status/type/date.</small>
+          </div>
+          <span class="api-badge">GET /api/admin/early-access-signups</span>
+        </div>
+        <div class="flow-step">
+          <div class="step-icon" style="background:#fef3c7;color:#92400e">7</div>
+          <div class="step-detail">
+            <strong>Clicks ⋯ → "Send Verification" on a NEW lead</strong>
+            <small>System generates unique crypto token, shows email preview. Admin clicks "Confirm & Send".</small>
+          </div>
+          <span class="api-badge">POST /api/admin/send-verification</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="arrow-down">▼</div>
+
+  <!-- Phase 4: System sends verification -->
+  <div class="flow">
+    <div class="flow-row">
+      <div class="flow-actor system">SYSTEM<br>(Automatic)</div>
+      <div class="flow-steps">
+        <div class="flow-step">
+          <div class="step-icon" style="background:#111;color:#ea580c">8</div>
+          <div class="step-detail">
+            <strong>Generates unique verification token</strong>
+            <small>Crypto-random token saved to DB column <code>verification_token</code></small>
+          </div>
+          <span class="api-badge">crypto.randomBytes</span>
+        </div>
+        <div class="flow-step">
+          <div class="step-icon" style="background:#111;color:#ea580c">9</div>
+          <div class="step-detail">
+            <strong>Sends verification email with form link</strong>
+            <small>Email contains button: "Complete Verification Form" → links to <code>/verify/&lt;token&gt;</code></small>
+          </div>
+          <span class="api-badge">Template: verification_request</span>
+        </div>
+        <div class="flow-step">
+          <div class="step-icon" style="background:#111;color:#ea580c">10</div>
+          <div class="step-detail">
+            <strong>Updates lead status to VERIFICATION SENT</strong>
+            <small>Adds note: "Verification form link sent on [date]"</small>
+          </div>
+          <span class="api-badge">DB UPDATE</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="arrow-down">▼</div>
+
+  <!-- Phase 5: Lead fills verification -->
+  <div class="flow">
+    <div class="flow-row">
+      <div class="flow-actor lead">LEAD<br>(Self-Service)</div>
+      <div class="flow-steps">
+        <div class="flow-step">
+          <div class="step-icon" style="background:#d1fae5;color:#065f46">11</div>
+          <div class="step-detail">
+            <strong>Clicks link in email → Opens /verify/&lt;token&gt;</strong>
+            <small>Branded LicenseIQ page with their name, email, company pre-filled. Shows 5-question form.</small>
+          </div>
+          <span class="api-badge">GET /api/verify/:token</span>
+        </div>
+        <div class="flow-step">
+          <div class="step-icon" style="background:#d1fae5;color:#065f46">12</div>
+          <div class="step-detail">
+            <strong>Fills out verification form and submits</strong>
+            <small>Fields: Company Website, Job Title, Contract Count, Goals, How They Heard About Us</small>
+          </div>
+          <span class="api-badge">POST /api/verify/:token</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="arrow-down">▼</div>
+
+  <!-- Phase 6: System auto-verifies -->
+  <div class="flow">
+    <div class="flow-row">
+      <div class="flow-actor system">SYSTEM<br>(Automatic)</div>
+      <div class="flow-steps">
+        <div class="flow-step">
+          <div class="step-icon" style="background:#111;color:#ea580c">13</div>
+          <div class="step-detail">
+            <strong>Saves verification data to database</strong>
+            <small>Stored as JSONB in <code>verification_data</code> column with timestamp in <code>verified_at</code></small>
+          </div>
+          <span class="api-badge">DB UPDATE</span>
+        </div>
+        <div class="flow-step">
+          <div class="step-icon" style="background:#111;color:#ea580c">14</div>
+          <div class="step-detail">
+            <strong>Auto-updates lead status to VERIFIED</strong>
+            <small>Lead moves to "Verified" in pipeline. Shows green badge on admin dashboard.</small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="arrow-down">▼</div>
+
+  <!-- Phase 7: Admin creates account -->
+  <div class="flow">
+    <div class="flow-row">
+      <div class="flow-actor admin">ADMIN<br>(Dashboard)</div>
+      <div class="flow-steps">
+        <div class="flow-step">
+          <div class="step-icon" style="background:#fef3c7;color:#92400e">15</div>
+          <div class="step-detail">
+            <strong>Clicks ⋯ → "Create Account" on VERIFIED lead</strong>
+            <small>Opens 3-step wizard panel. Fields are pre-filled from lead data + verification responses.</small>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="step-icon" style="background:#fef3c7;color:#92400e">16</div>
+          <div class="step-detail">
+            <strong>Step 1: Confirm company name</strong>
+            <small>Pre-filled from lead's company. Verification data (website, role, goals) shown as reference.</small>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="step-icon" style="background:#fef3c7;color:#92400e">17</div>
+          <div class="step-detail">
+            <strong>Step 2: Set user credentials</strong>
+            <small>Username (auto-generated from email), email, first/last name pre-filled. Admin sets temp password.</small>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="step-icon" style="background:#fef3c7;color:#92400e">18</div>
+          <div class="step-detail">
+            <strong>Step 3: Review & click "Create Account & Send Email"</strong>
+            <small>Shows summary of company + user details. One click triggers everything below.</small>
+          </div>
+          <span class="api-badge">POST /api/admin/leads/create-account</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="arrow-down">▼</div>
+
+  <!-- Phase 8: System creates everything -->
+  <div class="flow">
+    <div class="flow-row">
+      <div class="flow-actor system">SYSTEM<br>(Automatic)</div>
+      <div class="flow-steps">
+        <div class="flow-step">
+          <div class="step-icon" style="background:#111;color:#ea580c">19</div>
+          <div class="step-detail">
+            <strong>Creates company in <code>companies</code> table</strong>
+            <small>New row in Enterprise Master hierarchy. Status: Active. Contact info from lead.</small>
+          </div>
+          <span class="api-badge">DB INSERT → companies</span>
+        </div>
+        <div class="flow-step">
+          <div class="step-icon" style="background:#111;color:#ea580c">20</div>
+          <div class="step-detail">
+            <strong>Creates user in <code>users</code> table</strong>
+            <small>Password hashed with scrypt. Role: admin. Active: true.</small>
+          </div>
+          <span class="api-badge">DB INSERT → users</span>
+        </div>
+        <div class="flow-step">
+          <div class="step-icon" style="background:#111;color:#ea580c">21</div>
+          <div class="step-detail">
+            <strong>Links user to company via <code>user_organization_roles</code></strong>
+            <small>Creates org role with role: "admin" for the new company.</small>
+          </div>
+          <span class="api-badge">DB INSERT → user_organization_roles</span>
+        </div>
+        <div class="flow-step">
+          <div class="step-icon" style="background:#111;color:#ea580c">22</div>
+          <div class="step-detail">
+            <strong>Sets active context in <code>user_active_context</code></strong>
+            <small>So user lands in correct company on first login. No manual switching needed.</small>
+          </div>
+          <span class="api-badge">DB INSERT → user_active_context</span>
+        </div>
+        <div class="flow-step">
+          <div class="step-icon" style="background:#111;color:#ea580c">23</div>
+          <div class="step-detail">
+            <strong>Sends "Workspace Ready" email with login credentials</strong>
+            <small>Contains Login URL, email, temporary password, and "Getting Started" checklist.</small>
+          </div>
+          <span class="api-badge">Template: workspace_ready</span>
+        </div>
+        <div class="flow-step">
+          <div class="step-icon" style="background:#111;color:#ea580c">24</div>
+          <div class="step-detail">
+            <strong>Updates lead status to ACCOUNT CREATED</strong>
+            <small>Notes: "Account created. Company: X. Username: Y. Welcome email sent."</small>
+          </div>
+          <span class="api-badge">DB UPDATE → status='converted'</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="arrow-down">▼</div>
+
+  <!-- Phase 9: New user logs in -->
+  <div class="flow">
+    <div class="flow-row">
+      <div class="flow-actor new-user">NEW USER<br>(Company Admin)</div>
+      <div class="flow-steps">
+        <div class="flow-step">
+          <div class="step-icon" style="background:#ede9fe;color:#5b21b6">25</div>
+          <div class="step-detail">
+            <strong>Receives "Workspace Ready" email</strong>
+            <small>Email contains login URL, their email, and temporary password.</small>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="step-icon" style="background:#ede9fe;color:#5b21b6">26</div>
+          <div class="step-detail">
+            <strong>Logs in with credentials</strong>
+            <small>Lands in their company context (e.g., "Kadimi Technologies"). Sees only their company data.</small>
+          </div>
+          <span class="api-badge">POST /api/login</span>
+        </div>
+        <div class="flow-step">
+          <div class="step-icon" style="background:#ede9fe;color:#5b21b6">27</div>
+          <div class="step-detail">
+            <strong>Can create additional users for their company</strong>
+            <small>As Company Admin, they can add team members via User Management and assign roles.</small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SECTION 5: VERIFICATION FORM ==================== -->
+  <h2 class="section-title">5. Verification Form Details</h2>
+  <p class="section-subtitle">The self-service form that leads fill out after clicking the email link.</p>
+
+  <div class="info-grid">
+    <div class="info-card">
+      <h4>Form URL Pattern</h4>
+      <ul>
+        <li>URL: <code>/verify/&lt;unique-token&gt;</code></li>
+        <li>Token: 32-byte crypto random hex string</li>
+        <li>One-time use — shows "Already Verified" after submission</li>
+        <li>Invalid/expired tokens show error page</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <h4>Form Fields (5 Questions)</h4>
+      <ul>
+        <li><strong>1. Company Website URL</strong> — Optional text input</li>
+        <li><strong>2. Your Role / Job Title</strong> — Required text input</li>
+        <li><strong>3. Number of Contracts</strong> — Required dropdown (1-10, 11-50, 51-200, 201-500, 500+)</li>
+        <li><strong>4. Goals with LicenseIQ</strong> — Required textarea</li>
+        <li><strong>5. How did you hear about us?</strong> — Required dropdown (LinkedIn, Google, Referral, etc.)</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <h4>Pre-filled Information (Read-only)</h4>
+      <ul>
+        <li>Name — from the original signup</li>
+        <li>Email — from the original signup</li>
+        <li>Company — from the original signup</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <h4>After Submission</h4>
+      <ul>
+        <li>Data stored as JSONB in <code>verification_data</code> column</li>
+        <li>Timestamp saved in <code>verified_at</code></li>
+        <li>Lead status auto-updated to <strong>"Verified"</strong></li>
+        <li>Shows success page: "Verification Complete"</li>
+        <li>Repeat visits show: "Already Verified"</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ==================== SECTION 6: CREATE ACCOUNT WIZARD ==================== -->
+  <h2 class="section-title">6. Create Account Wizard (3 Steps)</h2>
+  <p class="section-subtitle">The admin wizard that creates a company + user in one flow. Available only for verified leads.</p>
+
+  <div class="wizard">
+    <div class="wizard-step">
+      <div class="wizard-num">1</div>
+      <h4>Company</h4>
+      <ul>
+        <li>Company name (pre-filled from lead)</li>
+        <li>Shows verification data as reference card</li>
+        <li>Creates row in <code>companies</code> table</li>
+        <li>Appears in Enterprise Master hierarchy</li>
+      </ul>
+    </div>
+    <div class="wizard-step">
+      <div class="wizard-num">2</div>
+      <h4>User</h4>
+      <ul>
+        <li>Username (auto-generated from email)</li>
+        <li>Email (pre-filled from lead)</li>
+        <li>First/Last name (split from lead name)</li>
+        <li>Temporary password (admin sets this)</li>
+        <li>Role: Company Admin (automatic)</li>
+      </ul>
+    </div>
+    <div class="wizard-step">
+      <div class="wizard-num">3</div>
+      <h4>Review & Create</h4>
+      <ul>
+        <li>Shows all details for confirmation</li>
+        <li>One click creates everything</li>
+        <li>Sends "Workspace Ready" email</li>
+        <li>Updates lead to "Account Created"</li>
+        <li>Validates no duplicate username/email</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ==================== SECTION 7: DATABASE TABLES ==================== -->
+  <h2 class="section-title">7. Database Tables Involved</h2>
+  <p class="section-subtitle">The key tables that store data at each stage of the pipeline.</p>
+
+  <div class="db-schema">
+    <div class="db-table">
+      <div class="db-table-header">early_access_signups</div>
+      <div class="db-table-body">
+        <div class="db-field pk"><span class="fname">id</span><span class="ftype">UUID PK</span></div>
+        <div class="db-field"><span class="fname">email</span><span class="ftype">VARCHAR</span></div>
+        <div class="db-field"><span class="fname">name</span><span class="ftype">VARCHAR</span></div>
+        <div class="db-field"><span class="fname">company</span><span class="ftype">VARCHAR</span></div>
+        <div class="db-field"><span class="fname">status</span><span class="ftype">VARCHAR</span></div>
+        <div class="db-field"><span class="fname">notes</span><span class="ftype">TEXT</span></div>
+        <div class="db-field"><span class="fname">verification_token</span><span class="ftype">VARCHAR</span></div>
+        <div class="db-field"><span class="fname">verification_data</span><span class="ftype">JSONB</span></div>
+        <div class="db-field"><span class="fname">verified_at</span><span class="ftype">TIMESTAMP</span></div>
+        <div class="db-field"><span class="fname">created_at</span><span class="ftype">TIMESTAMP</span></div>
+      </div>
+    </div>
+    <div class="db-table">
+      <div class="db-table-header">demo_requests</div>
+      <div class="db-table-body">
+        <div class="db-field pk"><span class="fname">id</span><span class="ftype">UUID PK</span></div>
+        <div class="db-field"><span class="fname">email</span><span class="ftype">VARCHAR</span></div>
+        <div class="db-field"><span class="fname">plan_tier</span><span class="ftype">VARCHAR</span></div>
+        <div class="db-field"><span class="fname">status</span><span class="ftype">VARCHAR</span></div>
+        <div class="db-field"><span class="fname">notes</span><span class="ftype">TEXT</span></div>
+        <div class="db-field"><span class="fname">verification_token</span><span class="ftype">VARCHAR</span></div>
+        <div class="db-field"><span class="fname">verification_data</span><span class="ftype">JSONB</span></div>
+        <div class="db-field"><span class="fname">verified_at</span><span class="ftype">TIMESTAMP</span></div>
+        <div class="db-field"><span class="fname">created_at</span><span class="ftype">TIMESTAMP</span></div>
+      </div>
+    </div>
+    <div class="db-table">
+      <div class="db-table-header">companies</div>
+      <div class="db-table-body">
+        <div class="db-field pk"><span class="fname">company_id</span><span class="ftype">UUID PK</span></div>
+        <div class="db-field"><span class="fname">company_name</span><span class="ftype">VARCHAR</span></div>
+        <div class="db-field"><span class="fname">contact_person</span><span class="ftype">VARCHAR</span></div>
+        <div class="db-field"><span class="fname">contact_email</span><span class="ftype">VARCHAR</span></div>
+        <div class="db-field"><span class="fname">status</span><span class="ftype">VARCHAR (A/I/D)</span></div>
+        <div class="db-field"><span class="fname">created_by</span><span class="ftype">FK → users</span></div>
+        <div class="db-field"><span class="fname">creation_date</span><span class="ftype">TIMESTAMP</span></div>
+      </div>
+    </div>
+    <div class="db-table">
+      <div class="db-table-header">users</div>
+      <div class="db-table-body">
+        <div class="db-field pk"><span class="fname">id</span><span class="ftype">UUID PK</span></div>
+        <div class="db-field"><span class="fname">username</span><span class="ftype">VARCHAR UNIQUE</span></div>
+        <div class="db-field"><span class="fname">email</span><span class="ftype">VARCHAR UNIQUE</span></div>
+        <div class="db-field"><span class="fname">password</span><span class="ftype">VARCHAR (hashed)</span></div>
+        <div class="db-field"><span class="fname">first_name</span><span class="ftype">VARCHAR</span></div>
+        <div class="db-field"><span class="fname">last_name</span><span class="ftype">VARCHAR</span></div>
+        <div class="db-field"><span class="fname">role</span><span class="ftype">VARCHAR</span></div>
+        <div class="db-field"><span class="fname">is_active</span><span class="ftype">BOOLEAN</span></div>
+      </div>
+    </div>
+    <div class="db-table">
+      <div class="db-table-header">user_organization_roles</div>
+      <div class="db-table-body">
+        <div class="db-field pk"><span class="fname">id</span><span class="ftype">UUID PK</span></div>
+        <div class="db-field"><span class="fname">user_id</span><span class="ftype">FK → users</span></div>
+        <div class="db-field"><span class="fname">company_id</span><span class="ftype">FK → companies</span></div>
+        <div class="db-field"><span class="fname">business_unit_id</span><span class="ftype">FK (optional)</span></div>
+        <div class="db-field"><span class="fname">location_id</span><span class="ftype">FK (optional)</span></div>
+        <div class="db-field"><span class="fname">role</span><span class="ftype">VARCHAR</span></div>
+        <div class="db-field"><span class="fname">status</span><span class="ftype">VARCHAR (A/I)</span></div>
+      </div>
+    </div>
+    <div class="db-table">
+      <div class="db-table-header">user_active_context</div>
+      <div class="db-table-body">
+        <div class="db-field pk"><span class="fname">user_id</span><span class="ftype">FK → users (UNIQUE)</span></div>
+        <div class="db-field"><span class="fname">active_org_role_id</span><span class="ftype">FK → user_org_roles</span></div>
+        <div class="db-field"><span class="fname">last_switched</span><span class="ftype">TIMESTAMP</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SECTION 8: EMAILS SENT ==================== -->
+  <h2 class="section-title">8. All Emails in the Pipeline</h2>
+  <p class="section-subtitle">Every email sent during the complete lifecycle, in chronological order.</p>
+
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>When</th>
+        <th>Email Name</th>
+        <th>Recipient</th>
+        <th>Key Content</th>
+        <th>Template Key</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td>On signup</td>
+        <td><strong>Signup Confirmation</strong></td>
+        <td>Customer</td>
+        <td>Welcome message, feature list, "we'll be in touch in 1-2 days"</td>
+        <td><code>early_access_confirmation</code></td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td>On signup</td>
+        <td><strong>Admin Notification</strong></td>
+        <td>info@licenseiq.ai</td>
+        <td>New lead alert with all submitted details</td>
+        <td><code>early_access_admin_notification</code></td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td>Admin action</td>
+        <td><strong>Verification Request</strong></td>
+        <td>Customer</td>
+        <td>"Complete Verification Form" button with unique link</td>
+        <td><code>verification_request</code></td>
+      </tr>
+      <tr>
+        <td>4</td>
+        <td>Admin action (optional)</td>
+        <td><strong>Personal Follow-Up</strong></td>
+        <td>Customer</td>
+        <td>Personal message from named team member</td>
+        <td><code>personal_followup</code></td>
+      </tr>
+      <tr>
+        <td>5</td>
+        <td>Account creation</td>
+        <td><strong>Workspace Ready</strong></td>
+        <td>Customer</td>
+        <td>Login URL, email, temp password, getting started steps</td>
+        <td><code>workspace_ready</code></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ==================== SECTION 9: ADMIN ACTIONS ==================== -->
+  <h2 class="section-title">9. Admin Actions by Lead Status</h2>
+  <p class="section-subtitle">What actions are available in the three-dot dropdown menu at each pipeline stage.</p>
+
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Lead Status</th>
+        <th>Available Actions</th>
+        <th>Primary Next Step</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span style="color:#3b82f6;font-weight:700">● New</span></td>
+        <td>Send Verification, Custom Email, Change Status, Add Notes</td>
+        <td>→ Send Verification</td>
+      </tr>
+      <tr>
+        <td><span style="color:#ea580c;font-weight:700">● Verification Sent</span></td>
+        <td>Send Workspace Ready, Send Follow-Up, Custom Email, Change Status, View Notes</td>
+        <td>→ Wait for lead to complete form</td>
+      </tr>
+      <tr>
+        <td><span style="color:#059669;font-weight:700">● Verified</span></td>
+        <td><strong>Create Account</strong>, Send Workspace Ready, Send Follow-Up, Custom Email, Change Status, View Verification</td>
+        <td>→ <strong>Create Account</strong></td>
+      </tr>
+      <tr>
+        <td><span style="color:#7c3aed;font-weight:700">● Contacted</span></td>
+        <td>Send Follow-Up, Custom Email, Change Status, View Notes</td>
+        <td>→ Follow up or change status</td>
+      </tr>
+      <tr>
+        <td><span style="color:#16a34a;font-weight:700">● Account Created</span></td>
+        <td>Send Follow-Up, Custom Email, Change Status, View Notes</td>
+        <td>✓ Complete — user can log in</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ==================== SECTION 10: API REFERENCE ==================== -->
+  <h2 class="section-title">10. API Endpoints Reference</h2>
+  <p class="section-subtitle">Every API route involved in the lead-to-account pipeline.</p>
+
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Method</th>
+        <th>Endpoint</th>
+        <th>Auth</th>
+        <th>Purpose</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td><code>POST</code></td><td><code>/api/early-access-signup</code></td><td>Public</td><td>Submit early access form from landing page</td></tr>
+      <tr><td><code>POST</code></td><td><code>/api/demo-request</code></td><td>Public</td><td>Submit demo request from pricing section</td></tr>
+      <tr><td><code>GET</code></td><td><code>/api/verify/:token</code></td><td>Public</td><td>Load verification form (validate token, return lead info)</td></tr>
+      <tr><td><code>POST</code></td><td><code>/api/verify/:token</code></td><td>Public</td><td>Submit verification form responses</td></tr>
+      <tr><td><code>GET</code></td><td><code>/api/admin/early-access-signups</code></td><td>Admin</td><td>List all early access leads</td></tr>
+      <tr><td><code>GET</code></td><td><code>/api/admin/demo-requests</code></td><td>Admin</td><td>List all demo request leads</td></tr>
+      <tr><td><code>PATCH</code></td><td><code>/api/admin/early-access-signups/:id</code></td><td>Admin</td><td>Update lead status/notes</td></tr>
+      <tr><td><code>PATCH</code></td><td><code>/api/admin/demo-requests/:id</code></td><td>Admin</td><td>Update lead status/notes</td></tr>
+      <tr><td><code>POST</code></td><td><code>/api/admin/send-verification</code></td><td>Admin</td><td>Generate token + send verification email</td></tr>
+      <tr><td><code>POST</code></td><td><code>/api/admin/leads/create-account</code></td><td>Admin</td><td>Create company + user + send welcome email</td></tr>
+      <tr><td><code>POST</code></td><td><code>/api/admin/send-workspace-ready</code></td><td>Admin</td><td>Send workspace ready email (standalone)</td></tr>
+      <tr><td><code>POST</code></td><td><code>/api/admin/send-followup</code></td><td>Admin</td><td>Send personal follow-up email</td></tr>
+      <tr><td><code>POST</code></td><td><code>/api/admin/send-lead-email</code></td><td>Admin</td><td>Send custom email with attachments</td></tr>
+      <tr><td><code>POST</code></td><td><code>/api/admin/preview-email-by-key</code></td><td>Admin</td><td>Preview rendered email template</td></tr>
+      <tr><td><code>POST</code></td><td><code>/api/login</code></td><td>Public</td><td>User login (new user uses this)</td></tr>
+    </tbody>
+  </table>
+
+  <!-- ==================== SECTION 11: WHAT THE NEW USER CAN DO ==================== -->
+  <h2 class="section-title">11. After Account Creation — What the New User Can Do</h2>
+  <p class="section-subtitle">The new Company Admin user has full control over their company within the platform.</p>
+
+  <div class="info-grid">
+    <div class="info-card">
+      <h4>Immediate Access</h4>
+      <ul>
+        <li>Log in with username + temporary password</li>
+        <li>Automatically lands in their company context</li>
+        <li>Company visible in the top-right context switcher</li>
+        <li>Only sees data belonging to their company</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <h4>Company Admin Capabilities</h4>
+      <ul>
+        <li>Create additional users for their company</li>
+        <li>Assign roles: admin, editor, viewer, auditor</li>
+        <li>Create business units and locations</li>
+        <li>Upload and process contracts</li>
+        <li>Configure calculation rules</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <h4>Data Isolation</h4>
+      <ul>
+        <li>Multi-tenant: each company's data is isolated</li>
+        <li>Organization context filters all queries</li>
+        <li>Cannot access other companies' data</li>
+        <li>System admins can see all companies</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <h4>Where Their Company Appears</h4>
+      <ul>
+        <li><strong>Enterprise Master</strong> — in the company hierarchy</li>
+        <li><strong>User Management</strong> — their users listed</li>
+        <li><strong>Context Switcher</strong> — top-right dropdown</li>
+        <li><strong>Contracts</strong> — filtered to their company</li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  &copy; 2026 <span>CimpleIT LLC</span>. All rights reserved. | License<span>IQ</span> — AI-Native Contract Intelligence
+</div>
+
+</body>
+</html>

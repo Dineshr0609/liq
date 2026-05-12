@@ -1,0 +1,74 @@
+SELECT 
+  -- ============ CONTRACTS TABLE ============
+  c.id AS contract_uuid,
+  c.contract_number,
+  c.display_name,
+  c.original_name,
+  c.status AS processing_status,
+  c.contract_type,
+  c.effective_start,
+  c.effective_end,
+  c.counterparty_name,
+  c.company_id,
+
+  -- ============ CONTRACT MASTER ============
+  cm.contract_id AS cm_contract_id,
+  cm.contract_name,
+  cm.contract_type AS cm_contract_type,
+  cm.contract_category,
+  cm.contract_status,
+  cm.owning_party,
+  cm.counterparty_type,
+  cm.territory_scope,
+  cm.channel_scope,
+  cm.contract_value_estimated_annual,
+  cm.currency,
+  cm.payment_frequency,
+  cm.auto_renew,
+  cm.renewal_term_months,
+  cm.linked_contract_id,
+
+  -- ============ COMPANY MASTER ============
+  comp.company_name,
+  comp.legal_entity_name,
+  comp.industry,
+  comp.headquarters_country,
+  comp.annual_revenue_millions,
+  comp.erp_system,
+  comp.primary_currency,
+  comp.fiscal_year_end,
+
+  -- ============ PIPELINE RUN ============
+  er.id AS run_id,
+  er.status AS pipeline_status,
+  er.stage_a_status,
+  er.stage_b_status,
+  er.stage_c_status,
+  er.overall_confidence,
+
+  -- ============ STAGE TIMING ============
+  esa.status AS stage_a_result,
+  esa.started_at AS stage_a_start,
+  esa.completed_at AS stage_a_end,
+  esb.status AS stage_b_result,
+  esb.started_at AS stage_b_start,
+  esb.completed_at AS stage_b_end,
+  esc.status AS stage_c_result,
+  esc.started_at AS stage_c_start,
+  esc.completed_at AS stage_c_end,
+
+  -- ============ ANALYSIS ============
+  ca.summary,
+  ca.confidence AS analysis_confidence,
+  ca.key_terms,
+  ca.header_review_flags,
+
+  -- ============ COUNTS ============
+  (SELECT COUNT(*) FROM contract_clauses cc WHERE cc.contract_id = c.id) AS clauses_extracted,
+  (SELECT COUNT(*) FROM contract_rules rr WHERE rr.contract_id = c.id AND rr.template_code IS NOT NULL) AS pipeline_rules_mapped,
+  (SELECT COUNT(*) FROM rule_conflicts rc WHERE rc.contract_id = c.id) AS conflicts_found,
+  (SELECT COUNT(*) FROM contract_terms ct WHERE ct.contract_id = cm.contract_id) AS master_terms_count,
+  (SELECT COUNT(*) FROM contract_qualifiers cq JOIN contract_terms ct2 ON ct2.term_id = cq.term_id WHERE ct2.contract_id = cm.contract_id) AS master_qualifiers_count,
+  (SELECT COUNT(*) FROM sales_data sd WHERE sd.matched_contract_id = c.id) AS sales_transactions
+
+FROM contracts c

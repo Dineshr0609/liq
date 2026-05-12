@@ -1,0 +1,4 @@
+date,txnId,productCode,productName,licenseType,territory,channel,qty,unitPrice,grossAmount,netAmount,licenseeCode
+2026-01-18,RLA-S-3001,TECH-LIC-01,Encryption SDK,Embedded,United States,Direct,1,250000.00,250000.00,250000.00,LIC-301
+2026-02-21,RLA-S-3002,TECH-LIC-02,Imaging API,SaaS,Europe,Direct,1,180000.00,180000.00,180000.00,LIC-302
+2026-03-29,RLA-S-3003,TECH-LIC-01,Encryption SDK,Embedded,Asia Pacific,Direct,1,310000.00,310000.00,310000.00,LIC-303

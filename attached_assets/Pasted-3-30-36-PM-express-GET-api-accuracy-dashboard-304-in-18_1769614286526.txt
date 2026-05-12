@@ -1,0 +1,41 @@
+3:30:36 PM [express] GET /api/accuracy/dashboard 304 in 185ms :: {"totalTestCases":21,"contractTypes…
+3:30:36 PM [express] GET /api/accuracy/test-suite-stats 500 in 196ms :: {"error":"column \"run_date\…
+3:30:41 PM [express] GET /api/accuracy/test-cases/21 304 in 141ms :: {"id":21,"name":"Conditional Ro…
+🔍 [RAG-HYBRID] Starting HYBRID RAG extraction for contract test_21_1769614246573
+   Step 1: Fast keyword-based extraction (immediate)
+   Step 2: Background embedding generation (async, for future refinement)
+📦 [RAG-HYBRID] Created 1 chunks, 1 contain payment terms (instant)
+🔄 [RAG-BACKGROUND] Starting background embedding generation for 1 chunks...
+⏭️ [RAG-BACKGROUND] Skipping chunk storage for test contract test_21_1769614246573
+📄 [RAG-HYBRID] Using 1 chunks for extraction (embeddings generating in background)
+📋 Loaded custom prompts for contract type: royalty_license (merged with defaults)
+🔍 [SANITIZE] Processing 10 raw rules
+✅ [RAG-GROUNDED] Extracted 10 rules from RAG context
+🔍 [RAG-RETURN] Building return object with 10 rules
+   First rule sample: {"ruleType":"percentage","ruleName":"Base Royalty","description":"6% of Net Sales","conditions":{"productCategories":["All"]},"calculation":{"rate":0.06},"sourceSpan":{"text":"6% of Net Sales","page":
+[FLATTEN] Transformed extraction: 10 fields
+[FLATTEN] Extracted fields: baseRoyaltyRate, royaltyRate, mdfRate, marketingRoyalty
+[FLATTEN] Transformed extraction: 10 fields
+[FLATTEN] Extracted fields: baseRoyaltyRate, royaltyRate, mdfRate, marketingRoyalty
+[FLATTEN] Transformed extraction: 10 fields
+[FLATTEN] Extracted fields: baseRoyaltyRate, royaltyRate, mdfRate, marketingRoyalty
+[FLATTEN] Transformed extraction: 10 fields
+[FLATTEN] Extracted fields: baseRoyaltyRate, royaltyRate, mdfRate, marketingRoyalty
+[FLATTEN] Transformed extraction: 10 fields
+[FLATTEN] Extracted fields: baseRoyaltyRate, royaltyRate, mdfRate, marketingRoyalty
+[FLATTEN] Transformed extraction: 10 fields
+[FLATTEN] Extracted fields: baseRoyaltyRate, royaltyRate, mdfRate, marketingRoyalty
+[FLATTEN] Transformed extraction: 10 fields
+[FLATTEN] Extracted fields: baseRoyaltyRate, royaltyRate, mdfRate, marketingRoyalty
+[FLATTEN] Transformed extraction: 10 fields
+[FLATTEN] Extracted fields: baseRoyaltyRate, royaltyRate, mdfRate, marketingRoyalty
+[FLATTEN] Transformed extraction: 10 fields
+[FLATTEN] Extracted fields: baseRoyaltyRate, royaltyRate, mdfRate, marketingRoyalty
+[FLATTEN] Transformed extraction: 10 fields
+[FLATTEN] Extracted fields: baseRoyaltyRate, royaltyRate, mdfRate, marketingRoyalty
+[FLATTEN] Transformed extraction: 10 fields
+[FLATTEN] Extracted fields: baseRoyaltyRate, royaltyRate, mdfRate, marketingRoyalty
+3:30:49 PM [express] POST /api/accuracy/test-cases/21/run 200 in 2563ms :: {"testCaseId":21,"testCas…
+3:30:49 PM [express] GET /api/accuracy/test-cases 304 in 215ms :: [{"id":21,"name":"Conditional Roya…
+3:30:53 PM [express] GET /api/contracts 304 in 243ms :: {"contracts":[{"id":"80bfc7e0-af6b-42eb-a1fa…
+3:30:59 PM [express] GET /api/contracts 304 in 204ms :: {"contracts":[{"id":"80bfc7e0-af6b-42eb-a1fa…

@@ -1,0 +1,4 @@
+date,txnId,productCode,productName,category,territory,channel,qty,unitPrice,grossAmount,netAmount,customerCode
+2026-01-15,VRP-S-1001,WIDGET-100,Premium Widget,Hardware,United States,Distributor,250,42.50,10625.00,9775.00,CUST-101
+2026-02-08,VRP-S-1002,WIDGET-200,Standard Widget,Hardware,Canada,Distributor,140,28.00,3920.00,3606.40,CUST-102
+2026-03-22,VRP-S-1003,WIDGET-100,Premium Widget,Hardware,Mexico,Distributor,310,42.50,13175.00,12121.00,CUST-103

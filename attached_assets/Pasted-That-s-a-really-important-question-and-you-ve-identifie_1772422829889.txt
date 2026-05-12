@@ -1,0 +1,37 @@
+That's a really important question, and you've identified a real design consideration. Let me explain how it currently works and what the gap is.
+How It Works Today
+
+When you upload sales data company-wide (no contract selected), the data sits in a shared pool tagged with the company/business unit/location context.
+
+When you go to any specific contract's License Fee Dashboard and run a calculation, it:
+•	Looks at that contract's organizational context (company, business unit, location)
+•	Pulls sales data that matches those org filters
+•	Applies that contract's rules against the matched sales data
+So if you have:
+•	Contract A (Royalty Agreement) — rule: "5% of gross sales"
+•	Contract B (Rebate Agreement) — rule: "2% discount on purchases over $100K"
+And you uploaded one company-wide sales dataset, then:
+•	Running calculation from Contract A applies the 5% royalty formula
+•	Running calculation from Contract B applies the 2% rebate formula
+•	Both use the same underlying sales data, just different formulas
+
+The Gap You're Pointing Out
+You're right that this creates a potential issue: not all sales data is relevant to every contract. A royalty contract about plant varieties shouldn't calculate against office supply purchase data that's actually meant for a rebate agreement.
+Right now, the system relies on:
+•	The user choosing which contract to calculate from (manual context)
+•	Organizational filters (company/BU/location narrows it down)
+•	ERP field matching (when enabled, maps specific sales columns to contract terms)
+But there's no automatic mechanism that says "this sales row belongs to the royalty contract, and that sales row belongs to the rebate contract" when both contracts share the same company context.
+
+How This Should Ideally Work
+In enterprise platforms, this is typically solved by one or more of these approaches:
+•	Product/Category matching — Contract rules define which products or categories they apply to. Sales rows are matched by product code or category.
+•	Vendor/Counterparty matching — The contract's counterparty (vendor/licensor) is matched against the vendor field in sales data.
+•	Contract-specific sales upload — Users upload sales data directly to the relevant contract rather than company-wide.
+Your system already has some of this infrastructure — rules have productCategories and territories fields, and contracts have counterpartyName. The ERP mapping system is also designed to create this linkage.
+In Practice Today
+The safest workflow for your users right now is:
+•	For clear-cut cases: Upload sales data directly to the specific contract (contract-specific upload)
+•	For shared sales pools: Use the ERP Semantic Matching feature, which maps sales data fields to each contract's specific field mappings, giving more precise matching
+•	For company-wide uploads: The user is responsible for running calculations from the correct contract, understanding that the same data pool is available to all contracts in that company
+

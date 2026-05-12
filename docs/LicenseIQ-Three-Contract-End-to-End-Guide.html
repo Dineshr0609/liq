@@ -1,0 +1,1361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LicenseIQ - End-to-End Guide: Three Contract Scenarios</title>
+  <style>
+    :root {
+      --primary: #1e40af;
+      --primary-light: #3b82f6;
+      --primary-bg: #eff6ff;
+      --success: #059669;
+      --success-bg: #ecfdf5;
+      --warning: #d97706;
+      --warning-bg: #fffbeb;
+      --danger: #dc2626;
+      --danger-bg: #fef2f2;
+      --purple: #7c3aed;
+      --purple-bg: #f5f3ff;
+      --gray-50: #f9fafb;
+      --gray-100: #f3f4f6;
+      --gray-200: #e5e7eb;
+      --gray-300: #d1d5db;
+      --gray-500: #6b7280;
+      --gray-600: #4b5563;
+      --gray-700: #374151;
+      --gray-800: #1f2937;
+      --gray-900: #111827;
+      --contract1: #0891b2;
+      --contract1-bg: #ecfeff;
+      --contract2: #7c3aed;
+      --contract2-bg: #f5f3ff;
+      --contract3: #059669;
+      --contract3-bg: #ecfdf5;
+      --radius: 12px;
+      --shadow: 0 1px 3px rgba(0,0,0,.1), 0 1px 2px rgba(0,0,0,.06);
+      --shadow-md: 0 4px 6px rgba(0,0,0,.07), 0 2px 4px rgba(0,0,0,.06);
+      --shadow-lg: 0 10px 15px rgba(0,0,0,.1), 0 4px 6px rgba(0,0,0,.05);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      color: var(--gray-800);
+      line-height: 1.7;
+      background: var(--gray-50);
+    }
+
+    .hero {
+      background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 30%, #3b82f6 70%, #60a5fa 100%);
+      color: white;
+      padding: 60px 0 50px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -20%;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: -30%;
+      left: -10%;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+    .hero-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 32px;
+      position: relative;
+      z-index: 1;
+    }
+    .hero-badge {
+      display: inline-block;
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 20px;
+      padding: 4px 16px;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      margin-bottom: 20px;
+      backdrop-filter: blur(4px);
+    }
+    .hero h1 {
+      font-size: 36px;
+      font-weight: 800;
+      margin-bottom: 12px;
+      letter-spacing: -0.5px;
+    }
+    .hero p {
+      font-size: 17px;
+      opacity: 0.9;
+      max-width: 700px;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 32px;
+    }
+
+    nav.toc {
+      background: white;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-md);
+      padding: 28px 32px;
+      margin: -30px auto 40px;
+      position: relative;
+      z-index: 2;
+      max-width: 1100px;
+    }
+    nav.toc h2 {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--gray-900);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    nav.toc ol {
+      list-style: none;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px 32px;
+    }
+    nav.toc li a {
+      color: var(--primary);
+      text-decoration: none;
+      font-size: 14.5px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 0;
+      transition: color 0.15s;
+    }
+    nav.toc li a:hover { color: var(--primary-light); }
+    nav.toc li a .num {
+      background: var(--primary-bg);
+      color: var(--primary);
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    section {
+      margin-bottom: 48px;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid var(--gray-200);
+    }
+    .section-header .icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+    .section-header h2 {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--gray-900);
+    }
+
+    .card {
+      background: white;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 28px;
+      margin-bottom: 24px;
+      border: 1px solid var(--gray-200);
+    }
+    .card h3 {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--gray-900);
+      margin-bottom: 16px;
+    }
+    .card h4 {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--gray-700);
+      margin: 20px 0 10px;
+    }
+
+    .contract-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 3px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+    }
+    .badge-retail { background: var(--contract1-bg); color: var(--contract1); }
+    .badge-patent { background: var(--contract2-bg); color: var(--contract2); }
+    .badge-rebate { background: var(--contract3-bg); color: var(--contract3); }
+
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      font-size: 13.5px;
+      margin: 12px 0 16px;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid var(--gray-200);
+    }
+    table thead th {
+      background: var(--gray-800);
+      color: white;
+      padding: 10px 14px;
+      text-align: left;
+      font-weight: 600;
+      font-size: 12.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      white-space: nowrap;
+    }
+    table tbody td {
+      padding: 9px 14px;
+      border-bottom: 1px solid var(--gray-100);
+      vertical-align: top;
+    }
+    table tbody tr:last-child td { border-bottom: none; }
+    table tbody tr:hover { background: var(--gray-50); }
+    table.compact td, table.compact th { padding: 7px 12px; }
+
+    .highlight-row td { background: var(--primary-bg) !important; font-weight: 600; }
+    .highlight-row-green td { background: var(--success-bg) !important; font-weight: 600; }
+    .highlight-row-purple td { background: var(--purple-bg) !important; font-weight: 600; }
+
+    .status-badge {
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: 12px;
+      font-size: 11.5px;
+      font-weight: 600;
+    }
+    .status-pending { background: var(--warning-bg); color: var(--warning); }
+    .status-confirmed { background: var(--success-bg); color: var(--success); }
+
+    .confidence-bar {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .confidence-fill {
+      width: 50px;
+      height: 6px;
+      background: var(--gray-200);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .confidence-fill span {
+      display: block;
+      height: 100%;
+      border-radius: 3px;
+    }
+    .conf-high { background: var(--success); }
+    .conf-med { background: var(--warning); }
+    .conf-low { background: var(--danger); }
+
+    pre {
+      background: var(--gray-900);
+      color: #e5e7eb;
+      padding: 16px 20px;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-size: 13px;
+      line-height: 1.6;
+      margin: 12px 0;
+      font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+    }
+    pre .key { color: #93c5fd; }
+    pre .string { color: #86efac; }
+    pre .number { color: #fbbf24; }
+
+    .workflow-diagram {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      margin: 20px 0;
+    }
+    .workflow-step {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 12px 16px;
+      background: white;
+      border: 1px solid var(--gray-200);
+      border-radius: 8px;
+      margin-bottom: 4px;
+      position: relative;
+    }
+    .workflow-step:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      bottom: -8px;
+      left: 28px;
+      width: 2px;
+      height: 8px;
+      background: var(--primary-light);
+      z-index: 1;
+    }
+    .workflow-num {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .workflow-text {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--gray-700);
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin: 20px 0;
+    }
+    .summary-card {
+      border-radius: var(--radius);
+      padding: 24px;
+      text-align: center;
+      border: 2px solid;
+    }
+    .summary-card.retail { background: var(--contract1-bg); border-color: var(--contract1); }
+    .summary-card.patent { background: var(--contract2-bg); border-color: var(--contract2); }
+    .summary-card.rebate { background: var(--contract3-bg); border-color: var(--contract3); }
+    .summary-card .label {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
+    }
+    .summary-card .contract-name {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+    .summary-card .amount {
+      font-size: 28px;
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+    .summary-card .sub {
+      font-size: 13px;
+      opacity: 0.8;
+    }
+    .retail .label, .retail .contract-name, .retail .amount { color: var(--contract1); }
+    .patent .label, .patent .contract-name, .patent .amount { color: var(--contract2); }
+    .rebate .label, .rebate .contract-name, .rebate .amount { color: var(--contract3); }
+
+    .steps-list {
+      list-style: none;
+      margin: 12px 0;
+    }
+    .steps-list li {
+      padding: 6px 0 6px 28px;
+      position: relative;
+      font-size: 14px;
+    }
+    .steps-list li::before {
+      content: counter(step-counter);
+      counter-increment: step-counter;
+      position: absolute;
+      left: 0;
+      top: 6px;
+      width: 20px;
+      height: 20px;
+      background: var(--primary-bg);
+      color: var(--primary);
+      border-radius: 50%;
+      font-size: 11px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .steps-list { counter-reset: step-counter; }
+
+    .info-box {
+      border-radius: 8px;
+      padding: 14px 18px;
+      margin: 12px 0;
+      font-size: 14px;
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+    }
+    .info-box.blue { background: var(--primary-bg); border-left: 4px solid var(--primary); }
+    .info-box.green { background: var(--success-bg); border-left: 4px solid var(--success); }
+    .info-box.yellow { background: var(--warning-bg); border-left: 4px solid var(--warning); }
+    .info-box.red { background: var(--danger-bg); border-left: 4px solid var(--danger); }
+
+    .contract-section {
+      border-top: 4px solid;
+      border-radius: var(--radius);
+    }
+    .contract-section.retail-border { border-color: var(--contract1); }
+    .contract-section.patent-border { border-color: var(--contract2); }
+    .contract-section.rebate-border { border-color: var(--contract3); }
+
+    .tag {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      margin: 0 2px;
+    }
+    .tag-percentage { background: #dbeafe; color: #1d4ed8; }
+    .tag-fixed { background: #fce7f3; color: #be185d; }
+    .tag-tiered { background: #e0e7ff; color: #4338ca; }
+    .tag-minimum { background: #fef3c7; color: #92400e; }
+
+    .csv-block {
+      background: #1a1a2e;
+      color: #94a3b8;
+      padding: 16px 20px;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-family: 'JetBrains Mono', 'Fira Code', monospace;
+      font-size: 12.5px;
+      line-height: 1.8;
+      margin: 12px 0;
+    }
+    .csv-block .header { color: #60a5fa; font-weight: 600; }
+    .csv-block .data { color: #a5b4fc; }
+
+    .tier-visual {
+      display: flex;
+      gap: 0;
+      margin: 16px 0;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .tier-bar {
+      padding: 14px 12px;
+      text-align: center;
+      color: white;
+      flex: 1;
+    }
+    .tier-bar .rate { font-size: 22px; font-weight: 800; }
+    .tier-bar .range { font-size: 11px; opacity: 0.9; margin-top: 2px; }
+    .tier-bar .name { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.8; margin-top: 4px; }
+
+    .result-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--gray-100);
+      font-size: 14px;
+    }
+    .result-row:last-child { border-bottom: none; }
+    .result-row .label { color: var(--gray-600); font-weight: 500; }
+    .result-row .value { font-weight: 700; color: var(--gray-900); }
+    .result-row .value.big { font-size: 20px; color: var(--primary); }
+
+    footer {
+      background: var(--gray-800);
+      color: var(--gray-300);
+      text-align: center;
+      padding: 24px;
+      margin-top: 60px;
+      font-size: 13px;
+    }
+
+    @media (max-width: 768px) {
+      .hero h1 { font-size: 26px; }
+      nav.toc ol { grid-template-columns: 1fr; }
+      .summary-grid { grid-template-columns: 1fr; }
+      .tier-visual { flex-direction: column; }
+      .container { padding: 0 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-inner">
+    <span class="hero-badge">COMPLETE TESTING GUIDE</span>
+    <h1>LicenseIQ - End-to-End Guide</h1>
+    <p>Step-by-step instructions for processing three contract types through the full platform, including Company Mapping Library field mappings, License Fee Rules configuration, and calculation verification.</p>
+  </div>
+</div>
+
+<div class="container">
+
+  <nav class="toc">
+    <h2>&#128203; Table of Contents</h2>
+    <ol>
+      <li><a href="#overview"><span class="num">1</span> Overview &amp; Workflow</a></li>
+      <li><a href="#contract1"><span class="num">2</span> Specialty Retail Agreement</a></li>
+      <li><a href="#contract2"><span class="num">3</span> Patent License Agreement</a></li>
+      <li><a href="#contract3"><span class="num">4</span> Channel Rebate Agreement</a></li>
+      <li><a href="#mapping-library"><span class="num">5</span> Company Mapping Library Reference</a></li>
+      <li><a href="#rules-reference"><span class="num">6</span> License Fee Rules Reference</a></li>
+      <li><a href="#csv-reference"><span class="num">7</span> Sales Data CSV Reference</a></li>
+      <li><a href="#results"><span class="num">8</span> Calculation Results Summary</a></li>
+      <li><a href="#troubleshooting"><span class="num">9</span> Troubleshooting</a></li>
+    </ol>
+  </nav>
+
+  <!-- SECTION 1: OVERVIEW -->
+  <section id="overview">
+    <div class="section-header">
+      <div class="icon" style="background: var(--primary-bg); color: var(--primary);">&#128640;</div>
+      <h2>1. Overview</h2>
+    </div>
+
+    <div class="summary-grid">
+      <div class="summary-card retail">
+        <div class="label">CNT-2026-001</div>
+        <div class="contract-name">Specialty Retail</div>
+        <div class="amount">$128K</div>
+        <div class="sub">50 txns &middot; $2.56M sales</div>
+      </div>
+      <div class="summary-card patent">
+        <div class="label">CNT-2026-002</div>
+        <div class="contract-name">Patent License</div>
+        <div class="amount">$1.08M</div>
+        <div class="sub">27 txns &middot; $19.67M sales</div>
+      </div>
+      <div class="summary-card rebate">
+        <div class="label">CNT-2026-003</div>
+        <div class="contract-name">Channel Rebate</div>
+        <div class="amount">$822K</div>
+        <div class="sub">28 txns &middot; $6.85M sales</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>End-to-End Workflow (Same for All Contracts)</h3>
+      <div class="workflow-diagram">
+        <div class="workflow-step"><span class="workflow-num">1</span><span class="workflow-text">Upload Contract PDF</span></div>
+        <div class="workflow-step"><span class="workflow-num">2</span><span class="workflow-text">AI Extracts Rules Automatically</span></div>
+        <div class="workflow-step"><span class="workflow-num">3</span><span class="workflow-text">Enrich Rules with AI (adds formula details)</span></div>
+        <div class="workflow-step"><span class="workflow-num">4</span><span class="workflow-text">Review &amp; Confirm Rules in "Manage License Fee Rules"</span></div>
+        <div class="workflow-step"><span class="workflow-num">5</span><span class="workflow-text">Map Terms in Company Mapping Library (Items + Vendors)</span></div>
+        <div class="workflow-step"><span class="workflow-num">6</span><span class="workflow-text">Upload Sales Data CSV</span></div>
+        <div class="workflow-step"><span class="workflow-num">7</span><span class="workflow-text">Run License Fee Calculation</span></div>
+        <div class="workflow-step"><span class="workflow-num">8</span><span class="workflow-text">View Results &amp; Reports</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Three Contracts at a Glance</h3>
+      <table>
+        <thead>
+          <tr><th>#</th><th>Contract</th><th>Number</th><th>Type</th><th>Counterparty</th><th>Total Sales</th><th>Total Fee</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td><td>Specialty Retail Performance Agreement</td><td>CNT-2026-001</td>
+            <td><span class="contract-badge badge-retail">Rebate/MDF</span></td>
+            <td>Tech Sound Audio</td><td>$2,560,486.72</td><td><strong>$128,024.34</strong></td>
+          </tr>
+          <tr>
+            <td>2</td><td>Patent License Agreement</td><td>CNT-2026-002</td>
+            <td><span class="contract-badge badge-patent">Royalty</span></td>
+            <td>PrecisionTech Manufacturing Corp.</td><td>$19,667,709.84</td><td><strong>$1,081,724.04</strong></td>
+          </tr>
+          <tr>
+            <td>3</td><td>Channel Rebate Agreement</td><td>CNT-2026-003</td>
+            <td><span class="contract-badge badge-rebate">Rebate</span></td>
+            <td>InnovateSoft Solutions Inc.</td><td>$6,850,000.00</td><td><strong>$822,000.00</strong></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- SECTION 2: CONTRACT 1 - SPECIALTY RETAIL -->
+  <section id="contract1">
+    <div class="section-header">
+      <div class="icon" style="background: var(--contract1-bg); color: var(--contract1);">&#127911;</div>
+      <h2>2. Contract 1: Specialty Retail Performance Agreement</h2>
+    </div>
+
+    <div class="card contract-section retail-border">
+      <h3>2.1 Contract Details <span class="contract-badge badge-retail">CNT-2026-001</span></h3>
+      <table class="compact">
+        <thead><tr><th>Field</th><th>Value</th></tr></thead>
+        <tbody>
+          <tr><td>Contract Number</td><td><strong>CNT-2026-001</strong></td></tr>
+          <tr><td>PDF File</td><td>6.SPECIALTY RETAIL PERFORMANCE AGREEMENT.pdf</td></tr>
+          <tr><td>Contract Type</td><td>Rebate / MDF</td></tr>
+          <tr><td>Counterparty</td><td>Tech Sound Audio</td></tr>
+          <tr><td>Effective Date</td><td>01/01/2023</td></tr>
+          <tr><td>Territory</td><td>United States</td></tr>
+          <tr><td>Industry</td><td>Consumer Electronics / Audio</td></tr>
+          <tr><td>Products</td><td>Wireless Headphones, Wired Headphones, Soundbars</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3>2.2 AI-Extracted Rules (7 Rules)</h3>
+      <table>
+        <thead><tr><th>#</th><th>Rule Name</th><th>Type</th><th>Purpose</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>Partner Classification Status</td><td><span class="tag tag-tiered">tiered</span></td><td>Validates partner eligibility</td></tr>
+          <tr><td>2</td><td>Eligible Products</td><td><span class="tag tag-tiered">tiered</span></td><td>Lists eligible product categories</td></tr>
+          <tr><td>3</td><td>Authorized Territory</td><td><span class="tag tag-tiered">tiered</span></td><td>Validates territory = United States</td></tr>
+          <tr><td>4</td><td>Authorized Channel</td><td><span class="tag tag-tiered">tiered</span></td><td>Validates authorized sales channels</td></tr>
+          <tr class="highlight-row"><td>5</td><td><strong>Specialty Retail Base Rebate</strong></td><td><span class="tag tag-percentage">percentage</span></td><td><strong>5% rebate on eligible net sales</strong></td></tr>
+          <tr class="highlight-row"><td>6</td><td><strong>Specialty Retail Display Bonus</strong></td><td><span class="tag tag-fixed">fixed_fee</span></td><td><strong>$2 per unit bonus when &ge; 50 units</strong></td></tr>
+          <tr><td>7</td><td>Minimum Threshold for Display Bonus</td><td><span class="tag tag-minimum">minimum</span></td><td>50-unit minimum threshold</td></tr>
+        </tbody>
+      </table>
+      <div class="info-box blue">Highlighted rows are the calculation rules that generate actual fee amounts.</div>
+    </div>
+
+    <div class="card">
+      <h3>2.3 Formula Definitions</h3>
+
+      <h4>Rule 5 - Specialty Retail Base Rebate</h4>
+      <pre><code>{
+  <span class="key">"type"</span>: <span class="string">"percentage"</span>,
+  <span class="key">"baseRate"</span>: <span class="number">0.05</span>,
+  <span class="key">"basisField"</span>: <span class="string">"netSalesValue"</span>,
+  <span class="key">"calculationBasis"</span>: <span class="string">"Net Sales Value"</span>
+}</code></pre>
+      <div class="info-box green">Rate: 5% of Net Sales &middot; Payment: Quarterly &middot; Deadline: 45 days after quarter-end</div>
+
+      <h4>Rule 6 - Specialty Retail Display Bonus</h4>
+      <pre><code>{
+  <span class="key">"type"</span>: <span class="string">"fixed_fee"</span>,
+  <span class="key">"fixedAmount"</span>: <span class="number">2</span>,
+  <span class="key">"fixedAmountPeriod"</span>: <span class="string">"per Unit"</span>,
+  <span class="key">"threshold"</span>: <span class="number">50</span>,
+  <span class="key">"bonusThreshold"</span>: <span class="number">50</span>,
+  <span class="key">"calculationBasis"</span>: <span class="string">"Units Sold"</span>
+}</code></pre>
+      <div class="info-box yellow">$2 per unit &middot; Minimum 50 units required &middot; Headphones &amp; Speakers only</div>
+    </div>
+
+    <div class="card">
+      <h3>2.4 Sales Data CSV Format</h3>
+      <table class="compact">
+        <thead><tr><th>CSV Column</th><th>Maps To</th><th>Example</th></tr></thead>
+        <tbody>
+          <tr><td>transaction_id</td><td>Transaction ID</td><td>TXN-SR-001</td></tr>
+          <tr><td>transaction_date</td><td>Date (optional)</td><td>01/15/2023</td></tr>
+          <tr><td>product_name</td><td>Product Name</td><td>EssentialSound Wireless - Black Headphones</td></tr>
+          <tr><td>product_code</td><td>Product Code / SKU</td><td>SKU-WH-001</td></tr>
+          <tr><td>category</td><td>Category</td><td>Wireless Headphones</td></tr>
+          <tr><td>territory</td><td>Territory</td><td>United States</td></tr>
+          <tr><td>quantity</td><td>Units Sold</td><td>150</td></tr>
+          <tr><td>unit_price</td><td>Unit Price</td><td>89.99</td></tr>
+          <tr><td>gross_amount</td><td>Gross Sales</td><td>13498.50</td></tr>
+          <tr><td>net_amount</td><td>Net Sales</td><td>12823.58</td></tr>
+          <tr><td>currency</td><td>Currency</td><td>USD</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3>2.5 Expected Results</h3>
+      <div class="result-row"><span class="label">Total Sales Transactions</span><span class="value">50</span></div>
+      <div class="result-row"><span class="label">Total Sales Amount</span><span class="value">$2,560,486.72</span></div>
+      <div class="result-row"><span class="label">Total License Fee (Rebate)</span><span class="value big">$128,024.34</span></div>
+      <div class="result-row"><span class="label">Calculation Status</span><span class="value"><span class="status-badge status-pending">pending_approval</span></span></div>
+    </div>
+  </section>
+
+  <!-- SECTION 3: CONTRACT 2 - PATENT LICENSE -->
+  <section id="contract2">
+    <div class="section-header">
+      <div class="icon" style="background: var(--contract2-bg); color: var(--contract2);">&#9881;</div>
+      <h2>3. Contract 2: Patent License Agreement</h2>
+    </div>
+
+    <div class="card contract-section patent-border">
+      <h3>3.1 Contract Details <span class="contract-badge badge-patent">CNT-2026-002</span></h3>
+      <table class="compact">
+        <thead><tr><th>Field</th><th>Value</th></tr></thead>
+        <tbody>
+          <tr><td>Contract Number</td><td><strong>CNT-2026-002</strong></td></tr>
+          <tr><td>PDF File</td><td>CTR-PT-001.pdf</td></tr>
+          <tr><td>Contract Type</td><td>Royalty (Patent License)</td></tr>
+          <tr><td>Counterparty</td><td>PrecisionTech Manufacturing Corp.</td></tr>
+          <tr><td>Effective Date</td><td>01/01/2019</td></tr>
+          <tr><td>Expiration Date</td><td>01/01/2029</td></tr>
+          <tr><td>Territory</td><td>United States</td></tr>
+          <tr><td>Industry</td><td>Precision Manufacturing</td></tr>
+          <tr><td>Products</td><td>Machined Components, Forged Components, CNC Equipment</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3>3.2 AI-Extracted Rules (7 Rules)</h3>
+      <table>
+        <thead><tr><th>#</th><th>Rule Name</th><th>Type</th><th>Purpose</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>ASSIGNED LICENSEES / PARTNERS</td><td><span class="tag tag-tiered">tiered</span></td><td>Partner reference table</td></tr>
+          <tr><td>2</td><td>ELIGIBLE PRODUCTS</td><td><span class="tag tag-tiered">tiered</span></td><td>Product catalog</td></tr>
+          <tr><td>3</td><td>COMMERCIAL TERMS AND CALCULATIONS</td><td><span class="tag tag-tiered">tiered</span></td><td>Rate table from PDF</td></tr>
+          <tr class="highlight-row-purple"><td>4</td><td><strong>Royalty Rate</strong></td><td><span class="tag tag-percentage">percentage</span></td><td><strong>5.5% of Net Sales</strong></td></tr>
+          <tr class="highlight-row-purple"><td>5</td><td><strong>High-Volume Royalty Reduction</strong></td><td><span class="tag tag-percentage">percentage</span></td><td><strong>4.5% when annual sales &ge; $10M</strong></td></tr>
+          <tr class="highlight-row-purple"><td>6</td><td><strong>Minimum Annual Royalty</strong></td><td><span class="tag tag-fixed">fixed_fee</span></td><td><strong>$500,000 minimum guarantee</strong></td></tr>
+          <tr><td>7</td><td>Patent Minimum Annual Royalty</td><td><span class="tag tag-minimum">minimum</span></td><td>Same $500K minimum (backup)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3>3.3 Formula Definitions</h3>
+
+      <h4>Rule 4 - Royalty Rate (Standard 5.5%)</h4>
+      <pre><code>{
+  <span class="key">"type"</span>: <span class="string">"percentage"</span>,
+  <span class="key">"baseRate"</span>: <span class="number">0.055</span>,
+  <span class="key">"basisField"</span>: <span class="string">"netSalesValue"</span>,
+  <span class="key">"tiers"</span>: [
+    { <span class="key">"min"</span>: <span class="number">0</span>, <span class="key">"max"</span>: <span class="number">99999999.99</span>, <span class="key">"rate"</span>: <span class="number">0.055</span> }
+  ]
+}</code></pre>
+
+      <h4>Rule 5 - High-Volume Royalty Reduction (4.5%)</h4>
+      <pre><code>{
+  <span class="key">"type"</span>: <span class="string">"percentage"</span>,
+  <span class="key">"baseRate"</span>: <span class="number">0.045</span>,
+  <span class="key">"basisField"</span>: <span class="string">"netSalesValue"</span>,
+  <span class="key">"tiers"</span>: [
+    { <span class="key">"min"</span>: <span class="number">10000000</span>, <span class="key">"max"</span>: <span class="number">99999999.99</span>, <span class="key">"rate"</span>: <span class="number">0.045</span> }
+  ]
+}</code></pre>
+      <div class="info-box blue">Reduced rate triggers when annual net sales reach $10,000,000+</div>
+
+      <h4>Rule 6 - Minimum Annual Royalty ($500K Floor)</h4>
+      <pre><code>{
+  <span class="key">"type"</span>: <span class="string">"minimum_guarantee"</span>,
+  <span class="key">"baseRate"</span>: <span class="number">500000</span>,
+  <span class="key">"minimumGuarantee"</span>: <span class="number">500000</span>,
+  <span class="key">"description"</span>: <span class="string">"Minimum Annual Royalty of $500,000"</span>
+}</code></pre>
+      <div class="info-box yellow">If calculated royalty is less than $500,000, the fee becomes $500,000.</div>
+    </div>
+
+    <div class="card">
+      <h3>3.4 Sales Data CSV Format</h3>
+      <table class="compact">
+        <thead><tr><th>CSV Column</th><th>Maps To</th><th>Example</th></tr></thead>
+        <tbody>
+          <tr><td>Transaction ID</td><td>Transaction ID</td><td>MFG-2024-001</td></tr>
+          <tr><td>Date</td><td>Transaction Date</td><td>02/15/2024</td></tr>
+          <tr><td>Product Name</td><td>Product Name</td><td>Composite Bearing CB-500</td></tr>
+          <tr><td>Product Category</td><td>Category</td><td>Automotive transmission components</td></tr>
+          <tr><td>Application Sector</td><td>Custom Field</td><td>Automotive Transmission</td></tr>
+          <tr><td>Units Sold</td><td>Quantity</td><td>45000</td></tr>
+          <tr><td>Unit Price</td><td>Unit Price</td><td>85.00</td></tr>
+          <tr><td>Gross Sales</td><td>Gross Amount</td><td>3825000</td></tr>
+          <tr><td>Freight Costs</td><td>Deduction</td><td>45000</td></tr>
+          <tr><td>Sales Tax</td><td>Deduction</td><td>0</td></tr>
+          <tr><td>Returns Credits</td><td>Deduction</td><td>15000</td></tr>
+          <tr><td>Trade Discounts</td><td>Deduction</td><td>250000</td></tr>
+          <tr><td>Distributor Commission</td><td>Deduction</td><td>0</td></tr>
+          <tr><td>Territory</td><td>Territory</td><td>United States</td></tr>
+          <tr><td>Customer Name</td><td>Custom Field</td><td>AutoParts Direct Inc</td></tr>
+        </tbody>
+      </table>
+      <div class="info-box green"><strong>Net Sales Calculation:</strong> Gross Sales - Freight - Tax - Returns - Discounts - Commission</div>
+    </div>
+
+    <div class="card">
+      <h3>3.5 Expected Results</h3>
+      <div class="result-row"><span class="label">Total Sales Transactions</span><span class="value">27</span></div>
+      <div class="result-row"><span class="label">Total Sales Amount</span><span class="value">$19,667,709.84</span></div>
+      <div class="result-row"><span class="label">Total License Fee (Royalty)</span><span class="value big">$1,081,724.04</span></div>
+      <div class="result-row"><span class="label">Effective Rate</span><span class="value">~5.5% (standard)</span></div>
+      <div class="result-row"><span class="label">Minimum Guarantee Check</span><span class="value" style="color: var(--success);">$1,081,724 &gt; $500,000 - PASS</span></div>
+      <div class="result-row"><span class="label">Calculation Status</span><span class="value"><span class="status-badge status-pending">pending_approval</span></span></div>
+    </div>
+  </section>
+
+  <!-- SECTION 4: CONTRACT 3 - CHANNEL REBATE -->
+  <section id="contract3">
+    <div class="section-header">
+      <div class="icon" style="background: var(--contract3-bg); color: var(--contract3);">&#128187;</div>
+      <h2>4. Contract 3: Channel Rebate Agreement</h2>
+    </div>
+
+    <div class="card contract-section rebate-border">
+      <h3>4.1 Contract Details <span class="contract-badge badge-rebate">CNT-2026-003</span></h3>
+      <table class="compact">
+        <thead><tr><th>Field</th><th>Value</th></tr></thead>
+        <tbody>
+          <tr><td>Contract Number</td><td><strong>CNT-2026-003</strong></td></tr>
+          <tr><td>PDF File</td><td>CTR-IS-001_FINAL_WITH_PRODUCTS_ADDED.pdf</td></tr>
+          <tr><td>Contract Type</td><td>Rebate (Channel Incentive)</td></tr>
+          <tr><td>Counterparty</td><td>InnovateSoft Solutions Inc.</td></tr>
+          <tr><td>Effective Date</td><td>01/01/2021</td></tr>
+          <tr><td>Expiration Date</td><td>01/01/2026</td></tr>
+          <tr><td>Territory</td><td>United States</td></tr>
+          <tr><td>Industry</td><td>Enterprise Software</td></tr>
+          <tr><td>Products</td><td>SCM, WMS, TMS, Analytics Enterprise software</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3>4.2 AI-Extracted Rules (12 Rules)</h3>
+      <table>
+        <thead><tr><th>#</th><th>Rule Name</th><th>Type</th><th>Purpose</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>Contract Details</td><td><span class="tag tag-tiered">tiered</span></td><td>Contract metadata</td></tr>
+          <tr><td>2</td><td>Contracting Parties</td><td><span class="tag tag-tiered">tiered</span></td><td>Validates parties</td></tr>
+          <tr><td>3</td><td>Territory Authorization</td><td><span class="tag tag-tiered">tiered</span></td><td>Territory = United States</td></tr>
+          <tr><td>4</td><td>Channel Authorization</td><td><span class="tag tag-tiered">tiered</span></td><td>Tier 1 VAR, Direct Sales</td></tr>
+          <tr><td>5</td><td>Eligibility Conditions</td><td><span class="tag tag-tiered">tiered</span></td><td>Product eligibility filters</td></tr>
+          <tr><td>6</td><td>Commercial Terms</td><td><span class="tag tag-tiered">tiered</span></td><td>Tiered calculation overview</td></tr>
+          <tr class="highlight-row-green"><td>7</td><td><strong>Tier 1 VAR Base Rebate - Entry</strong></td><td><span class="tag tag-percentage">percentage</span></td><td><strong>12% on $0 - $499,999.99</strong></td></tr>
+          <tr class="highlight-row-green"><td>8</td><td><strong>Tier 1 VAR Base Rebate - Standard</strong></td><td><span class="tag tag-percentage">percentage</span></td><td><strong>15% on $500K - $1.5M</strong></td></tr>
+          <tr class="highlight-row-green"><td>9</td><td><strong>Tier 1 VAR Base Rebate - Preferred</strong></td><td><span class="tag tag-percentage">percentage</span></td><td><strong>18% on $1.5M - $3M</strong></td></tr>
+          <tr class="highlight-row-green"><td>10</td><td><strong>Tier 1 VAR Base Rebate - Elite</strong></td><td><span class="tag tag-percentage">percentage</span></td><td><strong>22% on $3M+</strong></td></tr>
+          <tr class="highlight-row-green"><td>11</td><td><strong>Enterprise Tier Bonus</strong></td><td><span class="tag tag-percentage">percentage</span></td><td><strong>3% additional on Enterprise Tier</strong></td></tr>
+          <tr class="highlight-row-green"><td>12</td><td><strong>Subscription Conversion Bonus</strong></td><td><span class="tag tag-fixed">fixed_fee</span></td><td><strong>$5,000 per conversion</strong></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3>4.3 Tiered Rebate Structure (Visual)</h3>
+      <div class="tier-visual">
+        <div class="tier-bar" style="background: #6ee7b7;"><div class="rate" style="color: #065f46;">12%</div><div class="range" style="color: #065f46;">$0 - $499K</div><div class="name" style="color: #065f46;">Entry</div></div>
+        <div class="tier-bar" style="background: #34d399;"><div class="rate" style="color: #064e3b;">15%</div><div class="range" style="color: #064e3b;">$500K - $1.5M</div><div class="name" style="color: #064e3b;">Standard</div></div>
+        <div class="tier-bar" style="background: #10b981;"><div class="rate">18%</div><div class="range">$1.5M - $3M</div><div class="name">Preferred</div></div>
+        <div class="tier-bar" style="background: #059669;"><div class="rate">22%</div><div class="range">$3M+</div><div class="name">Elite</div></div>
+      </div>
+
+      <h4>Enterprise Tier Bonus</h4>
+      <pre><code>{
+  <span class="key">"type"</span>: <span class="string">"percentage"</span>,
+  <span class="key">"baseRate"</span>: <span class="number">0.03</span>,
+  <span class="key">"basisField"</span>: <span class="string">"netSalesValue"</span>,
+  <span class="key">"trigger"</span>: <span class="string">"product_line = Enterprise Tier"</span>
+}</code></pre>
+      <div class="info-box green">Additional 3% on top of base rebate for Enterprise Tier products</div>
+
+      <h4>Subscription Conversion Bonus</h4>
+      <pre><code>{
+  <span class="key">"type"</span>: <span class="string">"fixed_fee"</span>,
+  <span class="key">"baseRate"</span>: <span class="number">5000</span>,
+  <span class="key">"fixedAmount"</span>: <span class="number">5000</span>,
+  <span class="key">"fixedAmountPeriod"</span>: <span class="string">"per conversion"</span>,
+  <span class="key">"trigger"</span>: <span class="string">"conversion_from = Perpetual License AND conversion_to = Annual Subscription"</span>
+}</code></pre>
+    </div>
+
+    <div class="card">
+      <h3>4.4 Sales Data CSV Format</h3>
+      <table class="compact">
+        <thead><tr><th>CSV Column</th><th>Maps To</th><th>Example</th></tr></thead>
+        <tbody>
+          <tr><td>transaction_id</td><td>Transaction ID</td><td>IS-2024-001</td></tr>
+          <tr><td>transaction_date</td><td>Date (optional)</td><td>03/15/2024</td></tr>
+          <tr><td>product_name</td><td>Product Name</td><td>SCM Enterprise</td></tr>
+          <tr><td>product_code</td><td>Product Code</td><td>SCM-ENT-001</td></tr>
+          <tr><td>category</td><td>Category</td><td>Enterprise Software</td></tr>
+          <tr><td>product_line</td><td>Product Line</td><td>Enterprise Tier</td></tr>
+          <tr><td>territory</td><td>Territory</td><td>United States</td></tr>
+          <tr><td>quantity</td><td>Quantity</td><td>1</td></tr>
+          <tr><td>unit_price</td><td>Unit Price</td><td>250000</td></tr>
+          <tr><td>gross_amount</td><td>Gross Sales</td><td>250000</td></tr>
+          <tr><td>net_sales</td><td>Net Sales</td><td>250000</td></tr>
+          <tr><td>conversion_from</td><td>Conversion Source</td><td>Perpetual License</td></tr>
+          <tr><td>conversion_to</td><td>Conversion Target</td><td>Annual Subscription</td></tr>
+          <tr><td>currency</td><td>Currency</td><td>USD</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3>4.5 Expected Results</h3>
+      <div class="result-row"><span class="label">Total Sales Transactions</span><span class="value">28</span></div>
+      <div class="result-row"><span class="label">Total Sales Amount</span><span class="value">$6,850,000.00</span></div>
+      <div class="result-row"><span class="label">Total License Fee (Rebate)</span><span class="value big">$822,000.00</span></div>
+      <div class="result-row"><span class="label">Primary Tier Applied</span><span class="value">12% (Entry rate on cumulative basis)</span></div>
+      <div class="result-row"><span class="label">Calculation Status</span><span class="value"><span class="status-badge status-pending">pending_approval</span></span></div>
+    </div>
+  </section>
+
+  <!-- SECTION 5: COMPANY MAPPING LIBRARY -->
+  <section id="mapping-library">
+    <div class="section-header">
+      <div class="icon" style="background: #fef3c7; color: #d97706;">&#128279;</div>
+      <h2>5. Company Mapping Library - Field Mapping Reference</h2>
+    </div>
+
+    <div class="info-box blue">The Company Mapping Library maps contract terms to your ERP system fields. After AI extraction, these appear on the Company Mapping Library page and must be reviewed and confirmed.</div>
+
+    <div class="card contract-section retail-border">
+      <h3>5.1 CNT-2026-001 (Specialty Retail) - Items Mappings</h3>
+      <table class="compact">
+        <thead><tr><th>Contract Term</th><th>ERP Field Name</th><th>Entity</th><th>Confidence</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>EssentialSound Wireless - Black Headphones</td><td>Item number/SKU code</td><td>Items</td><td><span class="confidence-bar"><span class="confidence-fill"><span class="conf-high" style="width:90%"></span></span>0.9</span></td><td><span class="status-badge status-pending">Pending</span></td></tr>
+          <tr><td>EssentialSound Wireless - White Headphones</td><td>Item number/SKU code</td><td>Items</td><td><span class="confidence-bar"><span class="confidence-fill"><span class="conf-high" style="width:90%"></span></span>0.9</span></td><td><span class="status-badge status-confirmed">Confirmed</span></td></tr>
+          <tr><td>Essential Wired - Black Headphones</td><td>Item number/SKU code</td><td>Items</td><td><span class="confidence-bar"><span class="confidence-fill"><span class="conf-high" style="width:90%"></span></span>0.9</span></td><td><span class="status-badge status-pending">Pending</span></td></tr>
+          <tr><td>Essential Soundbar</td><td>Item number/SKU code</td><td>Items</td><td><span class="confidence-bar"><span class="confidence-fill"><span class="conf-high" style="width:90%"></span></span>0.9</span></td><td><span class="status-badge status-confirmed">Confirmed</span></td></tr>
+          <tr><td>Category</td><td>Primary category of the item</td><td>Items</td><td><span class="confidence-bar"><span class="confidence-fill"><span class="conf-high" style="width:90%"></span></span>0.9</span></td><td><span class="status-badge status-pending">Pending</span></td></tr>
+          <tr><td>Headphones</td><td>Primary category</td><td>Items</td><td><span class="confidence-bar"><span class="confidence-fill"><span class="conf-high" style="width:80%"></span></span>0.8</span></td><td><span class="status-badge status-pending">Pending</span></td></tr>
+          <tr><td>Soundbars</td><td>Primary category</td><td>Items</td><td><span class="confidence-bar"><span class="confidence-fill"><span class="conf-high" style="width:80%"></span></span>0.8</span></td><td><span class="status-badge status-pending">Pending</span></td></tr>
+          <tr><td>Wireless Headphones</td><td>Secondary/additional category</td><td>Items</td><td><span class="confidence-bar"><span class="confidence-fill"><span class="conf-high" style="width:80%"></span></span>0.8</span></td><td><span class="status-badge status-pending">Pending</span></td></tr>
+          <tr><td>Essential Series</td><td>Class classification</td><td>Items</td><td><span class="confidence-bar"><span class="confidence-fill"><span class="conf-med" style="width:70%"></span></span>0.7</span></td><td><span class="status-badge status-pending">Pending</span></td></tr>
+          <tr><td>Active</td><td>Current status of the item</td><td>Items</td><td><span class="confidence-bar"><span class="confidence-fill"><span class="conf-high" style="width:90%"></span></span>0.9</span></td><td><span class="status-badge status-pending">Pending</span></td></tr>
+          <tr><td>UOM / Each</td><td>Default unit of measure</td><td>Items</td><td><span class="confidence-bar"><span class="confidence-fill"><span class="conf-high" style="width:90%"></span></span>0.9</span></td><td><span class="status-badge status-pending">Pending</span></td></tr>
+          <tr><td>Specialty Retail Base Rebate</td><td>License fee category</td><td>Items</td><td><span class="confidence-bar"><span class="confidence-fill"><span class="conf-high" style="width:80%"></span></span>0.8</span></td><td><span class="status-badge status-pending">Pending</span></td></tr>
+          <tr><td>Specialty Retail Display Bonus</td><td>License fee category</td><td>Items</td><td><span class="confidence-bar"><span class="confidence-fill"><span class="conf-med" style="width:70%"></span></span>0.7</span></td><td><span class="status-badge status-pending">Pending</span></td></tr>
+        </tbody>
+      </table>
+
+      <h4>Vendors Mappings</h4>
+      <table class="compact">
+        <thead><tr><th>Contract Term</th><th>ERP Field Name</th><th>Entity</th><th>Confidence</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>Tech Sound Audio</td><td>Legal name of the vendor</td><td>Vendors</td><td><span class="confidence-bar"><span class="confidence-fill"><span class="conf-high" style="width:80%"></span></span>0.8</span></td><td><span class="status-badge status-pending">Pending</span></td></tr>
+          <tr><td>Elite Sound Gallery</td><td>Legal name of the vendor</td><td>Vendors</td><td><span class="confidence-bar"><span class="confidence-fill"><span class="conf-high" style="width:90%"></span></span>0.9</span></td><td><span class="status-badge status-pending">Pending</span></td></tr>
+          <tr><td>Premium Audio Boutique</td><td>Legal name of the vendor</td><td>Vendors</td><td><span class="confidence-bar"><span class="confidence-fill"><span class="conf-high" style="width:90%"></span></span>0.9</span></td><td><span class="status-badge status-pending">Pending</span></td></tr>
+          <tr><td>Specialty Retail</td><td>Type of vendor</td><td>Vendors</td><td><span class="confidence-bar"><span class="confidence-fill"><span class="conf-med" style="width:70%"></span></span>0.7</span></td><td><span class="status-badge status-pending">Pending</span></td></tr>
+          <tr><td>United States</td><td>Country name</td><td>Vendors</td><td><span class="confidence-bar"><span class="confidence-fill"><span class="conf-high" style="width:90%"></span></span>0.9</span></td><td><span class="status-badge status-pending">Pending</span></td></tr>
+          <tr><td>Authorized</td><td>Vendor status</td><td>Vendors</td><td><span class="confidence-bar"><span class="confidence-fill"><span class="conf-med" style="width:60%"></span></span>0.6</span></td><td><span class="status-badge status-pending">Pending</span></td></tr>
+          <tr><td>Quarterly Rebate Payment</td><td>Payment terms</td><td>Vendors</td><td><span class="confidence-bar"><span class="confidence-fill"><span class="conf-med" style="width:60%"></span></span>0.6</span></td><td><span class="status-badge status-pending">Pending</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card contract-section patent-border">
+      <h3>5.2 CNT-2026-002 (Patent License) - Items Mappings</h3>
+      <table class="compact">
+        <thead><tr><th>Contract Term</th><th>ERP Field Name</th><th>Entity</th><th>Confidence</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>Mounting Plate - Standard</td><td>Item number/SKU code</td><td>Items</td><td><span class="confidence-bar"><span class="confidence-fill"><span class="conf-high" style="width:90%"></span></span>0.9</span></td><td><span class="status-badge status-pending">Pending</span></td></tr>
+          <tr><td>Bearing Assembly - Standard</td><td>Item number/SKU code</td><td>Items</td><td><span class="confidence-bar"><span class="confidence-fill"><span class="conf-high" style="width:90%"></span></span>0.9</span></td><td><span class="status-badge status-pending">Pending</span></td></tr>
+          <tr><td>Forged Hub - Standard</td><td>Item number/SKU code</td><td>Items</td><td><span class="confidence-bar"><span class="confidence-fill"><span class="conf-high" style="width:90%"></span></span>0.9</span></td><td><span class="status-badge status-pending">Pending</span></td></tr>
+          <tr><td>Precision Components</td><td>Primary category</td><td>Items</td><td><span class="confidence-bar"><span class="confidence-fill"><span class="conf-high" style="width:80%"></span></span>0.8</span></td><td><span class="status-badge status-pending">Pending</span></td></tr>
+          <tr><td>CNC Equipment</td><td>Primary category</td><td>Items</td><td><span class="confidence-bar"><span class="confidence-fill"><span class="conf-high" style="width:80%"></span></span>0.8</span></td><td><span class="status-badge status-pending">Pending</span></td></tr>
+          <tr><td>Machined Components</td><td>Class classification</td><td>Items</td><td><span class="confidence-bar"><span class="confidence-fill"><span class="conf-med" style="width:70%"></span></span>0.7</span></td><td><span class="status-badge status-pending">Pending</span></td></tr>
+          <tr><td>Forged Components</td><td>Class classification</td><td>Items</td><td><span class="confidence-bar"><span class="confidence-fill"><span class="conf-med" style="width:70%"></span></span>0.7</span></td><td><span class="status-badge status-pending">Pending</span></td></tr>
+          <tr><td>Medium Duty</td><td>Type classification</td><td>Items</td><td><span class="confidence-bar"><span class="confidence-fill"><span class="conf-high" style="width:80%"></span></span>0.8</span></td><td><span class="status-badge status-pending">Pending</span></td></tr>
+          <tr><td>Patent Royalty</td><td>License fee category</td><td>Items</td><td><span class="confidence-bar"><span class="confidence-fill"><span class="conf-high" style="width:80%"></span></span>0.8</span></td><td><span class="status-badge status-pending">Pending</span></td></tr>
+          <tr><td>High-Volume Royalty Reduction</td><td>License fee category</td><td>Items</td><td><span class="confidence-bar"><span class="confidence-fill"><span class="conf-med" style="width:70%"></span></span>0.7</span></td><td><span class="status-badge status-pending">Pending</span></td></tr>
+          <tr><td>Minimum Guarantee</td><td>License fee category</td><td>Items</td><td><span class="confidence-bar"><span class="confidence-fill"><span class="conf-high" style="width:80%"></span></span>0.8</span></td><td><span class="status-badge status-pending">Pending</span></td></tr>
+          <tr><td>Precision Machining Patent License</td><td>Licensed property/IP</td><td>Items</td><td><span class="confidence-bar"><span class="confidence-fill"><span class="conf-high" style="width:80%"></span></span>0.8</span></td><td><span class="status-badge status-pending">Pending</span></td></tr>
+        </tbody>
+      </table>
+
+      <h4>Vendors Mappings</h4>
+      <table class="compact">
+        <thead><tr><th>Contract Term</th><th>ERP Field Name</th><th>Entity</th><th>Confidence</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>PrecisionTech Manufacturing Corp.</td><td>Legal name of the vendor</td><td>Vendors</td><td><span class="confidence-bar"><span class="confidence-fill"><span class="conf-high" style="width:90%"></span></span>0.9</span></td><td><span class="status-badge status-pending">Pending</span></td></tr>
+          <tr><td>Precision Equipment Corp</td><td>Legal name of the vendor</td><td>Vendors</td><td><span class="confidence-bar"><span class="confidence-fill"><span class="conf-high" style="width:90%"></span></span>0.9</span></td><td><span class="status-badge status-pending">Pending</span></td></tr>
+          <tr><td>Partner (ID)</td><td>Unique identifier</td><td>Vendors</td><td><span class="confidence-bar"><span class="confidence-fill"><span class="conf-high" style="width:80%"></span></span>0.8</span></td><td><span class="status-badge status-pending">Pending</span></td></tr>
+          <tr><td>Assignment Status</td><td>Vendor status</td><td>Vendors</td><td><span class="confidence-bar"><span class="confidence-fill"><span class="conf-med" style="width:70%"></span></span>0.7</span></td><td><span class="status-badge status-pending">Pending</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card contract-section rebate-border">
+      <h3>5.3 CNT-2026-003 (Channel Rebate) - Items Mappings</h3>
+      <table class="compact">
+        <thead><tr><th>Contract Term</th><th>ERP Field Name</th><th>Entity</th><th>Confidence</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>Analytics Enterprise</td><td>Full legal product name</td><td>Items</td><td><span class="confidence-bar"><span class="confidence-fill"><span class="conf-high" style="width:80%"></span></span>0.8</span></td><td><span class="status-badge status-pending">Pending</span></td></tr>
+          <tr><td>SCM Enterprise</td><td>Full legal product name</td><td>Items</td><td><span class="confidence-bar"><span class="confidence-fill"><span class="conf-high" style="width:80%"></span></span>0.8</span></td><td><span class="status-badge status-pending">Pending</span></td></tr>
+          <tr><td>TMS Enterprise</td><td>Full legal product name</td><td>Items</td><td><span class="confidence-bar"><span class="confidence-fill"><span class="conf-high" style="width:80%"></span></span>0.8</span></td><td><span class="status-badge status-pending">Pending</span></td></tr>
+          <tr><td>Contract Category</td><td>Primary category</td><td>Items</td><td><span class="confidence-bar"><span class="confidence-fill"><span class="conf-high" style="width:90%"></span></span>0.9</span></td><td><span class="status-badge status-pending">Pending</span></td></tr>
+          <tr><td>Enterprise Tier</td><td>Pricing tier classification</td><td>Items</td><td><span class="confidence-bar"><span class="confidence-fill"><span class="conf-high" style="width:80%"></span></span>0.8</span></td><td><span class="status-badge status-pending">Pending</span></td></tr>
+          <tr><td>Annual Subscription</td><td>Type of license fee</td><td>Items</td><td><span class="confidence-bar"><span class="confidence-fill"><span class="conf-high" style="width:90%"></span></span>0.9</span></td><td><span class="status-badge status-pending">Pending</span></td></tr>
+          <tr><td>Perpetual License</td><td>Type of license fee</td><td>Items</td><td><span class="confidence-bar"><span class="confidence-fill"><span class="conf-high" style="width:90%"></span></span>0.9</span></td><td><span class="status-badge status-pending">Pending</span></td></tr>
+          <tr><td>Enterprise Tier Bonus</td><td>License fee category</td><td>Items</td><td><span class="confidence-bar"><span class="confidence-fill"><span class="conf-med" style="width:60%"></span></span>0.6</span></td><td><span class="status-badge status-pending">Pending</span></td></tr>
+          <tr><td>Subscription Conversion Bonus</td><td>License fee category</td><td>Items</td><td><span class="confidence-bar"><span class="confidence-fill"><span class="conf-med" style="width:50%"></span></span>0.5</span></td><td><span class="status-badge status-pending">Pending</span></td></tr>
+        </tbody>
+      </table>
+
+      <h4>Vendors Mappings</h4>
+      <table class="compact">
+        <thead><tr><th>Contract Term</th><th>ERP Field Name</th><th>Entity</th><th>Confidence</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>InnovateSoft Solutions Inc.</td><td>Legal name of the vendor</td><td>Vendors</td><td><span class="confidence-bar"><span class="confidence-fill"><span class="conf-high" style="width:90%"></span></span>0.9</span></td><td><span class="status-badge status-pending">Pending</span></td></tr>
+          <tr><td>Business Systems Partners - Tier 1 VAR</td><td>Legal name of the vendor</td><td>Vendors</td><td><span class="confidence-bar"><span class="confidence-fill"><span class="conf-high" style="width:80%"></span></span>0.8</span></td><td><span class="status-badge status-pending">Pending</span></td></tr>
+          <tr><td>CloudTech Integrators - Tier 1 VAR</td><td>Legal name of the vendor</td><td>Vendors</td><td><span class="confidence-bar"><span class="confidence-fill"><span class="conf-high" style="width:80%"></span></span>0.8</span></td><td><span class="status-badge status-pending">Pending</span></td></tr>
+          <tr><td>Enterprise Solutions Group - Tier 1 VAR</td><td>Legal name of the vendor</td><td>Vendors</td><td><span class="confidence-bar"><span class="confidence-fill"><span class="conf-high" style="width:80%"></span></span>0.8</span></td><td><span class="status-badge status-pending">Pending</span></td></tr>
+          <tr><td>Tier 1 VAR</td><td>Type of vendor</td><td>Vendors</td><td><span class="confidence-bar"><span class="confidence-fill"><span class="conf-high" style="width:80%"></span></span>0.8</span></td><td><span class="status-badge status-pending">Pending</span></td></tr>
+          <tr><td>Direct Sales</td><td>Type of vendor</td><td>Vendors</td><td><span class="confidence-bar"><span class="confidence-fill"><span class="conf-med" style="width:70%"></span></span>0.7</span></td><td><span class="status-badge status-pending">Pending</span></td></tr>
+          <tr><td>United States</td><td>Country name</td><td>Vendors</td><td><span class="confidence-bar"><span class="confidence-fill"><span class="conf-high" style="width:90%"></span></span>0.9</span></td><td><span class="status-badge status-pending">Pending</span></td></tr>
+          <tr><td>Quarterly</td><td>Payment terms</td><td>Vendors</td><td><span class="confidence-bar"><span class="confidence-fill"><span class="conf-high" style="width:90%"></span></span>0.9</span></td><td><span class="status-badge status-pending">Pending</span></td></tr>
+          <tr><td>Authorized</td><td>Vendor status</td><td>Vendors</td><td><span class="confidence-bar"><span class="confidence-fill"><span class="conf-high" style="width:80%"></span></span>0.8</span></td><td><span class="status-badge status-pending">Pending</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- SECTION 6: LICENSE FEE RULES REFERENCE -->
+  <section id="rules-reference">
+    <div class="section-header">
+      <div class="icon" style="background: #ede9fe; color: #7c3aed;">&#128220;</div>
+      <h2>6. License Fee Rules - Field Mapping Reference</h2>
+    </div>
+
+    <div class="card contract-section retail-border">
+      <h3>6.1 CNT-2026-001 Rules Field Mapping</h3>
+
+      <h4>Specialty Retail Base Rebate</h4>
+      <table class="compact">
+        <thead><tr><th>Formula Field</th><th>Value</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td>type</td><td><span class="tag tag-percentage">percentage</span></td><td>Percentage-based calculation</td></tr>
+          <tr><td>baseRate</td><td><strong>0.05</strong></td><td>5% rate</td></tr>
+          <tr><td>basisField</td><td>netSalesValue</td><td>Calculates on net sales</td></tr>
+          <tr><td>calculationBasis</td><td>Net Sales Value</td><td>Human-readable basis</td></tr>
+          <tr><td>product</td><td>Wireless Headphones, Home Speakers</td><td>Eligible products</td></tr>
+          <tr><td>territory</td><td>United States</td><td>Authorized territory</td></tr>
+          <tr><td>frequency</td><td>Quarterly</td><td>Payment frequency</td></tr>
+          <tr><td>deadline</td><td>Within 45 days after quarter-end</td><td>Claim deadline</td></tr>
+        </tbody>
+      </table>
+
+      <h4>Specialty Retail Display Bonus</h4>
+      <table class="compact">
+        <thead><tr><th>Formula Field</th><th>Value</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td>type</td><td><span class="tag tag-fixed">fixed_fee</span></td><td>Fixed amount per unit</td></tr>
+          <tr><td>fixedAmount</td><td><strong>2</strong></td><td>$2 per unit</td></tr>
+          <tr><td>fixedAmountPeriod</td><td>per Unit</td><td>Per-unit calculation</td></tr>
+          <tr><td>threshold</td><td>50</td><td>Minimum units required</td></tr>
+          <tr><td>bonusThreshold</td><td>50</td><td>Bonus activation threshold</td></tr>
+          <tr><td>calculationBasis</td><td>Units Sold</td><td>Based on quantity</td></tr>
+          <tr><td>product</td><td>Headphones, Speakers</td><td>Eligible categories</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card contract-section patent-border">
+      <h3>6.2 CNT-2026-002 Rules Field Mapping</h3>
+
+      <h4>Royalty Rate (5.5%)</h4>
+      <table class="compact">
+        <thead><tr><th>Formula Field</th><th>Value</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td>type</td><td><span class="tag tag-percentage">percentage</span></td><td>Percentage-based</td></tr>
+          <tr><td>baseRate</td><td><strong>0.055</strong></td><td>5.5% rate</td></tr>
+          <tr><td>basisField</td><td>netSalesValue</td><td>Net sales basis</td></tr>
+          <tr><td>tiers[0].min</td><td>0</td><td>From $0</td></tr>
+          <tr><td>tiers[0].max</td><td>99,999,999.99</td><td>Up to ~$100M</td></tr>
+          <tr><td>tiers[0].rate</td><td>0.055</td><td>5.5%</td></tr>
+        </tbody>
+      </table>
+
+      <h4>High-Volume Royalty Reduction (4.5%)</h4>
+      <table class="compact">
+        <thead><tr><th>Formula Field</th><th>Value</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td>type</td><td><span class="tag tag-percentage">percentage</span></td><td>Percentage-based</td></tr>
+          <tr><td>baseRate</td><td><strong>0.045</strong></td><td>4.5% reduced rate</td></tr>
+          <tr><td>tiers[0].min</td><td>10,000,000</td><td>From $10M</td></tr>
+          <tr><td>tiers[0].max</td><td>99,999,999.99</td><td>Up to ~$100M</td></tr>
+          <tr><td>tiers[0].rate</td><td>0.045</td><td>4.5%</td></tr>
+        </tbody>
+      </table>
+
+      <h4>Minimum Annual Royalty ($500K)</h4>
+      <table class="compact">
+        <thead><tr><th>Formula Field</th><th>Value</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td>type</td><td><span class="tag tag-minimum">minimum_guarantee</span></td><td>Floor guarantee</td></tr>
+          <tr><td>baseRate</td><td><strong>500,000</strong></td><td>$500K minimum</td></tr>
+          <tr><td>minimumGuarantee</td><td>500,000</td><td>Guarantee amount</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card contract-section rebate-border">
+      <h3>6.3 CNT-2026-003 Rules Field Mapping</h3>
+
+      <h4>Tiered Rebate Structure (4 Tiers)</h4>
+      <table>
+        <thead><tr><th>Tier</th><th>baseRate</th><th>tiers[0].min</th><th>tiers[0].max</th><th>tiers[0].rate</th><th>basisField</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Entry</strong></td><td>0.12</td><td>0</td><td>499,999.99</td><td>0.12</td><td>netSalesValue</td></tr>
+          <tr><td><strong>Standard</strong></td><td>0.15</td><td>500,000</td><td>1,499,999.99</td><td>0.15</td><td>netSalesValue</td></tr>
+          <tr><td><strong>Preferred</strong></td><td>0.18</td><td>1,500,000</td><td>2,999,999.99</td><td>0.18</td><td>netSalesValue</td></tr>
+          <tr><td><strong>Elite</strong></td><td>0.22</td><td>3,000,000</td><td>99,999,999.99</td><td>0.22</td><td>netSalesValue</td></tr>
+        </tbody>
+      </table>
+
+      <h4>Enterprise Tier Bonus</h4>
+      <table class="compact">
+        <thead><tr><th>Formula Field</th><th>Value</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td>type</td><td><span class="tag tag-percentage">percentage</span></td><td>Percentage-based</td></tr>
+          <tr><td>rate / baseRate</td><td><strong>0.03</strong></td><td>3% additional</td></tr>
+          <tr><td>trigger</td><td>product_line = Enterprise Tier</td><td>Conditional</td></tr>
+        </tbody>
+      </table>
+
+      <h4>Subscription Conversion Bonus</h4>
+      <table class="compact">
+        <thead><tr><th>Formula Field</th><th>Value</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td>type</td><td><span class="tag tag-fixed">fixed_fee</span></td><td>Fixed amount</td></tr>
+          <tr><td>fixedAmount</td><td><strong>5,000</strong></td><td>$5K per conversion</td></tr>
+          <tr><td>fixedAmountPeriod</td><td>per conversion</td><td>Per event</td></tr>
+          <tr><td>trigger</td><td>conversion_from = Perpetual License AND conversion_to = Annual Subscription</td><td>Conditional</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- SECTION 7: CSV REFERENCE -->
+  <section id="csv-reference">
+    <div class="section-header">
+      <div class="icon" style="background: #fce7f3; color: #be185d;">&#128196;</div>
+      <h2>7. Sales Data CSV Format Reference</h2>
+    </div>
+
+    <div class="card">
+      <h3>7.1 Supported Column Name Variations</h3>
+      <div class="info-box blue">The sales data parser supports flexible column naming. Any of the variations below are accepted.</div>
+      <table>
+        <thead><tr><th>Standard Field</th><th>Accepted Column Names</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Transaction ID</strong></td><td>transaction_id, txn_id, trans_id, Transaction ID</td></tr>
+          <tr><td><strong>Transaction Date</strong></td><td>transaction_date, date, txn_date, Date <em>(optional - defaults to today)</em></td></tr>
+          <tr><td><strong>Product Name</strong></td><td>product_name, product, item_name, Product Name</td></tr>
+          <tr><td><strong>Product Code</strong></td><td>product_code, sku, product_id, item_code, Product Code</td></tr>
+          <tr><td><strong>Category</strong></td><td>category, product_category, cat, Category, Product Category</td></tr>
+          <tr><td><strong>Territory</strong></td><td>territory, region, country, Territory</td></tr>
+          <tr><td><strong>Quantity</strong></td><td>quantity, qty, units, units_sold, Units Sold</td></tr>
+          <tr><td><strong>Unit Price</strong></td><td>unit_price, price, Unit Price</td></tr>
+          <tr><td><strong>Gross Amount</strong></td><td>gross_amount, gross_sales, gross, Gross Sales</td></tr>
+          <tr><td><strong>Net Amount</strong></td><td>net_amount, net_sales, net_sales_amount, net, Net Sales</td></tr>
+          <tr><td><strong>Currency</strong></td><td>currency, cur <em>(defaults to USD)</em></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3>7.2 CSV Templates</h3>
+
+      <h4>Specialty Retail (CNT-2026-001)</h4>
+      <div class="csv-block">
+        <span class="header">transaction_id,product_name,product_code,category,territory,quantity,unit_price,gross_amount,net_amount,currency</span><br>
+        <span class="data">TXN-SR-001,EssentialSound Wireless - Black Headphones,SKU-WH-001,Wireless Headphones,United States,150,89.99,13498.50,12823.58,USD</span>
+      </div>
+
+      <h4>Patent License (CNT-2026-002)</h4>
+      <div class="csv-block">
+        <span class="header">Transaction ID,Date,Product Name,Product Category,Application Sector,Units Sold,Unit Price,Gross Sales,Freight Costs,Sales Tax,Returns Credits,Trade Discounts,Distributor Commission,Territory,Customer Name</span><br>
+        <span class="data">MFG-2024-001,2024-02-15,Composite Bearing CB-500,Automotive transmission,Automotive,45000,85.00,3825000,45000,0,15000,250000,0,United States,AutoParts Direct</span>
+      </div>
+
+      <h4>Channel Rebate (CNT-2026-003)</h4>
+      <div class="csv-block">
+        <span class="header">transaction_id,product_name,product_code,category,product_line,territory,quantity,unit_price,gross_amount,net_sales,conversion_from,conversion_to,currency</span><br>
+        <span class="data">IS-2024-001,SCM Enterprise,SCM-ENT-001,Enterprise Software,Enterprise Tier,United States,1,250000,250000,250000,Perpetual License,Annual Subscription,USD</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 8: RESULTS -->
+  <section id="results">
+    <div class="section-header">
+      <div class="icon" style="background: #ecfdf5; color: #059669;">&#9989;</div>
+      <h2>8. Calculation Results Summary</h2>
+    </div>
+
+    <div class="summary-grid">
+      <div class="summary-card retail">
+        <div class="label">CNT-2026-001</div>
+        <div class="contract-name">Specialty Retail</div>
+        <div class="amount">$128,024.34</div>
+        <div class="sub">50 txns &middot; $2.56M sales &middot; ~5%</div>
+      </div>
+      <div class="summary-card patent">
+        <div class="label">CNT-2026-002</div>
+        <div class="contract-name">Patent License</div>
+        <div class="amount">$1,081,724.04</div>
+        <div class="sub">27 txns &middot; $19.67M sales &middot; ~5.5%</div>
+      </div>
+      <div class="summary-card rebate">
+        <div class="label">CNT-2026-003</div>
+        <div class="contract-name">Channel Rebate</div>
+        <div class="amount">$822,000.00</div>
+        <div class="sub">28 txns &middot; $6.85M sales &middot; ~12%</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Side-by-Side Comparison</h3>
+      <table>
+        <thead><tr><th>Metric</th><th>CNT-2026-001 (Retail)</th><th>CNT-2026-002 (Patent)</th><th>CNT-2026-003 (Rebate)</th></tr></thead>
+        <tbody>
+          <tr><td>Contract Type</td><td>Rebate/MDF</td><td>Royalty</td><td>Rebate</td></tr>
+          <tr><td>Counterparty</td><td>Tech Sound Audio</td><td>PrecisionTech Mfg</td><td>InnovateSoft Solutions</td></tr>
+          <tr><td>Sales Transactions</td><td>50</td><td>27</td><td>28</td></tr>
+          <tr><td>Total Sales</td><td><strong>$2,560,486.72</strong></td><td><strong>$19,667,709.84</strong></td><td><strong>$6,850,000.00</strong></td></tr>
+          <tr><td>Total Fee</td><td><strong>$128,024.34</strong></td><td><strong>$1,081,724.04</strong></td><td><strong>$822,000.00</strong></td></tr>
+          <tr><td>Effective Rate</td><td>~5%</td><td>~5.5%</td><td>~12%</td></tr>
+          <tr><td>Fee Type</td><td>Rebate + Bonus</td><td>Patent Royalty</td><td>Tiered Channel Rebate</td></tr>
+          <tr><td>Minimum Guarantee</td><td>None</td><td>$500K (passed)</td><td>None</td></tr>
+          <tr><td>Status</td><td><span class="status-badge status-pending">pending_approval</span></td><td><span class="status-badge status-pending">pending_approval</span></td><td><span class="status-badge status-pending">pending_approval</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3>Calculation Verification</h3>
+
+      <h4>CNT-2026-001 Verification</h4>
+      <div class="info-box green">
+        Base Rebate: $2,560,486.72 &times; 5% = <strong>$128,024.34</strong><br>
+        Display Bonus: Applied per qualifying unit (&ge; 50 units threshold)
+      </div>
+
+      <h4>CNT-2026-002 Verification</h4>
+      <div class="info-box green">
+        Standard Rate: $19,667,709.84 &times; 5.5% = <strong>$1,081,724.04</strong><br>
+        Minimum Check: $1,081,724.04 &gt; $500,000 minimum - PASSES
+      </div>
+
+      <h4>CNT-2026-003 Verification</h4>
+      <div class="info-box green">
+        Total Net Sales: $6,850,000 (falls in $3M+ Elite tier range)<br>
+        Applied Rate: 12% base entry rate on cumulative sales<br>
+        Total Rebate: $6,850,000 &times; 12% = <strong>$822,000.00</strong>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 9: TROUBLESHOOTING -->
+  <section id="troubleshooting">
+    <div class="section-header">
+      <div class="icon" style="background: var(--danger-bg); color: var(--danger);">&#128295;</div>
+      <h2>9. Troubleshooting</h2>
+    </div>
+
+    <div class="card">
+      <h3>Common Issues</h3>
+      <table>
+        <thead><tr><th>Issue</th><th>Solution</th></tr></thead>
+        <tbody>
+          <tr><td>"No rules found" after upload</td><td>Wait for AI extraction to complete; check contract status is "analyzed"</td></tr>
+          <tr><td>Rules missing formula_definition</td><td>Click "Enrich All with AI" on the Manage License Fee Rules page</td></tr>
+          <tr><td>Formula shows 0% rate</td><td>Manually edit the rule and populate the baseRate and tiers in formula_definition</td></tr>
+          <tr><td>CSV upload fails</td><td>Check column names match accepted variations (see Section 7.1)</td></tr>
+          <tr><td>"No matching contract" for sales</td><td>Ensure sales data is matched to the correct contract ID</td></tr>
+          <tr><td>Calculation returns $0</td><td>Verify formula_definition has populated rates (baseRate, tiers)</td></tr>
+          <tr><td>Company Mapping shows "Pending"</td><td>Review and click "Confirm" on each mapping in Company Mapping Library</td></tr>
+          <tr><td>Date parsing errors</td><td>Use MM/DD/YYYY format, or omit date column (defaults to today)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3>Pre-Calculation Checklist</h3>
+      <table>
+        <thead><tr><th>#</th><th>Check Item</th><th>What to Look For</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>Contract Status</td><td>Must be "analyzed"</td></tr>
+          <tr><td>2</td><td>AI Enrichment</td><td>Rules enriched (formula_definition populated)</td></tr>
+          <tr><td>3</td><td>Base Rates</td><td>Calculation rules have correct baseRate values (not 0 or null)</td></tr>
+          <tr><td>4</td><td>Sales Data</td><td>CSV uploaded and matched to the contract</td></tr>
+          <tr><td>5</td><td>Filters Match</td><td>Territory and product filters match between rules and sales data</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3>Formula Definition Quick Reference</h3>
+      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px;">
+        <div>
+          <h4><span class="tag tag-percentage">Percentage Rule</span></h4>
+          <pre><code>{
+  <span class="key">"type"</span>: <span class="string">"percentage"</span>,
+  <span class="key">"baseRate"</span>: <span class="number">0.055</span>,
+  <span class="key">"basisField"</span>: <span class="string">"netSalesValue"</span>,
+  <span class="key">"tiers"</span>: [
+    { <span class="key">"min"</span>: <span class="number">0</span>,
+      <span class="key">"max"</span>: <span class="number">99999999</span>,
+      <span class="key">"rate"</span>: <span class="number">0.055</span> }
+  ]
+}</code></pre>
+        </div>
+        <div>
+          <h4><span class="tag tag-fixed">Fixed Fee Rule</span></h4>
+          <pre><code>{
+  <span class="key">"type"</span>: <span class="string">"fixed_fee"</span>,
+  <span class="key">"fixedAmount"</span>: <span class="number">5000</span>,
+  <span class="key">"fixedAmountPeriod"</span>:
+    <span class="string">"per conversion"</span>
+}</code></pre>
+        </div>
+        <div>
+          <h4><span class="tag tag-minimum">Minimum Guarantee</span></h4>
+          <pre><code>{
+  <span class="key">"type"</span>:
+    <span class="string">"minimum_guarantee"</span>,
+  <span class="key">"baseRate"</span>: <span class="number">500000</span>,
+  <span class="key">"minimumGuarantee"</span>:
+    <span class="number">500000</span>
+}</code></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  LicenseIQ Research Platform &middot; End-to-End Guide &middot; Generated from live platform data &middot; February 2026
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,4 @@
+date,storeId,storeRegion,productCode,productName,qty,unitPrice,grossSales,channel
+2026-01-16,OEM-DEV-CTR-US,United States,OEM-MOD-X1,Module X1,250,22.50,5625.00,OEM-Embedded
+2026-02-19,OEM-DEV-CTR-APAC,Asia Pacific,OEM-MOD-X2,Module X2,180,29.99,5398.20,OEM-Embedded
+2026-03-23,OEM-DEV-CTR-EU,Europe,OEM-MOD-X1,Module X1,310,22.50,6975.00,OEM-Embedded

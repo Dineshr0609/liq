@@ -1,0 +1,1238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>LicenseIQ – Accrual Management</title>
+<style>
+  /* ── Reset & tokens ──────────────────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg:          #0d1117;
+    --surface:     #161b22;
+    --surface2:    #1c2333;
+    --surface3:    #21262d;
+    --border:      #30363d;
+    --border2:     #3d444d;
+    --accent:      #4f8ef7;
+    --accent2:     #3875e0;
+    --accent-glow: rgba(79,142,247,.15);
+    --green:       #3fb950;
+    --green-bg:    rgba(63,185,80,.12);
+    --yellow:      #d29922;
+    --yellow-bg:   rgba(210,153,34,.12);
+    --red:         #f85149;
+    --red-bg:      rgba(248,81,73,.12);
+    --purple:      #a371f7;
+    --purple-bg:   rgba(163,113,247,.12);
+    --text:        #e6edf3;
+    --text2:       #8b949e;
+    --text3:       #6e7681;
+    --ai-from:     #4f8ef7;
+    --ai-to:       #a371f7;
+    --radius:      8px;
+    --radius-lg:   12px;
+    font-size: 13px;
+  }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── Top nav ─────────────────────────────────────────────── */
+  .topnav {
+    height: 48px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    gap: 16px;
+    flex-shrink: 0;
+    z-index: 100;
+  }
+  .brand {
+    display: flex; align-items: center; gap: 8px;
+    font-weight: 700; font-size: 15px; letter-spacing: -.3px;
+  }
+  .brand-icon {
+    width: 28px; height: 28px; border-radius: 6px;
+    background: linear-gradient(135deg, var(--ai-from), var(--ai-to));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+  }
+  .brand span { color: var(--text); }
+  .brand em { color: var(--accent); font-style: normal; }
+  .nav-sep { flex: 1; }
+  .nav-breadcrumb {
+    display: flex; align-items: center; gap: 6px;
+    color: var(--text2); font-size: 12px;
+  }
+  .nav-breadcrumb .active { color: var(--text); font-weight: 500; }
+  .nav-breadcrumb span { color: var(--text3); }
+  .nav-actions { display: flex; align-items: center; gap: 10px; }
+  .avatar {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: linear-gradient(135deg, #4f8ef7, #a371f7);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 600; cursor: pointer;
+  }
+  .icon-btn {
+    width: 30px; height: 30px; border-radius: 6px;
+    background: transparent; border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; color: var(--text2); transition: all .15s;
+    font-size: 14px;
+  }
+  .icon-btn:hover { background: var(--surface2); color: var(--text); }
+
+  /* ── Left sidebar ────────────────────────────────────────── */
+  .layout {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+  }
+  .sidebar {
+    width: 200px;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    overflow-y: auto;
+    padding: 12px 8px;
+    gap: 2px;
+  }
+  .sidebar-section {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: .8px;
+    padding: 8px 8px 4px;
+  }
+  .sidebar-item {
+    display: flex; align-items: center; gap: 9px;
+    padding: 7px 10px; border-radius: 6px;
+    color: var(--text2); cursor: pointer; font-size: 12.5px;
+    transition: all .15s;
+  }
+  .sidebar-item:hover { background: var(--surface2); color: var(--text); }
+  .sidebar-item.active { background: var(--accent-glow); color: var(--accent); font-weight: 500; }
+  .sidebar-item .icon { font-size: 14px; width: 16px; text-align: center; }
+  .sidebar-badge {
+    margin-left: auto; background: var(--yellow-bg); color: var(--yellow);
+    font-size: 10px; font-weight: 600; padding: 1px 6px; border-radius: 10px;
+  }
+
+  /* ── Main area ───────────────────────────────────────────── */
+  .main {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+  }
+
+  /* ── Work area (left of AI panel) ───────────────────────── */
+  .workarea {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    padding: 0;
+  }
+
+  /* ── Page header ─────────────────────────────────────────── */
+  .page-header {
+    padding: 18px 24px 14px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    flex-shrink: 0;
+  }
+  .page-title-row {
+    display: flex; align-items: center; gap: 12px; margin-bottom: 14px;
+  }
+  .page-title { font-size: 18px; font-weight: 700; }
+  .page-subtitle { color: var(--text2); font-size: 12px; }
+  .period-badge {
+    background: var(--surface3); border: 1px solid var(--border2);
+    border-radius: 6px; padding: 3px 10px; font-size: 12px; color: var(--text2);
+  }
+  .header-actions { display: flex; gap: 8px; margin-left: auto; }
+
+  /* Buttons */
+  .btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 6px 14px; border-radius: 6px; font-size: 12px; font-weight: 500;
+    cursor: pointer; border: 1px solid transparent; transition: all .15s;
+    white-space: nowrap;
+  }
+  .btn-primary {
+    background: var(--accent); color: #fff; border-color: var(--accent2);
+  }
+  .btn-primary:hover { background: var(--accent2); }
+  .btn-secondary {
+    background: var(--surface2); color: var(--text); border-color: var(--border2);
+  }
+  .btn-secondary:hover { background: var(--surface3); }
+  .btn-ghost {
+    background: transparent; color: var(--text2); border-color: var(--border);
+  }
+  .btn-ghost:hover { background: var(--surface2); color: var(--text); }
+  .btn-danger {
+    background: var(--red-bg); color: var(--red); border-color: rgba(248,81,73,.3);
+  }
+  .btn-green {
+    background: var(--green-bg); color: var(--green); border-color: rgba(63,185,80,.3);
+  }
+  .btn-sm { padding: 4px 10px; font-size: 11px; }
+
+  /* Filters row */
+  .filters-row {
+    display: flex; align-items: center; gap: 10px;
+    flex-wrap: wrap;
+  }
+  .search-box {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--surface2); border: 1px solid var(--border2);
+    border-radius: 6px; padding: 6px 12px; width: 220px;
+    color: var(--text2); font-size: 12px;
+  }
+  .search-box input {
+    background: none; border: none; outline: none;
+    color: var(--text); width: 100%; font-size: 12px;
+  }
+  .select-filter {
+    background: var(--surface2); border: 1px solid var(--border2);
+    border-radius: 6px; padding: 6px 12px; color: var(--text);
+    font-size: 12px; cursor: pointer; outline: none;
+  }
+
+  /* ── AI Insights Widget ──────────────────────────────────── */
+  .insights-widget {
+    display: flex; gap: 12px;
+    padding: 14px 24px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  .insight-card {
+    flex: 1; background: var(--surface2); border: 1px solid var(--border2);
+    border-radius: var(--radius); padding: 12px 16px;
+    display: flex; align-items: center; gap: 12px;
+    cursor: pointer; transition: all .15s;
+  }
+  .insight-card:hover { border-color: var(--accent); background: var(--surface3); }
+  .insight-icon {
+    width: 36px; height: 36px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 17px; flex-shrink: 0;
+  }
+  .insight-icon.red    { background: var(--red-bg); }
+  .insight-icon.yellow { background: var(--yellow-bg); }
+  .insight-icon.purple { background: var(--purple-bg); }
+  .insight-icon.green  { background: var(--green-bg); }
+  .insight-num { font-size: 22px; font-weight: 700; line-height: 1; }
+  .insight-label { font-size: 11px; color: var(--text2); margin-top: 2px; }
+  .insight-num.red    { color: var(--red); }
+  .insight-num.yellow { color: var(--yellow); }
+  .insight-num.purple { color: var(--purple); }
+  .insight-num.green  { color: var(--green); }
+  .insight-ai-tag {
+    margin-left: auto; background: var(--accent-glow); color: var(--accent);
+    font-size: 9px; font-weight: 600; padding: 2px 7px; border-radius: 10px;
+    text-transform: uppercase; letter-spacing: .5px; align-self: flex-start;
+  }
+
+  /* ── Content area ────────────────────────────────────────── */
+  .content-area {
+    flex: 1; display: flex; overflow: hidden;
+  }
+
+  /* ── Accrual table panel ─────────────────────────────────── */
+  .table-panel {
+    flex: 1; display: flex; flex-direction: column; overflow: hidden;
+    border-right: 1px solid var(--border);
+  }
+  .table-toolbar {
+    padding: 10px 20px;
+    display: flex; align-items: center; gap: 8px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0; background: var(--surface);
+  }
+  .table-label { font-size: 12px; font-weight: 600; color: var(--text2); }
+  .count-badge {
+    background: var(--surface3); color: var(--text2);
+    font-size: 11px; padding: 1px 8px; border-radius: 10px;
+    border: 1px solid var(--border2);
+  }
+  .table-scroll { flex: 1; overflow-y: auto; }
+  table { width: 100%; border-collapse: collapse; }
+  thead th {
+    padding: 9px 14px; text-align: left;
+    font-size: 11px; font-weight: 600; color: var(--text3);
+    text-transform: uppercase; letter-spacing: .5px;
+    background: var(--surface); border-bottom: 1px solid var(--border);
+    position: sticky; top: 0; z-index: 10; white-space: nowrap;
+  }
+  tbody tr {
+    border-bottom: 1px solid var(--border);
+    cursor: pointer; transition: background .1s;
+  }
+  tbody tr:hover { background: var(--surface2); }
+  tbody tr.selected { background: rgba(79,142,247,.08); border-left: 3px solid var(--accent); }
+  tbody td {
+    padding: 10px 14px; font-size: 12px; vertical-align: middle;
+  }
+  .td-contract { font-weight: 500; }
+  .td-amount { font-weight: 600; font-size: 13px; }
+  .td-amount.positive { color: var(--text); }
+  .td-type {
+    display: inline-flex; align-items: center; gap: 5px;
+    background: var(--surface3); border: 1px solid var(--border2);
+    border-radius: 4px; padding: 2px 8px; font-size: 11px; color: var(--text2);
+  }
+  .status-pill {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: 11px; padding: 2px 8px; border-radius: 10px; font-weight: 500;
+  }
+  .status-pill.posted    { background: var(--green-bg);  color: var(--green); }
+  .status-pill.review    { background: var(--yellow-bg); color: var(--yellow); }
+  .status-pill.pending   { background: rgba(79,142,247,.12); color: var(--accent); }
+  .status-pill.draft     { background: var(--surface3);  color: var(--text3); }
+  .conf-bar-wrap { display: flex; align-items: center; gap: 8px; }
+  .conf-bar {
+    width: 60px; height: 5px; border-radius: 3px; background: var(--border2); overflow: hidden;
+  }
+  .conf-bar-fill { height: 100%; border-radius: 3px; }
+  .conf-val { font-size: 11px; font-weight: 600; }
+  .conf-warn { color: var(--yellow); font-size: 12px; }
+  .ai-icon-cell { font-size: 12px; }
+
+  /* ── Accrual Detail Panel ────────────────────────────────── */
+  .detail-panel {
+    width: 300px; flex-shrink: 0;
+    display: flex; flex-direction: column;
+    background: var(--surface); border-right: 1px solid var(--border);
+    overflow: hidden;
+  }
+  .detail-header {
+    padding: 14px 16px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .detail-header h3 { font-size: 13px; font-weight: 600; flex: 1; }
+  .detail-scroll { flex: 1; overflow-y: auto; padding: 16px; }
+  .detail-amount {
+    text-align: center; padding: 16px 0 12px;
+    border-bottom: 1px solid var(--border); margin-bottom: 16px;
+  }
+  .detail-amount-val {
+    font-size: 28px; font-weight: 700;
+    background: linear-gradient(135deg, var(--ai-from), var(--ai-to));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .detail-amount-label { font-size: 11px; color: var(--text2); margin-top: 4px; }
+  .clickable-amount {
+    cursor: pointer; display: inline-block;
+    border-bottom: 1px dashed var(--accent); padding-bottom: 1px;
+  }
+  .detail-meta { display: flex; flex-direction: column; gap: 10px; }
+  .meta-row {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    font-size: 12px;
+  }
+  .meta-key { color: var(--text2); width: 110px; flex-shrink: 0; }
+  .meta-val { font-weight: 500; text-align: right; }
+  .detail-section {
+    margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border);
+  }
+  .detail-section-title {
+    font-size: 11px; font-weight: 600; color: var(--text3);
+    text-transform: uppercase; letter-spacing: .5px; margin-bottom: 10px;
+  }
+  .audit-entry {
+    display: flex; gap: 10px; margin-bottom: 10px;
+  }
+  .audit-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--accent); margin-top: 3px; flex-shrink: 0;
+  }
+  .audit-text { font-size: 11px; color: var(--text2); line-height: 1.5; }
+  .audit-time { font-size: 10px; color: var(--text3); }
+  .calc-row { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 8px; }
+  .calc-row .val { font-weight: 500; }
+  .calc-total {
+    display: flex; justify-content: space-between; font-size: 13px;
+    font-weight: 700; padding-top: 8px; border-top: 1px solid var(--border);
+  }
+  .detail-actions { padding: 12px 16px; border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 8px; }
+
+  /* ── AI Explainability modal ─────────────────────────────── */
+  .explainability-overlay {
+    display: none; position: fixed; inset: 0; z-index: 200;
+    background: rgba(0,0,0,.6); backdrop-filter: blur(4px);
+    align-items: center; justify-content: center;
+  }
+  .explainability-overlay.show { display: flex; }
+  .explain-modal {
+    background: var(--surface); border: 1px solid var(--border2);
+    border-radius: var(--radius-lg); width: 520px; padding: 24px;
+    box-shadow: 0 20px 60px rgba(0,0,0,.5);
+  }
+  .explain-modal-title {
+    font-size: 15px; font-weight: 700; margin-bottom: 4px;
+  }
+  .explain-modal-sub { font-size: 12px; color: var(--text2); margin-bottom: 20px; }
+  .explain-steps { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+  .explain-step {
+    background: var(--surface2); border: 1px solid var(--border2);
+    border-radius: var(--radius); padding: 12px 14px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .explain-step-icon {
+    width: 32px; height: 32px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px; flex-shrink: 0;
+  }
+  .explain-step-key { font-size: 11px; color: var(--text2); }
+  .explain-step-val { font-size: 14px; font-weight: 600; margin-top: 2px; }
+  .explain-arrow { text-align: center; color: var(--text3); font-size: 16px; margin: -4px 0; }
+  .explain-result {
+    background: var(--accent-glow); border: 1px solid rgba(79,142,247,.3);
+    border-radius: var(--radius); padding: 14px 16px; text-align: center;
+  }
+  .explain-result-val {
+    font-size: 26px; font-weight: 700;
+    background: linear-gradient(135deg, var(--ai-from), var(--ai-to));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .explain-result-label { font-size: 12px; color: var(--text2); }
+  .explain-footer { display: flex; gap: 8px; margin-top: 16px; }
+
+  /* ── AI Agent Panel ──────────────────────────────────────── */
+  .ai-panel {
+    width: 340px; flex-shrink: 0;
+    display: flex; flex-direction: column;
+    background: var(--surface);
+    border-left: 1px solid var(--border);
+    overflow: hidden;
+  }
+  .ai-panel-header {
+    padding: 14px 16px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 10px;
+    background: linear-gradient(180deg, var(--surface2), var(--surface));
+  }
+  .ai-logo {
+    width: 30px; height: 30px; border-radius: 8px;
+    background: linear-gradient(135deg, var(--ai-from), var(--ai-to));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px;
+  }
+  .ai-header-text h3 { font-size: 13px; font-weight: 700; }
+  .ai-header-text p { font-size: 11px; color: var(--text2); }
+  .ai-online { margin-left: auto; display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--green); }
+  .ai-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+  .ai-context-bar {
+    padding: 8px 14px;
+    background: var(--accent-glow);
+    border-bottom: 1px solid rgba(79,142,247,.2);
+    font-size: 11px; color: var(--accent);
+    display: flex; align-items: center; gap: 6px;
+  }
+  .ai-context-bar.hidden { display: none; }
+
+  .ai-messages {
+    flex: 1; overflow-y: auto; padding: 14px;
+    display: flex; flex-direction: column; gap: 12px;
+  }
+
+  .ai-msg-ai {
+    background: var(--surface2); border: 1px solid var(--border2);
+    border-radius: 10px; border-top-left-radius: 2px;
+    padding: 12px 14px; font-size: 12px; line-height: 1.6;
+  }
+  .ai-msg-user {
+    background: var(--accent-glow); border: 1px solid rgba(79,142,247,.25);
+    border-radius: 10px; border-top-right-radius: 2px;
+    padding: 10px 14px; font-size: 12px; align-self: flex-end;
+    max-width: 85%; color: var(--text);
+  }
+  .ai-msg-label {
+    font-size: 10px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: .5px; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;
+  }
+  .ai-msg-label.ai-label { color: var(--accent); }
+  .ai-msg-label.user-label { color: var(--text3); text-align: right; flex-direction: row-reverse; }
+
+  .ai-analysis-row {
+    display: flex; align-items: center; gap: 10px; margin-bottom: 6px;
+    background: var(--surface3); border-radius: 6px; padding: 7px 10px;
+  }
+  .ai-analysis-icon { font-size: 15px; }
+  .ai-analysis-text { font-size: 12px; flex: 1; }
+  .ai-analysis-val { font-weight: 600; font-size: 12px; white-space: nowrap; }
+  .ai-period-compare {
+    display: flex; gap: 8px; margin-top: 8px;
+  }
+  .ai-period-box {
+    flex: 1; background: var(--surface3); border-radius: 6px; padding: 8px;
+    text-align: center;
+  }
+  .ai-period-box .label { font-size: 10px; color: var(--text2); margin-bottom: 2px; }
+  .ai-period-box .val { font-size: 14px; font-weight: 600; }
+  .ai-period-box .val.prev { color: var(--text2); }
+  .ai-period-box .val.curr { color: var(--green); }
+
+  .ai-insight-box {
+    background: rgba(210,153,34,.1); border: 1px solid rgba(210,153,34,.25);
+    border-radius: 8px; padding: 12px 14px; margin-bottom: 8px;
+  }
+  .ai-insight-title {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 12px; font-weight: 600; color: var(--yellow); margin-bottom: 6px;
+  }
+  .ai-insight-detail { font-size: 11px; color: var(--text2); margin-bottom: 3px; }
+  .ai-insight-estimate { font-size: 13px; font-weight: 700; color: var(--red); margin-top: 6px; }
+  .ai-insight-actions { display: flex; gap: 6px; margin-top: 10px; }
+
+  .ai-draft-box {
+    background: var(--surface3); border: 1px solid var(--border2);
+    border-radius: 8px; padding: 12px 14px; margin-bottom: 8px;
+  }
+  .ai-draft-title { font-size: 12px; font-weight: 600; margin-bottom: 8px; color: var(--green); }
+  .ai-draft-row { display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 5px; }
+  .ai-draft-key { color: var(--text2); }
+  .ai-draft-val { font-weight: 500; }
+  .ai-draft-actions { display: flex; gap: 6px; margin-top: 10px; }
+
+  .ai-suggestions {
+    padding: 10px 14px;
+    border-top: 1px solid var(--border);
+    background: var(--surface);
+    flex-shrink: 0;
+  }
+  .ai-suggestions-label { font-size: 10px; color: var(--text3); margin-bottom: 6px; text-transform: uppercase; letter-spacing: .5px; }
+  .ai-chips { display: flex; flex-wrap: wrap; gap: 5px; }
+  .ai-chip {
+    background: var(--surface2); border: 1px solid var(--border2);
+    border-radius: 20px; padding: 4px 10px;
+    font-size: 11px; color: var(--text2); cursor: pointer;
+    transition: all .15s; white-space: nowrap;
+  }
+  .ai-chip:hover { background: var(--accent-glow); border-color: rgba(79,142,247,.4); color: var(--accent); }
+
+  .ai-input-area {
+    padding: 12px 14px; border-top: 1px solid var(--border);
+    display: flex; align-items: flex-end; gap: 8px;
+  }
+  .ai-input {
+    flex: 1; background: var(--surface2); border: 1px solid var(--border2);
+    border-radius: 8px; padding: 8px 12px;
+    color: var(--text); font-size: 12px; outline: none;
+    resize: none; min-height: 36px; max-height: 80px; font-family: inherit;
+    line-height: 1.5;
+  }
+  .ai-input:focus { border-color: var(--accent); }
+  .ai-send-btn {
+    width: 34px; height: 34px; border-radius: 8px; flex-shrink: 0;
+    background: linear-gradient(135deg, var(--ai-from), var(--ai-to));
+    border: none; cursor: pointer; display: flex; align-items: center;
+    justify-content: center; font-size: 15px; transition: opacity .15s;
+  }
+  .ai-send-btn:hover { opacity: .85; }
+
+  /* ── Scrollbars ──────────────────────────────────────────── */
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+
+  /* ── Tabs ────────────────────────────────────────────────── */
+  .tabs { display: flex; gap: 0; border-bottom: 1px solid var(--border); }
+  .tab {
+    padding: 8px 16px; font-size: 12px; font-weight: 500;
+    color: var(--text2); cursor: pointer; border-bottom: 2px solid transparent;
+    margin-bottom: -1px; transition: all .15s;
+  }
+  .tab:hover { color: var(--text); }
+  .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  /* ── Tooltip helper ──────────────────────────────────────── */
+  .tooltip { position: relative; cursor: help; }
+  .tooltip::after {
+    content: attr(data-tip);
+    position: absolute; bottom: 110%; left: 50%; transform: translateX(-50%);
+    background: #000; color: #fff; font-size: 10px; white-space: nowrap;
+    padding: 4px 8px; border-radius: 4px; opacity: 0; pointer-events: none;
+    transition: opacity .15s; z-index: 999;
+  }
+  .tooltip:hover::after { opacity: 1; }
+
+  /* ── Divider ─────────────────────────────────────────────── */
+  .divider { border: none; border-top: 1px solid var(--border); margin: 12px 0; }
+</style>
+</head>
+<body>
+
+<!-- TOP NAV -->
+<nav class="topnav">
+  <div class="brand">
+    <div class="brand-icon">⚡</div>
+    <span>License<em>IQ</em></span>
+  </div>
+  <div class="nav-sep"></div>
+  <div class="nav-breadcrumb">
+    <span>Finance Hub</span>
+    <span>›</span>
+    <span class="active">Accrual Management</span>
+  </div>
+  <div class="nav-sep"></div>
+  <div class="nav-actions">
+    <div class="icon-btn" title="Notifications">🔔</div>
+    <div class="icon-btn" title="Settings">⚙️</div>
+    <div class="avatar" title="User">CT</div>
+  </div>
+</nav>
+
+<!-- LAYOUT -->
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-section">Finance Hub</div>
+    <div class="sidebar-item active"><span class="icon">📋</span> Accrual Management</div>
+    <div class="sidebar-item"><span class="icon">📓</span> Journal Entry Hub</div>
+    <div class="sidebar-item"><span class="icon">🗂️</span> Period Close <span class="sidebar-badge">2</span></div>
+    <div class="sidebar-item"><span class="icon">⚖️</span> Adjustments &amp; Disputes</div>
+    <div class="sidebar-section" style="margin-top:8px">Contract Intelligence</div>
+    <div class="sidebar-item"><span class="icon">🔍</span> Search Contracts</div>
+    <div class="sidebar-item"><span class="icon">🗺️</span> Term Mapping</div>
+    <div class="sidebar-item"><span class="icon">🕐</span> Pending Queue <span class="sidebar-badge">7</span></div>
+    <div class="sidebar-section" style="margin-top:8px">Financial Intelligence</div>
+    <div class="sidebar-item"><span class="icon">📊</span> Analytics</div>
+    <div class="sidebar-item"><span class="icon">📄</span> Reports</div>
+    <div class="sidebar-section" style="margin-top:8px">System</div>
+    <div class="sidebar-item"><span class="icon">🗄️</span> Master Data</div>
+    <div class="sidebar-item"><span class="icon">🔗</span> ERP Mapping</div>
+    <div class="sidebar-item"><span class="icon">👤</span> User Mgmt</div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <!-- WORK AREA -->
+    <div class="workarea">
+
+      <!-- PAGE HEADER -->
+      <div class="page-header">
+        <div class="page-title-row">
+          <div>
+            <div class="page-title">Accrual Management</div>
+            <div class="page-subtitle">AI-powered accrual tracking, review, and financial control</div>
+          </div>
+          <div class="period-badge">📅 Mar 2026</div>
+          <div class="header-actions">
+            <button class="btn btn-ghost btn-sm" onclick="showManualAccrualFlow()">+ Manual Accrual</button>
+            <button class="btn btn-secondary btn-sm">⬇ Export</button>
+            <button class="btn btn-primary btn-sm">▶ Run Calculation</button>
+          </div>
+        </div>
+        <div class="filters-row">
+          <div class="search-box">
+            <span>🔍</span>
+            <input placeholder="Search accruals, contracts…" />
+          </div>
+          <select class="select-filter">
+            <option>All Flow Types</option>
+            <option>Rebate</option>
+            <option>Royalty</option>
+            <option>Commission</option>
+          </select>
+          <select class="select-filter">
+            <option>All Statuses</option>
+            <option>Posted</option>
+            <option>Pending Review</option>
+            <option>Draft</option>
+          </select>
+          <select class="select-filter">
+            <option>All Counterparties</option>
+            <option>Distributor Corp</option>
+            <option>Solar Corp</option>
+            <option>RetailCo</option>
+          </select>
+          <button class="btn btn-ghost btn-sm">⚡ AI Filter</button>
+        </div>
+      </div>
+
+      <!-- AI INSIGHTS WIDGET -->
+      <div class="insights-widget">
+        <div class="insight-card" onclick="triggerAIInsight('over-accrual')">
+          <div class="insight-icon red">⚠️</div>
+          <div>
+            <div class="insight-num red">3</div>
+            <div class="insight-label">Potential Over-accruals</div>
+          </div>
+          <div class="insight-ai-tag">AI</div>
+        </div>
+        <div class="insight-card" onclick="triggerAIInsight('missing-data')">
+          <div class="insight-icon yellow">📂</div>
+          <div>
+            <div class="insight-num yellow">2</div>
+            <div class="insight-label">Missing Data Inputs</div>
+          </div>
+          <div class="insight-ai-tag">AI</div>
+        </div>
+        <div class="insight-card" onclick="triggerAIInsight('high-risk')">
+          <div class="insight-icon purple">🎯</div>
+          <div>
+            <div class="insight-num purple">1</div>
+            <div class="insight-label">High Risk Contracts</div>
+          </div>
+          <div class="insight-ai-tag">AI</div>
+        </div>
+        <div class="insight-card">
+          <div class="insight-icon green">✅</div>
+          <div>
+            <div class="insight-num green">12</div>
+            <div class="insight-label">Ready to Post</div>
+          </div>
+          <div class="insight-ai-tag">AI</div>
+        </div>
+      </div>
+
+      <!-- TABLE + DETAIL -->
+      <div class="content-area">
+
+        <!-- ACCRUAL TABLE -->
+        <div class="table-panel">
+          <div class="table-toolbar">
+            <span class="table-label">Accruals</span>
+            <span class="count-badge">16 records</span>
+            <div style="flex:1"></div>
+            <button class="btn btn-ghost btn-sm">⊞ Columns</button>
+            <button class="btn btn-ghost btn-sm">⇅ Sort</button>
+            <button class="btn btn-ghost btn-sm">🔍 Group</button>
+          </div>
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th style="width:24px"><input type="checkbox"/></th>
+                  <th>Accrual ID</th>
+                  <th>Contract / Counterparty</th>
+                  <th>Flow Type</th>
+                  <th>Period</th>
+                  <th>Amount</th>
+                  <th>Status</th>
+                  <th>AI Confidence</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="accrualTable">
+                <!-- JS-generated rows -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ACCRUAL DETAIL PANEL -->
+        <div class="detail-panel" id="detailPanel">
+          <div class="detail-header">
+            <h3 id="detailTitle">Select an accrual</h3>
+            <button class="btn btn-ghost btn-sm" onclick="closeDetail()">✕</button>
+          </div>
+          <div class="detail-scroll" id="detailContent">
+            <div style="padding:40px 20px; text-align:center; color:var(--text3);">
+              <div style="font-size:36px;margin-bottom:12px">📋</div>
+              <div style="font-size:13px;">Click any accrual to view details</div>
+            </div>
+          </div>
+          <div class="detail-actions" id="detailActions" style="display:none"></div>
+        </div>
+
+      </div><!-- end content-area -->
+    </div><!-- end workarea -->
+
+    <!-- LiQ AI AGENT PANEL -->
+    <div class="ai-panel">
+      <div class="ai-panel-header">
+        <div class="ai-logo">🤖</div>
+        <div class="ai-header-text">
+          <h3>LiQ AI Agent</h3>
+          <p>Accrual Management context</p>
+        </div>
+        <div class="ai-online"><div class="ai-dot"></div>Active</div>
+      </div>
+
+      <div class="ai-context-bar hidden" id="aiContextBar">
+        📌 <span id="aiContextText">Context: No accrual selected</span>
+      </div>
+      <div class="ai-context-bar" id="aiContextBarDefault">
+        📌 Context: Accrual Management – Mar 2026 · 16 records
+      </div>
+
+      <div class="ai-messages" id="aiMessages">
+        <div class="ai-msg-ai">
+          <div class="ai-msg-label ai-label">✦ LiQ Agent</div>
+          Hello! I'm monitoring your accruals for Mar 2026. I've detected <strong>3 potential over-accruals</strong> and <strong>2 missing data inputs</strong> that need attention.<br/><br/>
+          Select any accrual for detailed analysis, or ask me anything.
+        </div>
+      </div>
+
+      <div class="ai-suggestions">
+        <div class="ai-suggestions-label">Quick Actions</div>
+        <div class="ai-chips">
+          <div class="ai-chip" onclick="sendAIMessage('Show accruals with low confidence score')">Low confidence</div>
+          <div class="ai-chip" onclick="sendAIMessage('Why did rebate accrual increase this period?')">Period variance</div>
+          <div class="ai-chip" onclick="showManualAccrualFlow()">Create manual</div>
+          <div class="ai-chip" onclick="sendAIMessage('Detect all anomalies in Mar 2026')">Detect anomalies</div>
+          <div class="ai-chip" onclick="sendAIMessage('Find variance vs ERP for all accruals')">ERP variance</div>
+        </div>
+      </div>
+
+      <div class="ai-input-area">
+        <textarea class="ai-input" id="aiInput" rows="1" placeholder="Ask anything about accruals…" onkeydown="handleKey(event)"></textarea>
+        <button class="ai-send-btn" onclick="sendCurrentInput()">➤</button>
+      </div>
+    </div><!-- end ai-panel -->
+
+  </div><!-- end main -->
+</div><!-- end layout -->
+
+<!-- EXPLAINABILITY MODAL -->
+<div class="explainability-overlay" id="explainModal">
+  <div class="explain-modal">
+    <div class="explain-modal-title">Accrual Explainability</div>
+    <div class="explain-modal-sub">AI-generated breakdown for <strong>Distributor Program A – ACC2032</strong></div>
+    <div class="explain-steps">
+      <div class="explain-step">
+        <div class="explain-step-icon" style="background:rgba(79,142,247,.15)">💰</div>
+        <div>
+          <div class="explain-step-key">Net Sales (Mar 2026)</div>
+          <div class="explain-step-val">$8,400,000</div>
+        </div>
+      </div>
+      <div class="explain-arrow">↓</div>
+      <div class="explain-step">
+        <div class="explain-step-icon" style="background:rgba(163,113,247,.15)">📜</div>
+        <div>
+          <div class="explain-step-key">Contract Clause (Section 7.2)</div>
+          <div class="explain-step-val">Tier 3 rebate – 5% above $6M threshold</div>
+        </div>
+      </div>
+      <div class="explain-arrow">↓</div>
+      <div class="explain-step">
+        <div class="explain-step-icon" style="background:rgba(63,185,80,.15)">🧮</div>
+        <div>
+          <div class="explain-step-key">Calculation</div>
+          <div class="explain-step-val">$8.4M × 5.0% rebate rate = <span style="color:var(--accent)">$420,000</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="explain-result">
+      <div class="explain-result-val">$420,000</div>
+      <div class="explain-result-label">Final Accrual – Confidence 92% · AI Verified ✓</div>
+    </div>
+    <div class="explain-footer">
+      <button class="btn btn-secondary" style="flex:1" onclick="closeExplain()">Close</button>
+      <button class="btn btn-primary" style="flex:1">Trace to Contract →</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── DATA ────────────────────────────────────────────────────
+const accruals = [
+  { id:'ACC2032', contract:'Distributor Program A', party:'Distributor Corp', flow:'Rebate', period:'Mar 2026', amount:420000, status:'review',    conf:92, tier:'Tier 3', rate:'5%'  },
+  { id:'ACC2033', contract:'Solar License Agreement', party:'Solar Corp',       flow:'Royalty', period:'Mar 2026', amount:75000,  status:'pending',   conf:65, tier:'—',     rate:'8%'  },
+  { id:'ACC2034', contract:'Retail Commission Plan',  party:'RetailCo',          flow:'Commission', period:'Mar 2026', amount:118500, status:'posted', conf:98, tier:'—',     rate:'3.5%'},
+  { id:'ACC2035', contract:'North Region Rebate',     party:'NorTech Ltd',       flow:'Rebate', period:'Mar 2026', amount:64200,  status:'posted',    conf:91, tier:'Tier 2', rate:'4%'  },
+  { id:'ACC2036', contract:'Premium OEM Royalty',     party:'OEM Partners',      flow:'Royalty', period:'Mar 2026', amount:210000, status:'review',   conf:77, tier:'—',     rate:'2.5%'},
+  { id:'ACC2037', contract:'Agent Commission Q1',     party:'AgentPlus',         flow:'Commission', period:'Mar 2026', amount:33000,  status:'draft',  conf:88, tier:'—',     rate:'2%'  },
+  { id:'ACC2038', contract:'Euro Distributor Rebate', party:'EuroDist GmbH',     flow:'Rebate', period:'Mar 2026', amount:97500,  status:'posted',    conf:95, tier:'Tier 2', rate:'4.5%'},
+  { id:'ACC2039', contract:'APAC License Royalty',    party:'APAC Corp',         flow:'Royalty', period:'Mar 2026', amount:155000, status:'pending',  conf:58, tier:'—',     rate:'7%'  },
+];
+
+const statusLabel = { posted:'Posted', review:'Pending Review', pending:'Pending', draft:'Draft' };
+const flowIcon    = { Rebate:'💰', Royalty:'📜', Commission:'🤝' };
+
+let selectedId = null;
+
+// ─── RENDER TABLE ─────────────────────────────────────────────
+function renderTable() {
+  const tbody = document.getElementById('accrualTable');
+  tbody.innerHTML = accruals.map(a => {
+    const confColor = a.conf >= 90 ? 'var(--green)' : a.conf >= 75 ? 'var(--yellow)' : 'var(--red)';
+    const warn = a.conf < 75 ? '<span class="conf-warn tooltip" data-tip="Low confidence – click for AI review">⚠</span>' : '';
+    const selected = a.id === selectedId ? 'selected' : '';
+    return `
+    <tr class="${selected}" onclick="selectAccrual('${a.id}')">
+      <td><input type="checkbox" onclick="event.stopPropagation()"/></td>
+      <td style="font-weight:600;color:var(--accent);font-size:11px">${a.id}</td>
+      <td class="td-contract">
+        <div>${a.contract}</div>
+        <div style="font-size:11px;color:var(--text2)">${a.party}</div>
+      </td>
+      <td><span class="td-type">${flowIcon[a.flow]} ${a.flow}</span></td>
+      <td style="color:var(--text2);font-size:11px">${a.period}</td>
+      <td class="td-amount">$${a.amount.toLocaleString()}</td>
+      <td><span class="status-pill ${a.status}">${statusLabel[a.status]}</span></td>
+      <td>
+        <div class="conf-bar-wrap">
+          <div class="conf-bar"><div class="conf-bar-fill" style="width:${a.conf}%;background:${confColor}"></div></div>
+          <span class="conf-val" style="color:${confColor}">${a.conf}%</span>
+          ${warn}
+        </div>
+      </td>
+      <td>
+        <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();askAIAbout('${a.id}')">✦ Ask AI</button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+// ─── SELECT ACCRUAL ───────────────────────────────────────────
+function selectAccrual(id) {
+  selectedId = id;
+  renderTable();
+  const a = accruals.find(x => x.id === id);
+  showDetail(a);
+  updateAIContext(a);
+}
+
+function showDetail(a) {
+  document.getElementById('detailTitle').textContent = a.id;
+  const confColor = a.conf >= 90 ? 'var(--green)' : a.conf >= 75 ? 'var(--yellow)' : 'var(--red)';
+
+  document.getElementById('detailContent').innerHTML = `
+    <div class="detail-amount">
+      <div class="detail-amount-val clickable-amount tooltip" data-tip="Click to explain this amount" onclick="openExplain()">
+        $${a.amount.toLocaleString()}
+      </div>
+      <div class="detail-amount-label">${a.contract} · ${a.period}</div>
+    </div>
+    <div class="detail-meta">
+      <div class="meta-row"><span class="meta-key">Accrual ID</span><span class="meta-val" style="color:var(--accent)">${a.id}</span></div>
+      <div class="meta-row"><span class="meta-key">Counterparty</span><span class="meta-val">${a.party}</span></div>
+      <div class="meta-row"><span class="meta-key">Flow Type</span><span class="meta-val">${flowIcon[a.flow]} ${a.flow}</span></div>
+      <div class="meta-row"><span class="meta-key">Period</span><span class="meta-val">${a.period}</span></div>
+      <div class="meta-row"><span class="meta-key">Tier</span><span class="meta-val">${a.tier}</span></div>
+      <div class="meta-row"><span class="meta-key">Rate</span><span class="meta-val">${a.rate}</span></div>
+      <div class="meta-row"><span class="meta-key">Status</span><span class="meta-val"><span class="status-pill ${a.status}">${statusLabel[a.status]}</span></span></div>
+      <div class="meta-row"><span class="meta-key">AI Confidence</span><span class="meta-val" style="color:${confColor}">${a.conf}%</span></div>
+    </div>
+
+    <div class="detail-section">
+      <div class="detail-section-title">Calculation Trace</div>
+      <div class="calc-row"><span>Net Sales</span><span class="val">$8,400,000</span></div>
+      <div class="calc-row"><span>Rebate Rate (${a.rate})</span><span class="val">${a.rate}</span></div>
+      <div class="calc-row"><span>Threshold Applied</span><span class="val">${a.tier}</span></div>
+      <hr class="divider"/>
+      <div class="calc-total"><span>Accrual Total</span><span>$${a.amount.toLocaleString()}</span></div>
+    </div>
+
+    <div class="detail-section">
+      <div class="detail-section-title">Audit Trail</div>
+      <div class="audit-entry">
+        <div class="audit-dot"></div>
+        <div>
+          <div class="audit-text">Calculation engine ran – Tier 3 threshold crossed</div>
+          <div class="audit-time">Mar 14, 2026 · 09:14 AM</div>
+        </div>
+      </div>
+      <div class="audit-entry">
+        <div class="audit-dot" style="background:var(--yellow)"></div>
+        <div>
+          <div class="audit-text">AI review triggered – confidence ${a.conf}%</div>
+          <div class="audit-time">Mar 14, 2026 · 09:15 AM</div>
+        </div>
+      </div>
+      <div class="audit-entry">
+        <div class="audit-dot" style="background:var(--text3)"></div>
+        <div>
+          <div class="audit-text">Sent to Pending Review queue</div>
+          <div class="audit-time">Mar 14, 2026 · 09:16 AM</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="detail-section">
+      <div class="detail-section-title">AI Explainability</div>
+      <button class="btn btn-secondary" style="width:100%;margin-bottom:6px" onclick="openExplain()">
+        🔍 Explain $${a.amount.toLocaleString()} calculation
+      </button>
+      <button class="btn btn-ghost" style="width:100%" onclick="askAIAbout('${a.id}')">
+        ✦ Ask AI about this accrual
+      </button>
+    </div>
+  `;
+
+  const actionsEl = document.getElementById('detailActions');
+  actionsEl.style.display = 'flex';
+  actionsEl.innerHTML = `
+    <button class="btn btn-green btn-sm" style="flex:1">✓ Approve</button>
+    <button class="btn btn-secondary btn-sm" style="flex:1">✎ Adjust</button>
+    <button class="btn btn-danger btn-sm" style="flex:1">✕ Reject</button>
+  `;
+}
+
+function closeDetail() {
+  selectedId = null;
+  renderTable();
+  document.getElementById('detailTitle').textContent = 'Select an accrual';
+  document.getElementById('detailContent').innerHTML = `
+    <div style="padding:40px 20px;text-align:center;color:var(--text3)">
+      <div style="font-size:36px;margin-bottom:12px">📋</div>
+      <div style="font-size:13px;">Click any accrual to view details</div>
+    </div>`;
+  document.getElementById('detailActions').style.display = 'none';
+}
+
+// ─── EXPLAINABILITY MODAL ─────────────────────────────────────
+function openExplain() {
+  document.getElementById('explainModal').classList.add('show');
+}
+function closeExplain() {
+  document.getElementById('explainModal').classList.remove('show');
+}
+document.getElementById('explainModal').addEventListener('click', function(e) {
+  if (e.target === this) closeExplain();
+});
+
+// ─── AI CONTEXT BAR ───────────────────────────────────────────
+function updateAIContext(a) {
+  const bar = document.getElementById('aiContextBar');
+  const defaultBar = document.getElementById('aiContextBarDefault');
+  const text = document.getElementById('aiContextText');
+  bar.classList.remove('hidden');
+  defaultBar.style.display = 'none';
+  text.textContent = `${a.id} · ${a.contract} · $${a.amount.toLocaleString()} · Conf ${a.conf}%`;
+}
+
+// ─── AI MESSAGES ──────────────────────────────────────────────
+function addMessage(html, isUser=false) {
+  const msgs = document.getElementById('aiMessages');
+  const div = document.createElement('div');
+  div.className = isUser ? 'ai-msg-user' : 'ai-msg-ai';
+  if (!isUser) div.innerHTML = `<div class="ai-msg-label ai-label">✦ LiQ Agent</div>${html}`;
+  else         div.innerHTML = html;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function addUserMessage(text) {
+  const msgs = document.getElementById('aiMessages');
+  const div = document.createElement('div');
+  div.className = 'ai-msg-user';
+  div.innerHTML = `<div class="ai-msg-label user-label">You</div>${text}`;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+let typing = null;
+function addTyping() {
+  const msgs = document.getElementById('aiMessages');
+  const div = document.createElement('div');
+  div.className = 'ai-msg-ai';
+  div.id = 'typingIndicator';
+  div.innerHTML = `<div class="ai-msg-label ai-label">✦ LiQ Agent</div><span style="color:var(--text3)">● ● ●</span>`;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+  return div;
+}
+function removeTyping() {
+  const el = document.getElementById('typingIndicator');
+  if (el) el.remove();
+}
+
+function sendAIMessage(msg) {
+  addUserMessage(msg);
+  const t = addTyping();
+  setTimeout(() => {
+    removeTyping();
+    handleAIResponse(msg);
+  }, 900);
+}
+
+function handleKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    sendCurrentInput();
+  }
+}
+function sendCurrentInput() {
+  const inp = document.getElementById('aiInput');
+  const val = inp.value.trim();
+  if (!val) return;
+  inp.value = '';
+  sendAIMessage(val);
+}
+
+function askAIAbout(id) {
+  const a = accruals.find(x => x.id === id);
+  selectAccrual(id);
+  setTimeout(() => {
+    sendAIMessage(`Explain the accrual ${id} – why is it $${a.amount.toLocaleString()}?`);
+  }, 200);
+}
+
+function handleAIResponse(msg) {
+  const m = msg.toLowerCase();
+
+  if (m.includes('confidence') || m.includes('low conf')) {
+    addMessage(`I found <strong>2 accruals</strong> with low AI confidence that need review:
+    <div class="ai-analysis-row" style="margin-top:8px">
+      <div class="ai-analysis-icon">📜</div>
+      <div class="ai-analysis-text">Solar License Agreement (ACC2033)</div>
+      <span class="conf-val" style="color:var(--yellow)">65% ⚠</span>
+    </div>
+    <div class="ai-analysis-row">
+      <div class="ai-analysis-icon">📜</div>
+      <div class="ai-analysis-text">APAC License Royalty (ACC2039)</div>
+      <span class="conf-val" style="color:var(--red)">58% ⚠</span>
+    </div>
+    <div style="margin-top:8px;padding:8px;background:var(--yellow-bg);border-radius:6px;font-size:11px;color:var(--yellow)">
+      ⚠ Issues: Missing POS data files, currency mapping gaps
+    </div>`);
+    return;
+  }
+
+  if (m.includes('rebate') && m.includes('period') || m.includes('increase') || m.includes('why')) {
+    const a = selectedId ? accruals.find(x=>x.id===selectedId) : accruals[0];
+    addMessage(`<strong>Analysis: ${a.contract}</strong>
+    <div class="ai-analysis-row" style="margin-top:8px">
+      <div class="ai-analysis-icon">📈</div>
+      <div class="ai-analysis-text">Sales volume increase</div>
+      <div class="ai-analysis-val" style="color:var(--green)">+38%</div>
+    </div>
+    <div class="ai-analysis-row">
+      <div class="ai-analysis-icon">📊</div>
+      <div class="ai-analysis-text">Crossed Tier 3 threshold</div>
+      <div class="ai-analysis-val">$6M+</div>
+    </div>
+    <div class="ai-period-compare">
+      <div class="ai-period-box">
+        <div class="label">Prev Rate</div>
+        <div class="val prev">3.0%</div>
+      </div>
+      <div class="ai-period-box">
+        <div class="label">Current Rate</div>
+        <div class="val curr">5.0%</div>
+      </div>
+    </div>
+    <div style="margin-top:8px;font-size:11px;color:var(--text2)">Expected accrual: ~$418k · Actual: $420k · Δ +$2k (within tolerance)</div>`);
+    return;
+  }
+
+  if (m.includes('anomal') || m.includes('detect')) {
+    addMessage(`<strong>Anomaly Detection – Mar 2026</strong>
+    <div class="ai-insight-box">
+      <div class="ai-insight-title">⚠ Possible over-accrual – ACC2033</div>
+      <div class="ai-insight-detail">Sales returns recorded after calculation cutoff</div>
+      <div class="ai-insight-detail">Missing POS file – Solar Corp portal</div>
+      <div class="ai-insight-estimate">Estimated adjustment: −$8,000</div>
+      <div class="ai-insight-actions">
+        <button class="btn btn-green btn-sm">Apply Adjustment</button>
+        <button class="btn btn-secondary btn-sm">View Transactions</button>
+        <button class="btn btn-ghost btn-sm">Ignore</button>
+      </div>
+    </div>
+    <div style="font-size:11px;color:var(--text2)">2 other records reviewed – no anomalies found</div>`);
+    return;
+  }
+
+  if (m.includes('erp') || m.includes('variance')) {
+    addMessage(`<strong>ERP Variance Report – Mar 2026</strong>
+    <div class="ai-analysis-row" style="margin-top:8px">
+      <div class="ai-analysis-icon">✅</div>
+      <div class="ai-analysis-text">LicenseIQ Total</div>
+      <div class="ai-analysis-val">$1,173,200</div>
+    </div>
+    <div class="ai-analysis-row">
+      <div class="ai-analysis-icon">🗄️</div>
+      <div class="ai-analysis-text">ERP Total (SAP)</div>
+      <div class="ai-analysis-val">$1,165,000</div>
+    </div>
+    <div class="ai-analysis-row" style="background:var(--yellow-bg)">
+      <div class="ai-analysis-icon">⚡</div>
+      <div class="ai-analysis-text" style="color:var(--yellow)">Variance</div>
+      <div class="ai-analysis-val" style="color:var(--yellow)">+$8,200</div>
+    </div>
+    <div style="margin-top:8px;font-size:11px;color:var(--text2)">Variance traced to ACC2033 – returns not yet posted in ERP</div>`);
+    return;
+  }
+
+  if (m.includes('explain') || m.includes('$420') || m.includes('420k')) {
+    addMessage(`<strong>Accrual Breakdown – ACC2032</strong>
+    <div class="ai-analysis-row" style="margin-top:8px">
+      <div class="ai-analysis-icon">💰</div>
+      <div class="ai-analysis-text">Net Sales (Mar 2026)</div>
+      <div class="ai-analysis-val">$8,400,000</div>
+    </div>
+    <div class="ai-analysis-row">
+      <div class="ai-analysis-icon">📜</div>
+      <div class="ai-analysis-text">Section 7.2 – Tier 3 Rebate</div>
+      <div class="ai-analysis-val">5.0%</div>
+    </div>
+    <div class="ai-analysis-row" style="background:var(--accent-glow)">
+      <div class="ai-analysis-icon">🧮</div>
+      <div class="ai-analysis-text" style="color:var(--accent)">Final Accrual</div>
+      <div class="ai-analysis-val" style="color:var(--accent)">$420,000</div>
+    </div>
+    <div style="margin-top:8px;font-size:11px;color:var(--text2)">Confidence: 92% · Calculation verified ✓</div>
+    <button class="btn btn-secondary btn-sm" style="margin-top:8px;width:100%" onclick="openExplain()">🔍 Full explainability view</button>`);
+    return;
+  }
+
+  if (m.includes('create') || m.includes('manual') || m.includes('solar license')) {
+    showManualAccrualFlow();
+    return;
+  }
+
+  // Default
+  addMessage(`I'm analyzing the accrual data for Mar 2026. I can help you:<br/><br/>
+  <div class="ai-analysis-row"><div class="ai-analysis-icon">🔍</div><div class="ai-analysis-text">Explain any accrual calculation</div></div>
+  <div class="ai-analysis-row"><div class="ai-analysis-icon">⚠️</div><div class="ai-analysis-text">Detect anomalies and over-accruals</div></div>
+  <div class="ai-analysis-row"><div class="ai-analysis-icon">📊</div><div class="ai-analysis-text">Compare vs ERP entries</div></div>
+  <div class="ai-analysis-row"><div class="ai-analysis-icon">✏️</div><div class="ai-analysis-text">Create manual accruals</div></div>
+  <br/>Select an accrual or use a quick action below.`);
+}
+
+// ─── AI INSIGHT CLICKS ────────────────────────────────────────
+function triggerAIInsight(type) {
+  if (type === 'over-accrual') sendAIMessage('Show me the potential over-accruals detected');
+  else if (type === 'missing-data') sendAIMessage('Which contracts have missing data inputs?');
+  else if (type === 'high-risk') sendAIMessage('What is the high risk contract flagged this period?');
+}
+
+// ─── MANUAL ACCRUAL FLOW ─────────────────────────────────────
+function showManualAccrualFlow() {
+  addUserMessage('Create accrual for Solar License royalty estimate – $75k for March');
+  setTimeout(() => {
+    addMessage(`<strong style="color:var(--green)">✓ Manual Accrual Draft Created</strong>
+    <div class="ai-draft-box" style="margin-top:10px">
+      <div class="ai-draft-row"><span class="ai-draft-key">Accrual ID</span><span class="ai-draft-val" style="color:var(--accent)">ACC2040-DRAFT</span></div>
+      <div class="ai-draft-row"><span class="ai-draft-key">Flow Type</span><span class="ai-draft-val">📜 Royalty</span></div>
+      <div class="ai-draft-row"><span class="ai-draft-key">Counterparty</span><span class="ai-draft-val">Solar Corp</span></div>
+      <div class="ai-draft-row"><span class="ai-draft-key">Period</span><span class="ai-draft-val">Mar 2026</span></div>
+      <div class="ai-draft-row"><span class="ai-draft-key">Amount</span><span class="ai-draft-val" style="color:var(--green);font-size:15px;font-weight:700">$75,000</span></div>
+      <div class="ai-draft-row"><span class="ai-draft-key">Reason</span><span class="ai-draft-val">Pending invoice</span></div>
+    </div>
+    <div class="ai-draft-actions">
+      <button class="btn btn-green btn-sm" style="flex:1">✓ Approve Draft</button>
+      <button class="btn btn-secondary btn-sm" style="flex:1">✎ Edit</button>
+      <button class="btn btn-ghost btn-sm">✕</button>
+    </div>`);
+  }, 900);
+}
+
+// ─── INIT ─────────────────────────────────────────────────────
+renderTable();
+</script>
+</body>
+</html>

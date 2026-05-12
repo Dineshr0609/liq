@@ -1,0 +1,4 @@
+date,storeId,storeRegion,productCode,productName,qty,unitPrice,grossSales,channel
+2026-01-22,RESELLER-NA-01,North America,TECH-LIC-01,Encryption SDK,3,3500.00,10500.00,Reseller
+2026-02-18,RESELLER-EU-02,Europe,TECH-LIC-02,Imaging API,2,2800.00,5600.00,Reseller
+2026-03-26,RESELLER-APAC-03,Asia Pacific,TECH-LIC-01,Encryption SDK,4,3500.00,14000.00,Reseller

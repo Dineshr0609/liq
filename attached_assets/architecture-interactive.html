@@ -1,0 +1,1123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LicenseIQ — Architecture Documentation</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#ffffff;color:#1a1a1a;line-height:1.6;font-size:14px}
+a{color:#c2410c;text-decoration:none;cursor:pointer}
+a:hover{color:#9a3412}
+code{background:rgba(194,65,12,.08);padding:2px 6px;border-radius:4px;font-size:.8em;color:#9a3412;font-family:'JetBrains Mono',monospace}
+strong{color:#111}
+h2{font-size:1.5rem;color:#111;margin-bottom:8px;font-weight:700}
+h3{font-size:1.15rem;color:#111;margin:28px 0 14px;font-weight:700}
+h4{font-size:1rem;color:#333;margin:18px 0 10px;font-weight:600}
+.hero{text-align:center;padding:48px 20px 32px;background:linear-gradient(180deg,#111 0%,#1a1a1a 100%);color:#fff}
+.hero h1{font-family:'Playfair Display',Georgia,serif;font-size:2.4rem;font-weight:800;color:#ea580c;margin-bottom:8px}
+.hero .sub{color:#e5e5e5;font-size:.95rem;margin-bottom:6px}
+.hero .desc{color:#a3a3a3;font-size:.85rem;max-width:680px;margin:0 auto 20px}
+.vbadge{display:inline-block;padding:4px 14px;background:rgba(234,88,12,.12);border:1px solid rgba(234,88,12,.3);border-radius:16px;font-size:.7rem;color:#ea580c;letter-spacing:.5px;margin-bottom:12px;font-weight:600}
+.stats{display:flex;justify-content:center;gap:24px;flex-wrap:wrap}
+.stat{text-align:center}
+.stat b{display:block;font-size:1.4rem;color:#ea580c}
+.stat span{font-size:.7rem;color:#a3a3a3}
+.nav{position:sticky;top:0;z-index:50;background:#111;border-bottom:2px solid #ea580c;display:flex;gap:2px;padding:6px 12px;overflow-x:auto;white-space:nowrap}
+.nav div{padding:8px 14px;border-radius:6px;cursor:pointer;font-size:.8rem;color:#d4d4d4;font-weight:500;transition:background .2s,color .2s}
+.nav div:hover{background:rgba(234,88,12,.15);color:#fff}
+.nav div.act{background:rgba(234,88,12,.25);color:#ea580c;font-weight:700}
+.wrap{max-width:1100px;margin:0 auto;padding:20px}
+.sec{display:none}
+.sec.act{display:block}
+.sdesc{color:#666;font-size:.9rem;margin-bottom:20px}
+.g2{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:12px}
+.g3{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+.g4{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+.c{background:#fafafa;border:1px solid #e5e5e5;border-radius:10px;padding:18px}
+.c .ct{font-weight:700;font-size:.9rem;color:#111;margin-bottom:6px}
+.c .cd{font-size:.82rem;color:#555}
+.calt{background:#f5f5f5}
+.bl{border-left:3px solid}
+.bl-p{border-color:#ea580c}
+.bl-s{border-color:#16a34a}
+.bl-w{border-color:#d97706}
+.bl-d{border-color:#dc2626}
+.bl-i{border-color:#0891b2}
+.bl-pk{border-color:#db2777}
+.layer{border:1px solid #e5e5e5;border-radius:10px;padding:16px;margin-bottom:12px;border-left:3px solid}
+.layer .ll{font-weight:700;font-size:.85rem;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px}
+.coll{border:1px solid #e5e5e5;border-radius:10px;overflow:hidden;margin-bottom:8px}
+.coll-h{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;cursor:pointer;background:#fafafa;transition:background .2s}
+.coll-h:hover{background:#f0f0f0}
+.coll-h .cht{font-weight:700;font-size:.88rem;color:#111}
+.coll-h .cha{color:#999;font-size:.75rem;transition:transform .2s}
+.coll-b{display:none;padding:14px 16px;background:#fff}
+.coll.open .coll-b{display:block}
+.coll.open .cha{transform:rotate(180deg)}
+table{width:100%;border-collapse:collapse;font-size:.82rem}
+th{text-align:left;padding:8px 10px;background:#111;color:#fff;font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.3px;border-bottom:1px solid #333}
+td{padding:8px 10px;border-bottom:1px solid #eee;color:#333}
+tr:hover td{background:rgba(234,88,12,.03)}
+.badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:.68rem;font-weight:700;letter-spacing:.3px}
+.b-p{background:rgba(234,88,12,.15);color:#c2410c}
+.b-s{background:rgba(22,163,74,.12);color:#16a34a}
+.b-w{background:rgba(217,119,6,.12);color:#b45309}
+.b-d{background:rgba(220,38,38,.12);color:#dc2626}
+.b-i{background:rgba(8,145,178,.12);color:#0891b2}
+.b-pu{background:rgba(124,58,237,.12);color:#7c3aed}
+.tag{display:inline-block;padding:4px 10px;background:rgba(234,88,12,.06);border:1px solid rgba(234,88,12,.15);border-radius:6px;font-size:.75rem;color:#9a3412;margin:2px}
+.tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px}
+.flow{display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:16px;background:#fafafa;border:1px solid #e5e5e5;border-radius:10px;margin-bottom:16px;overflow-x:auto}
+.fs{text-align:center;border:1px solid #e5e5e5;border-radius:8px;padding:12px 16px;min-width:110px;background:#fff}
+.fs .fi{font-size:1.3rem;margin-bottom:4px}
+.fs .fl{font-weight:700;font-size:.8rem;color:#111}
+.fs .fd{font-size:.68rem;color:#888;margin-top:2px}
+.fa{color:#ccc;font-size:1rem;font-weight:700}
+.pipe{padding-left:20px;border-left:2px solid #e5e5e5}
+.ps{display:flex;gap:12px;align-items:flex-start;margin-bottom:14px;position:relative}
+.ps::before{content:'';width:10px;height:10px;border-radius:50%;background:#ea580c;flex-shrink:0;margin-top:5px}
+.ps.ps-s::before{background:#16a34a}
+.ps.ps-i::before{background:#0891b2}
+.ps.ps-w::before{background:#d97706}
+.ps.ps-d::before{background:#dc2626}
+.ps.ps-m::before{background:#999}
+.ps .pt{font-weight:700;font-size:.85rem;color:#111}
+.ps .pd{font-size:.8rem;color:#555;margin-top:2px}
+.mc{text-align:center;background:#111;border:1px solid #333;border-radius:10px;padding:16px}
+.mc b{display:block;font-size:1.6rem;color:#ea580c}
+.mc span{font-size:.72rem;color:#aaa}
+.fb{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.fbn{flex:1;min-width:200px;border:1px solid #e5e5e5;border-radius:10px;padding:16px;background:#fafafa;text-align:center}
+.fbn .fbi{font-size:1.5rem;margin-bottom:6px}
+.fbn .fbname{font-weight:700;font-size:.9rem;color:#111}
+.fbn .fbmod{font-size:.75rem;color:#888;margin:4px 0 8px}
+.fbn .fbd{font-size:.78rem;color:#555;text-align:left;margin-top:8px}
+.fbc{display:flex;align-items:center;color:#ccc;font-size:.8rem;font-weight:600;padding:0 4px}
+.notes{padding:14px;background:#f5f5f5;border:1px solid #e5e5e5;border-radius:8px;margin-top:14px}
+.notes li{font-size:.82rem;color:#555;margin-bottom:6px;list-style:disc;margin-left:16px}
+.arch-box{border:1px solid #e5e5e5;border-radius:14px;padding:28px 24px;margin-bottom:28px;background:linear-gradient(160deg,#fafafa 0%,#fff 100%)}
+.arch-title{text-align:center;margin-bottom:28px}
+.arch-title h3{font-family:'Playfair Display',Georgia,serif;font-size:1.5rem;font-weight:800;color:#ea580c}
+.arch-title p{color:#888;font-size:.85rem;margin-top:4px}
+.row{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:4px}
+.role{display:flex;align-items:center;gap:8px;padding:10px 16px;border-radius:10px;border:1px solid #e5e5e5;background:#fff;cursor:pointer;transition:border-color .2s}
+.role:hover{border-color:#ea580c}
+.role .ri{font-size:1.3rem}
+.role b{font-size:.8rem;color:#111;display:block}
+.role span{font-size:.65rem;color:#888}
+.arrow-c{text-align:center;color:#ccc;font-size:.9rem;margin:4px 0}
+.lbox{display:block;border:2px solid #e5e5e5;border-radius:12px;padding:16px 18px;margin-bottom:4px;cursor:pointer;transition:border-color .2s}
+.lbox:hover{border-color:#ea580c}
+.lbox-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.lbox-head .lh-left{display:flex;align-items:center;gap:10px}
+.lbox-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1rem}
+.lbox-t{font-weight:700;font-size:.9rem;color:#111}
+.lbox-s{font-size:.7rem;color:#888}
+.lbox-link{font-size:.7rem;color:#ea580c;font-weight:600}
+.lbox-tags{display:flex;gap:5px;flex-wrap:wrap}
+.lbox-tag{padding:4px 10px;border-radius:6px;font-size:.7rem;border:1px solid #e5e5e5;color:#555;background:#fafafa}
+.lbox-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px}
+.lbox-cell{background:#fff;border:1px solid #e5e5e5;border-radius:8px;padding:10px 12px;cursor:pointer}
+.lbox-cell b{font-size:.78rem;color:#c2410c;display:flex;align-items:center;gap:6px}
+.lbox-cell p{font-size:.68rem;color:#888;margin-top:3px}
+.pink-cell{background:rgba(234,88,12,.03);border-color:rgba(234,88,12,.2)}
+.pink-cell b{color:#ea580c}
+.ai-row{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;border:1px solid #e5e5e5;background:#fff;margin-bottom:5px}
+.ai-row .emoji{font-size:1rem}
+.ai-row .info{flex:1}
+.ai-row .info b{font-size:.78rem;color:#111;display:block}
+.ai-row .info span{font-size:.62rem;color:#888}
+.ai-tag{padding:2px 7px;border-radius:4px;font-size:.6rem;font-weight:700}
+.side2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:4px}
+.ext-box{border:2px dashed #e5e5e5;border-radius:12px;padding:14px 18px;margin-bottom:16px;background:#fafafa}
+.ext-box .el{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#999;margin-bottom:8px}
+.ext-tags{display:flex;gap:6px;flex-wrap:wrap}
+.ext-tags span{background:#fff;border:1px solid #e5e5e5;padding:5px 12px;border-radius:8px;font-size:.72rem;color:#555}
+.kflow{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:8px}
+.kf{padding:12px 14px;border-radius:10px;border-left:3px solid;background:#fafafa;cursor:pointer;transition:background .2s}
+.kf:hover{background:#f0f0f0}
+.kf b{font-size:.8rem;color:#111;display:flex;align-items:center;gap:6px}
+.kf p{font-size:.7rem;color:#888;margin-top:3px}
+.kf-p{border-color:#ea580c}
+.kf-s{border-color:#16a34a}
+.kf-i{border-color:#0891b2}
+.kf-pk{border-color:#db2777}
+.kf-w{border-color:#d97706}
+.kf-pu{border-color:#7c3aed}
+.kf-d{border-color:#dc2626}
+.foot{text-align:center;padding:40px 20px;color:#999;font-size:.75rem;border-top:1px solid #e5e5e5;margin-top:40px}
+.foot strong{color:#ea580c}
+.spec-grid{display:grid;grid-template-columns:160px 1fr;gap:0;font-size:.82rem;border:1px solid #e5e5e5;border-radius:8px;overflow:hidden}
+.spec-grid .sk{padding:8px 12px;background:#111;color:#e5e5e5;font-weight:600;border-bottom:1px solid #333;font-size:.78rem}
+.spec-grid .sv{padding:8px 12px;color:#333;border-bottom:1px solid #eee;background:#fff}
+.spec-grid .sv code{font-size:.75rem}
+.hl-box{border:1px solid;border-radius:10px;padding:16px;margin-bottom:12px}
+.hl-box.hl-green{border-color:rgba(22,163,74,.3);background:rgba(22,163,74,.03)}
+.hl-box.hl-blue{border-color:rgba(234,88,12,.2);background:rgba(234,88,12,.03)}
+.hl-box.hl-orange{border-color:rgba(217,119,6,.3);background:rgba(217,119,6,.03)}
+.hl-box.hl-red{border-color:rgba(220,38,38,.3);background:rgba(220,38,38,.03)}
+.hl-box.hl-cyan{border-color:rgba(8,145,178,.3);background:rgba(8,145,178,.03)}
+.hl-box.hl-purple{border-color:rgba(124,58,237,.3);background:rgba(124,58,237,.03)}
+.stage-flow{display:flex;gap:0;margin-bottom:20px;flex-wrap:wrap}
+.stage-card{flex:1;min-width:240px;border:2px solid #e5e5e5;padding:20px;text-align:center;position:relative;background:#fff}
+.stage-card:first-child{border-radius:10px 0 0 10px}
+.stage-card:last-child{border-radius:0 10px 10px 0}
+.stage-card.stage-active{border-color:#ea580c;background:rgba(234,88,12,.02)}
+.stage-card .stage-label{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#ea580c;margin-bottom:6px}
+.stage-card .stage-name{font-weight:800;font-size:1rem;color:#111;margin-bottom:6px}
+.stage-card .stage-desc{font-size:.78rem;color:#666}
+.stage-arrow{display:flex;align-items:center;font-size:1.2rem;color:#ea580c;font-weight:700;padding:0 4px}
+@media(max-width:768px){.side2{grid-template-columns:1fr}.g3,.g4{grid-template-columns:1fr 1fr}.nav{padding:4px 8px}.nav div{padding:6px 10px;font-size:.72rem}.spec-grid{grid-template-columns:130px 1fr}.stage-flow{flex-direction:column}.stage-card{border-radius:10px !important}.stage-arrow{justify-content:center;transform:rotate(90deg)}}
+</style>
+</head>
+<body>
+
+<section class="hero">
+  <div class="vbadge">v3.0 — Architecture Documentation — Mar 2026</div>
+  <h1>LicenseIQ Platform</h1>
+  <p class="sub">AI-Native Universal Contract Intelligence & License Fee Calculation System</p>
+  <p class="desc">Enterprise-grade SaaS platform leveraging Anthropic Claude, Groq, and OpenAI for automated contract processing, rule extraction, ERP integration, and universal payment calculations across any contract type.</p>
+  <div class="stats">
+    <div class="stat"><b>50+</b><span>Application Pages</span></div>
+    <div class="stat"><b>80</b><span>Database Tables</span></div>
+    <div class="stat"><b>37</b><span>Backend Services</span></div>
+    <div class="stat"><b>3</b><span>AI Providers</span></div>
+    <div class="stat"><b>384-dim</b><span>Vector Embeddings</span></div>
+    <div class="stat"><b>5</b><span>Security Tiers</span></div>
+  </div>
+</section>
+
+<div class="nav" id="nav">
+  <div class="act" data-s="overview">Overview</div>
+  <div data-s="ai-architecture">AI Architecture</div>
+  <div data-s="rag-deep-dive">RAG & Embeddings</div>
+  <div data-s="ai-models">AI Models & Prompts</div>
+  <div data-s="data-pipeline">Contract Pipeline</div>
+  <div data-s="three-stage">3-Stage Pipeline</div>
+  <div data-s="pages">All Pages (50+)</div>
+  <div data-s="services">Backend Services</div>
+  <div data-s="database">Database Schema</div>
+  <div data-s="erp">ERP & Mapping</div>
+  <div data-s="calculation">Calculation Engine</div>
+  <div data-s="finance-hub">Finance Hub</div>
+  <div data-s="security">Security & RBAC</div>
+  <div data-s="tech-stack">Tech Stack</div>
+  <div data-s="api">API Reference</div>
+  <div data-s="deployment">Deployment</div>
+</div>
+
+<div class="wrap">
+
+<!-- =================== OVERVIEW =================== -->
+<div class="sec act" id="overview">
+  <h2>System Overview</h2>
+  <p class="sdesc">LicenseIQ is an AI-native platform that automates the entire contract-to-payment lifecycle — from PDF ingestion to license fee calculations — using a multi-provider AI architecture with intelligent fallbacks.</p>
+
+  <div class="arch-box">
+    <div class="arch-title">
+      <div class="vbadge">Enterprise Architecture Blueprint</div>
+      <h3>LicenseIQ System Architecture</h3>
+      <p>Complete end-to-end data flow across all platform layers. Click any section to explore details.</p>
+    </div>
+
+    <div class="row">
+      <a class="role" onclick="go('security')"><span class="ri">👤</span><div><b>System Admin</b><span>Full Access</span></div></a>
+      <a class="role" onclick="go('security')"><span class="ri">👥</span><div><b>Company Admin</b><span>Org Level</span></div></a>
+      <a class="role" onclick="go('security')"><span class="ri">📊</span><div><b>Analyst</b><span>Location Scope</span></div></a>
+      <a class="role" onclick="go('security')"><span class="ri">👁️</span><div><b>Reviewer</b><span>Read + Approve</span></div></a>
+      <a class="role" onclick="go('security')"><span class="ri">🔍</span><div><b>Viewer</b><span>Read Only</span></div></a>
+    </div>
+    <div class="arrow-c">▼ 5-Tier RBAC — <a onclick="go('security')">View Details →</a></div>
+    <div class="arrow-c">▼</div>
+
+    <a class="lbox" onclick="go('pages')">
+      <div class="lbox-head">
+        <div class="lh-left">
+          <div class="lbox-icon" style="background:#ea580c;color:#fff">⚛️</div>
+          <div><div class="lbox-t">Presentation Layer</div><div class="lbox-s">React 18 + TypeScript + Vite | 50+ Pages</div></div>
+        </div>
+        <span class="lbox-link">View All Pages →</span>
+      </div>
+      <div class="lbox-tags">
+        <span class="lbox-tag">TailwindCSS + shadcn/ui</span>
+        <span class="lbox-tag">TanStack Query v5</span>
+        <span class="lbox-tag">DM Sans + Playfair Display</span>
+        <span class="lbox-tag">12 Color Themes</span>
+        <span class="lbox-tag">Omnipresent liQ AI</span>
+      </div>
+    </a>
+
+    <div class="arrow-c">▼ REST API (JSON over HTTPS) ▼</div>
+
+    <a class="lbox" onclick="go('services')">
+      <div class="lbox-head">
+        <div class="lh-left">
+          <div class="lbox-icon" style="background:#111;color:#ea580c">🚀</div>
+          <div><div class="lbox-t">Application Layer</div><div class="lbox-s">Express.js + TypeScript | Port 5000 | 37 Services</div></div>
+        </div>
+        <span class="lbox-link">View Services →</span>
+      </div>
+      <div class="lbox-grid">
+        <div class="lbox-cell" onclick="event.stopPropagation();go('security')"><b>🔐 Auth & Security</b><p>Passport.js • 5-Tier RBAC • Sessions • Audit</p></div>
+        <div class="lbox-cell" onclick="event.stopPropagation();go('three-stage')"><b>📄 3-Stage Pipeline</b><p>Clause Segment → Rule Map → Conflict Detect</p></div>
+        <div class="lbox-cell" onclick="event.stopPropagation();go('calculation')"><b>💰 Calculation Engine</b><p>Universal Formula • Rules • Tiers • Reports</p></div>
+        <div class="lbox-cell" onclick="event.stopPropagation();go('finance-hub')"><b>🏦 Finance Hub</b><p>Auto-Accruals • Journal Entries • Period Close</p></div>
+        <div class="lbox-cell pink-cell" onclick="event.stopPropagation();go('rag-deep-dive')"><b>🧠 RAG & Vector Search</b><p>384-dim Embeddings • Cosine Similarity • liQ AI</p></div>
+        <div class="lbox-cell" onclick="event.stopPropagation();go('erp')"><b>🔗 ERP Integration</b><p>Field Mapping • Import • Master Data</p></div>
+        <div class="lbox-cell" onclick="event.stopPropagation();go('ai-models')"><b>🤖 AI Models & Prompts</b><p>Claude • Groq • OpenAI • Multi-Layer Prompts</p></div>
+      </div>
+    </a>
+
+    <div class="arrow-c" style="display:flex;justify-content:space-around">
+      <span>▼ AI API Calls ▼</span>
+      <span>▼ Drizzle ORM ▼</span>
+    </div>
+
+    <div class="side2">
+      <a class="lbox" onclick="go('ai-architecture')" style="border-color:#ea580c">
+        <div class="lbox-head">
+          <div class="lh-left">
+            <div class="lbox-icon" style="background:#ea580c;color:#fff">🧠</div>
+            <div><div class="lbox-t">AI Intelligence Layer</div><div class="lbox-s">Multi-Provider with Auto-Fallback <span class="lbox-link">Details →</span></div></div>
+          </div>
+        </div>
+        <div class="ai-row"><span class="emoji">🧠</span><div class="info"><b>Anthropic Claude</b><span>claude-sonnet-4-5 • Primary Default • 16K tokens</span></div><span class="ai-tag" style="background:rgba(22,163,74,.12);color:#16a34a">PRIMARY</span></div>
+        <div style="text-align:center;font-size:.6rem;color:#ccc">↓ fallback ↓</div>
+        <div class="ai-row"><span class="emoji">⚡</span><div class="info"><b>Groq</b><span>llama-3.3-70b • Fast Inference • 8K tokens</span></div><span class="ai-tag" style="background:rgba(217,119,6,.12);color:#b45309">FALLBACK</span></div>
+        <div class="ai-row"><span class="emoji">🌐</span><div class="info"><b>OpenAI</b><span>gpt-4o • Selectable Primary</span></div><span class="ai-tag" style="background:rgba(124,58,237,.12);color:#7c3aed">OPTIONAL</span></div>
+        <div class="ai-row"><span class="emoji">🔗</span><div class="info"><b>HuggingFace</b><span>BAAI/bge-small-en-v1.5 • 384-dim Embeddings</span></div><span class="ai-tag" style="background:rgba(8,145,178,.12);color:#0891b2">VECTORS</span></div>
+      </a>
+
+      <a class="lbox" onclick="go('database')">
+        <div class="lbox-head">
+          <div class="lh-left">
+            <div class="lbox-icon" style="background:#111;color:#ea580c">🐘</div>
+            <div><div class="lbox-t">Data & Storage Layer</div><div class="lbox-s">PostgreSQL + pgvector + Object Storage <span class="lbox-link">Schema →</span></div></div>
+          </div>
+        </div>
+        <div class="ai-row"><span class="emoji">🐘</span><div class="info"><b>PostgreSQL (Neon)</b><span>80 Tables • Drizzle ORM • Serverless</span></div><span class="ai-tag" style="background:rgba(234,88,12,.12);color:#c2410c">80 TABLES</span></div>
+        <div class="ai-row"><span class="emoji">📐</span><div class="info"><b>pgvector Extension</b><span>HNSW Index • Cosine Similarity • 384-dim</span></div></div>
+        <div class="ai-row"><span class="emoji">🗂️</span><div class="info"><b>Replit Object Storage</b><span>PDF Documents • Uploaded Files</span></div></div>
+        <div class="ai-row"><span class="emoji">🔑</span><div class="info"><b>Session Store</b><span>connect-pg-simple • Secure Sessions</span></div></div>
+      </a>
+    </div>
+
+    <div class="arrow-c">▼</div>
+
+    <div class="ext-box">
+      <div class="el">External Services & Integrations</div>
+      <div class="ext-tags">
+        <span>📧 Zoho Mail (SMTP)</span>
+        <span>📧 Resend (Email)</span>
+        <span>🔐 Replit Auth</span>
+        <span>☁️ Replit Hosting</span>
+        <span>🏢 ERP Systems (SAP, Oracle, NetSuite)</span>
+      </div>
+    </div>
+
+    <div style="border-top:1px solid #e5e5e5;padding-top:16px">
+      <div style="text-align:center;margin-bottom:12px"><span class="vbadge">KEY DATA FLOWS — Click to explore</span></div>
+      <div class="kflow">
+        <a class="kf kf-p" onclick="go('data-pipeline')"><b>📤 1. Contract Ingestion</b><p>Upload PDF → AI extracts rules → Save to DB → Generate embeddings</p></a>
+        <a class="kf kf-s" onclick="go('three-stage')"><b>🔬 2. 3-Stage Pipeline</b><p>Clause Segmentation → Rule Template Mapping → Conflict Detection</p></a>
+        <a class="kf kf-i" onclick="go('rag-deep-dive')"><b>🔎 3. RAG Q&A Pipeline</b><p>Question → Embed → Cosine search → Top-8 chunks → AI answers with citations</p></a>
+        <a class="kf kf-pk" onclick="go('erp')"><b>🔗 4. ERP & Term Mapping</b><p>AI extracts terms → Maps to ERP fields → Links to ERP values</p></a>
+        <a class="kf kf-w" onclick="go('calculation')"><b>💰 5. License Fee Calculation</b><p>Upload sales CSV → Match rules → Evaluate formulas → Reports & invoices</p></a>
+        <a class="kf kf-pu" onclick="go('finance-hub')"><b>🏦 6. Auto-Accrual Pipeline</b><p>Calculation → Auto-create accruals → Draft JE (DR 6100 / CR 2200) → Period Close</p></a>
+        <a class="kf kf-d" onclick="go('data-pipeline')"><b>👤 7. Human-in-the-Loop</b><p>AI extracts → Confidence scored → Auto-confirm ≥85% or Human Review Queue</p></a>
+      </div>
+    </div>
+  </div>
+
+  <div class="layer" style="border-color:#ea580c">
+    <div class="ll" style="color:#ea580c">Presentation Layer</div>
+    <div class="g4">
+      <div class="c"><div class="ct">⚛️ React 18 + TypeScript</div><div class="cd">Single Page Application with Vite bundler, DM Sans font</div></div>
+      <div class="c"><div class="ct">🎨 TailwindCSS + shadcn/ui</div><div class="cd">Radix UI primitives, 12 color themes, dark mode</div></div>
+      <div class="c"><div class="ct">📊 Recharts</div><div class="cd">Interactive analytics & dashboard charts</div></div>
+      <div class="c"><div class="ct">🤖 Omnipresent liQ AI</div><div class="cd">Floating AI assistant on every authenticated page, contract creation from natural language</div></div>
+    </div>
+  </div>
+
+  <div class="layer" style="border-color:#111">
+    <div class="ll" style="color:#111">Application Layer</div>
+    <div class="g4">
+      <div class="c"><div class="ct">🚀 Express.js API</div><div class="cd">RESTful endpoints with layered services</div></div>
+      <div class="c"><div class="ct">🔐 Passport.js Auth</div><div class="cd">Session-based with 5-tier RBAC</div></div>
+      <div class="c"><div class="ct">📄 3-Stage Pipeline</div><div class="cd">Clause → Rule Template → Conflict Detection</div></div>
+      <div class="c"><div class="ct">🏦 Finance Hub</div><div class="cd">Auto-accruals, JEs, period close from calculations</div></div>
+    </div>
+  </div>
+
+  <div class="layer" style="border-color:#16a34a">
+    <div class="ll" style="color:#16a34a">AI Intelligence Layer</div>
+    <div class="g4">
+      <div class="c"><div class="ct">🧠 Claude (Primary)</div><div class="cd">claude-sonnet-4-5 — temp 0.1, 16K tokens</div></div>
+      <div class="c"><div class="ct">⚡ Groq (Fallback)</div><div class="cd">llama-3.3-70b — fast inference, 8K tokens</div></div>
+      <div class="c"><div class="ct">🌐 OpenAI (Selectable)</div><div class="cd">gpt-4o — selectable primary provider</div></div>
+      <div class="c"><div class="ct">🔗 HuggingFace</div><div class="cd">BAAI/bge-small-en-v1.5 — 384-dim vectors</div></div>
+    </div>
+  </div>
+
+  <div class="layer" style="border-color:#d97706">
+    <div class="ll" style="color:#d97706">Data & Storage Layer</div>
+    <div class="g4">
+      <div class="c"><div class="ct">🐘 PostgreSQL (Neon)</div><div class="cd">80 tables via Drizzle ORM</div></div>
+      <div class="c"><div class="ct">📐 pgvector + HNSW</div><div class="cd">Cosine similarity, 384-dim vectors</div></div>
+      <div class="c"><div class="ct">🗂️ Object Storage</div><div class="cd">Replit-managed file storage</div></div>
+      <div class="c"><div class="ct">🔄 Session Store</div><div class="cd">connect-pg-simple sessions</div></div>
+    </div>
+  </div>
+
+  <h3>Core Architecture Principles</h3>
+  <div class="g3">
+    <div class="c"><div class="ct">🤖 AI-Native Design</div><div class="cd">AI is woven into every workflow — from PDF ingestion through 3-stage pipeline extraction to payment calculation. Human-in-the-loop validation ensures accuracy.</div></div>
+    <div class="c"><div class="ct">🔄 Contract-Agnostic Engine</div><div class="cd">The Universal Calculation Engine handles any contract type through a dynamic formula evaluator — no code changes needed for new contract types.</div></div>
+    <div class="c"><div class="ct">🏢 Multi-Tenant Architecture</div><div class="cd">Multi-location context switching with hierarchical RBAC ensures data isolation across organization, company, and user levels.</div></div>
+    <div class="c"><div class="ct">🗺️ Knowledge Graph Model</div><div class="cd">Contracts modeled as knowledge graphs with nodes and edges, enabling rich AI reasoning and cross-contract intelligence.</div></div>
+    <div class="c"><div class="ct">🏦 Financial Automation</div><div class="cd">Auto-accrual pipeline: every calculation automatically creates accruals, journal entries (DR 6100 / CR 2200), and feeds period close readiness.</div></div>
+    <div class="c"><div class="ct">🛡️ Enterprise Ready</div><div class="cd">Audit trails, version control, approval workflows, branded email templates, lead management, and comprehensive logging.</div></div>
+  </div>
+</div>
+
+<!-- =================== AI ARCHITECTURE =================== -->
+<div class="sec" id="ai-architecture">
+  <h2>AI Architecture & Fallback System</h2>
+  <p class="sdesc">Database-driven multi-provider AI system with automatic failover, configurable via System Settings. No restart required for provider changes.</p>
+
+  <h3>Provider Fallback Chain</h3>
+  <div class="fb">
+    <div class="fbn">
+      <div class="fbi">⚙️</div>
+      <div class="fbname">Configured Provider</div>
+      <div class="fbmod">From system_settings table</div>
+      <span class="badge b-s">PRIMARY</span>
+      <div class="fbd">Reads aiProvider + aiModel from database. Can be Claude, Groq, or OpenAI — configurable via System Settings page. Cached for 60 seconds.</div>
+    </div>
+    <div class="fbc">→ fails →</div>
+    <div class="fbn">
+      <div class="fbi">🧠</div>
+      <div class="fbname">Anthropic Claude</div>
+      <div class="fbmod">claude-sonnet-4-5</div>
+      <span class="badge b-w">FALLBACK 1</span>
+      <div class="fbd">If the configured provider fails and isn't already Claude, falls back to claude-sonnet-4-5 with 3 retry attempts.</div>
+    </div>
+    <div class="fbc">→ fails →</div>
+    <div class="fbn">
+      <div class="fbi">⚡</div>
+      <div class="fbname">Groq</div>
+      <div class="fbmod">llama-3.3-70b-versatile</div>
+      <span class="badge b-d">FALLBACK 2</span>
+      <div class="fbd">If Claude also fails, falls back to Groq for ultra-fast inference with rate limit detection and backoff.</div>
+    </div>
+  </div>
+
+  <div class="c bl bl-i">
+    <div class="ct">🌐 OpenAI (Selectable Primary Only)</div>
+    <div class="cd">OpenAI (gpt-4o, gpt-4o-mini) can be configured as the <strong>primary</strong> provider via System Settings, but is <strong>not</strong> in the automatic fallback chain. When set as primary and it fails, the system falls back to Claude → Groq.</div>
+  </div>
+
+  <div class="coll open">
+    <div class="coll-h" onclick="tog(this)"><div class="cht">⚙️ How the Fallback System Works</div><div class="cha">▼</div></div>
+    <div class="coll-b">
+      <div class="pipe">
+        <div class="ps ps-s"><div><div class="pt">Step 1: Read Configuration from Database</div><div class="pd">System reads aiProvider + aiModel from <strong>system_settings</strong> table. Default: Anthropic Claude. Settings cached for 60 seconds. No restart required.</div></div></div>
+        <div class="ps"><div><div class="pt">Step 2: Try the Configured Primary Provider</div><div class="pd">Sends request to configured provider — <strong>Anthropic Claude</strong>, <strong>Groq</strong>, or <strong>OpenAI</strong>. Temperature 0.1 for structured JSON output. If successful, returns immediately.</div></div></div>
+        <div class="ps ps-w"><div><div class="pt">Step 3: Fallback to Claude (if primary failed)</div><div class="pd">Automatic fallback to <strong>claude-sonnet-4-5</strong> — 3 retry attempts with exponential backoff (2^n × 1000ms). Skipped if Claude was already primary.</div></div></div>
+        <div class="ps ps-d"><div><div class="pt">Step 4: Fallback to Groq (if Claude also failed)</div><div class="pd">Falls back to <strong>Groq</strong> (llama-3.3-70b). Explicit rate limit detection with logged wait times. Skipped if Groq was already primary.</div></div></div>
+        <div class="ps ps-m"><div><div class="pt">Step 5: Safe Empty Response (all providers exhausted)</div><div class="pd">Each service has internal catch blocks that return valid empty JSON structures — never crashes the pipeline. Error logged and returned to user.</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <h3>AI Provider Configuration (System Settings)</h3>
+  <div class="c">
+    <table><tr><th>Setting</th><th>Field</th><th>Options</th><th>Default</th></tr><tr><td>AI Provider</td><td><code>aiProvider</code></td><td>anthropic, groq, openai</td><td>anthropic</td></tr><tr><td>AI Model</td><td><code>aiModel</code></td><td>claude-sonnet-4-5, llama-3.3-70b, gpt-4o, etc.</td><td>claude-sonnet-4-5</td></tr><tr><td>Temperature</td><td><code>aiTemperature</code></td><td>0.0 – 1.0</td><td>0.1</td></tr><tr><td>Max Tokens</td><td><code>aiMaxTokens</code></td><td>1024 – 200000</td><td>8192</td></tr><tr><td>Retry Attempts</td><td><code>aiRetryAttempts</code></td><td>1 – 5</td><td>3</td></tr><tr><td>Config Cache TTL</td><td>Internal</td><td>—</td><td>60 seconds</td></tr></table>
+  </div>
+
+  <h3>AI Operations Across the Platform</h3>
+  <div class="g3">
+    <div class="c"><div class="ct"><span class="badge b-p">Analysis</span> Contract Analysis</div><div class="cd">AI reads entire PDF, generates summary, identifies key terms, assesses risks, produces actionable insights. Input truncated to 50K chars.</div></div>
+    <div class="c"><div class="ct"><span class="badge b-s">Extraction</span> Rule Extraction</div><div class="cd">Zero-shot extraction of payment rules, tier structures, conditions, and formulas from contract text. Input truncated to 80K chars. Mandatory <code>sourceSpan</code> with exact quotes.</div></div>
+    <div class="c"><div class="ct"><span class="badge b-pu">Enrichment</span> Rule Enrichment</div><div class="cd">Deep AI analysis adding calculation logic, category tags, implementation checklists, real-world examples, and source citations. Processes in batches of 5 rules. Auto-triggered on first "Manage Rules" click.</div></div>
+    <div class="c"><div class="ct"><span class="badge b-i">Pipeline</span> 3-Stage Extraction</div><div class="cd">Stage A: Clause segmentation with categories. Stage B: Rule template mapping (T1–T12) with two-pass validation. Stage C: Conflict detection with resolution suggestions.</div></div>
+    <div class="c"><div class="ct"><span class="badge b-w">Matching</span> Sales Matching</div><div class="cd">Semantic matching of sales data against contract embeddings for automatic rule application using cosine similarity.</div></div>
+    <div class="c"><div class="ct"><span class="badge b-d">Q&A</span> liQ AI Assistant</div><div class="cd">RAG-powered document Q&A with source citations. Also supports natural language contract creation — describe a contract and AI generates rules.</div></div>
+  </div>
+</div>
+
+<!-- =================== RAG DEEP DIVE =================== -->
+<div class="sec" id="rag-deep-dive">
+  <h2>RAG System & Vector Embeddings — Deep Dive</h2>
+  <p class="sdesc">Complete Retrieval-Augmented Generation (RAG) pipeline powering liQ AI — from document chunking through vector search to cited answers.</p>
+
+  <h3>RAG Pipeline Architecture</h3>
+  <div class="flow">
+    <div class="fs" style="border-color:#ea580c"><div class="fi">📄</div><div class="fl">PDF Upload</div><div class="fd">Contract document</div></div>
+    <div class="fa">→</div>
+    <div class="fs" style="border-color:#111"><div class="fi">✂️</div><div class="fl">Layout Chunking</div><div class="fd">3000 chars / 200 overlap</div></div>
+    <div class="fa">→</div>
+    <div class="fs" style="border-color:#16a34a"><div class="fi">🔗</div><div class="fl">Embedding</div><div class="fd">BAAI/bge-small-en-v1.5</div></div>
+    <div class="fa">→</div>
+    <div class="fs" style="border-color:#d97706"><div class="fi">🐘</div><div class="fl">pgvector Store</div><div class="fd">384-dim HNSW index</div></div>
+    <div class="fa">→</div>
+    <div class="fs" style="border-color:#0891b2"><div class="fi">🔍</div><div class="fl">Cosine Search</div><div class="fd">Top-8 chunks (≥0.4)</div></div>
+    <div class="fa">→</div>
+    <div class="fs" style="border-color:#ea580c"><div class="fi">🧠</div><div class="fl">AI Answer</div><div class="fd">Claude with citations</div></div>
+  </div>
+
+  <h3>Embedding Model Specification</h3>
+  <div class="hl-box hl-cyan">
+    <div class="spec-grid">
+      <div class="sk">Model</div><div class="sv"><code>BAAI/bge-small-en-v1.5</code></div>
+      <div class="sk">Provider</div><div class="sv">HuggingFace Inference API</div>
+      <div class="sk">Dimensions</div><div class="sv"><strong>384 dimensions</strong></div>
+      <div class="sk">Type</div><div class="sv">Sentence Transformer (bi-encoder)</div>
+      <div class="sk">Language</div><div class="sv">English-optimized</div>
+      <div class="sk">Use Cases</div><div class="sv">Contract chunks, system docs, semantic search, sales matching</div>
+      <div class="sk">Alternative</div><div class="sv"><code>text-embedding-3-small</code> (OpenAI, 1536-dim) — available but not default</div>
+      <div class="sk">Why bge-small?</div><div class="sv">Cost-efficient, fast, excellent for domain-specific retrieval. Small model with strong MTEB benchmark performance.</div>
+    </div>
+  </div>
+
+  <h3>Document Chunking Strategy</h3>
+  <div class="hl-box hl-green">
+    <div class="ct" style="color:#16a34a;margin-bottom:12px">Layout-Aware Chunking (<code>layoutAwareChunking.ts</code>)</div>
+    <div class="spec-grid">
+      <div class="sk">Strategy</div><div class="sv"><strong>Layout-Aware</strong> — preserves document structure (tables, headers, lists)</div>
+      <div class="sk">Chunk Size</div><div class="sv"><strong>3,000 characters</strong> (max per chunk)</div>
+      <div class="sk">Chunk Overlap</div><div class="sv"><strong>200 characters</strong> — ensures context continuity between chunks</div>
+      <div class="sk">Table Handling</div><div class="sv">Detects Markdown &amp; ASCII tables, keeps them intact within a single chunk</div>
+      <div class="sk">Header Detection</div><div class="sv">Recognizes "SECTION X", "ARTICLE II", Markdown headers as section boundaries</div>
+      <div class="sk">List Preservation</div><div class="sv">Keeps numbered and bulleted lists together</div>
+      <div class="sk">Page Detection</div><div class="sv">Detects "Page X of Y" patterns, associates page numbers with chunk offsets</div>
+      <div class="sk">Importance Score</div><div class="sv">0–1 score based on payment keywords ("royalty", "fee", "rate", "threshold", "tier")</div>
+    </div>
+    <div class="notes" style="margin-top:12px">
+      <div style="font-weight:600;margin-bottom:6px;color:#111">Why Layout-Aware?</div>
+      <ul>
+        <li>Naive character splitting breaks tables mid-row, making them useless for AI interpretation</li>
+        <li>Section-aware boundaries keep related clauses together for better retrieval relevance</li>
+        <li>Importance scoring allows prioritization of payment-related chunks during retrieval</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Vector Storage & Indexing</h3>
+  <div class="hl-box hl-purple">
+    <div class="spec-grid">
+      <div class="sk">Database</div><div class="sv">PostgreSQL (Neon) with <code>pgvector</code> extension</div>
+      <div class="sk">Index Type</div><div class="sv"><strong>HNSW</strong> (Hierarchical Navigable Small World)</div>
+      <div class="sk">Distance Metric</div><div class="sv"><strong>Cosine Distance</strong> — <code>vector_cosine_ops</code> operator class</div>
+      <div class="sk">Similarity Calc</div><div class="sv"><code>1 - (vector &lt;=&gt; query_vector)</code> — converts distance to similarity (0–1)</div>
+      <div class="sk">Storage Tables</div><div class="sv"><code>contract_embeddings</code> (contract chunks), <code>system_embeddings</code> (platform docs)</div>
+      <div class="sk">Vector Column</div><div class="sv"><code>embedding vector(384)</code> — matches BGE model output dimensions</div>
+    </div>
+  </div>
+
+  <h3>Retrieval Configuration</h3>
+  <div class="g2">
+    <div class="c bl bl-p">
+      <div class="ct">📄 Contract Questions</div>
+      <div class="spec-grid" style="margin-top:8px">
+        <div class="sk">Top-K</div><div class="sv"><strong>8 chunks</strong></div>
+        <div class="sk">Min Similarity</div><div class="sv"><strong>0.4</strong> (cosine threshold)</div>
+        <div class="sk">Source</div><div class="sv"><code>contract_embeddings</code> table</div>
+        <div class="sk">Scope</div><div class="sv">Filtered by contractId for focused retrieval</div>
+      </div>
+    </div>
+    <div class="c bl bl-s">
+      <div class="ct">🏢 Platform/System Questions</div>
+      <div class="spec-grid" style="margin-top:8px">
+        <div class="sk">Top-K</div><div class="sv"><strong>5 chunks</strong></div>
+        <div class="sk">Min Similarity</div><div class="sv"><strong>0.5</strong> (higher threshold for precision)</div>
+        <div class="sk">Source</div><div class="sv"><code>system_embeddings</code> table</div>
+        <div class="sk">Scope</div><div class="sv">System-wide knowledge base</div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Hybrid Search & Intent Detection</h3>
+  <div class="c">
+    <div class="cd" style="margin-bottom:12px">Before vector search, the RAG pipeline detects the user's intent and routes accordingly:</div>
+    <div class="pipe">
+      <div class="ps ps-s"><div><div class="pt">Data Query Detection</div><div class="pd">If question is "List my active contracts" or "How many calculations?" → executes direct SQL query instead of vector search. Faster, exact results.</div></div></div>
+      <div class="ps ps-i"><div><div class="pt">Platform vs Contract Intent</div><div class="pd">Compares similarity scores between contract embeddings and system embeddings to auto-detect whether question is about platform features or specific contract content.</div></div></div>
+      <div class="ps ps-w"><div><div class="pt">Fallback to Keyword Search</div><div class="pd">If HuggingFace embedding service is unavailable (timeout), falls back to text-based keyword search for system docs or uses contract analysis summaries.</div></div></div>
+    </div>
+  </div>
+
+  <h3>liQ AI Prompt Structure</h3>
+  <div class="c">
+    <div class="pipe" style="margin-top:4px">
+      <div class="ps"><div><div class="pt">System Prompt Layer</div><div class="pd">Defines persona as "expert consultant for LicenseIQ Research Platform". Strict <strong>Accuracy Rules</strong> (use ONLY provided info, never speculate) and <strong>Identity Rules</strong> (never reveal underlying AI technology).</div></div></div>
+      <div class="ps ps-i"><div><div class="pt">Context Injection</div><div class="pd">Retrieved chunks injected as labeled sections: <code>[Section 1] chunk_text \n\n [Section 2] chunk_text ...</code></div></div></div>
+      <div class="ps ps-s"><div><div class="pt">User Query + Answer Prompt</div><div class="pd"><code>Context from contracts:\n[sections]\n\nQuestion: [user question]\n\nAnswer:</code></div></div></div>
+    </div>
+  </div>
+
+  <h3>Citation System</h3>
+  <div class="g2">
+    <div class="c bl bl-i">
+      <div class="ct">📎 Source Attribution</div>
+      <div class="cd">Every RAG answer includes source citations mapped from retrieved chunks:</div>
+      <div class="tags" style="margin-top:8px">
+        <span class="tag">contractId — UUID of source document</span>
+        <span class="tag">contractName — Original filename</span>
+        <span class="tag">relevantText — First 200 chars of matching chunk</span>
+        <span class="tag">similarity — Confidence score (0–1)</span>
+      </div>
+    </div>
+    <div class="c bl bl-w">
+      <div class="ct">📊 Confidence Scoring</div>
+      <div class="cd">Overall answer confidence = <strong>average similarity of top 3 sources</strong>. Displayed as a percentage badge in the UI. Low confidence answers are flagged for the user.</div>
+    </div>
+  </div>
+
+  <h3>RAG Service Inventory</h3>
+  <table>
+    <tr><th>Service File</th><th>Responsibility</th><th>Key Details</th></tr>
+    <tr><td><code>ragService.ts</code></td><td>RAG pipeline orchestrator</td><td>Intent detection, retrieval, prompt construction, citation mapping</td></tr>
+    <tr><td><code>layoutAwareChunking.ts</code></td><td>Document chunking</td><td>3000 char chunks, 200 overlap, table/header preservation</td></tr>
+    <tr><td><code>huggingFaceEmbedding.ts</code></td><td>Embedding generation</td><td>BAAI/bge-small-en-v1.5, 384-dim vectors via HF API</td></tr>
+    <tr><td><code>embeddingService.ts</code></td><td>Embedding management</td><td>Store/retrieve embeddings, batch processing</td></tr>
+    <tr><td><code>semanticSearchService.ts</code></td><td>Vector similarity search</td><td>pgvector cosine search, top-K retrieval, threshold filtering</td></tr>
+    <tr><td><code>knowledgeGraphService.ts</code></td><td>Knowledge graph traversal</td><td>Node/edge graph queries for cross-contract intelligence</td></tr>
+    <tr><td><code>systemSearchService.ts</code></td><td>Full-text search</td><td>Global search across all entities, keyword-based fallback</td></tr>
+  </table>
+</div>
+
+<!-- =================== AI MODELS & PROMPTS =================== -->
+<div class="sec" id="ai-models">
+  <h2>AI Models & Prompt Engineering — Technical Details</h2>
+  <p class="sdesc">Comprehensive breakdown of every AI model, prompt layer, token management, and JSON repair system used across the platform.</p>
+
+  <h3>Model Specifications</h3>
+  <div class="g3">
+    <div class="hl-box hl-green">
+      <div class="ct" style="color:#16a34a">🧠 Anthropic Claude</div>
+      <div class="spec-grid" style="margin-top:8px">
+        <div class="sk">Default Model</div><div class="sv"><code>claude-sonnet-4-5</code></div>
+        <div class="sk">Other Models</div><div class="sv"><code>claude-opus-4-5</code>, <code>claude-haiku-4-5</code></div>
+        <div class="sk">Temperature</div><div class="sv"><strong>0.1</strong> (optimized for structured JSON)</div>
+        <div class="sk">Max Tokens</div><div class="sv"><strong>16,384</strong> (constructor default)</div>
+        <div class="sk">Input Truncation</div><div class="sv">80,000 chars for extraction, 50,000 for analysis</div>
+        <div class="sk">Retry Logic</div><div class="sv">3 attempts, exponential backoff (2^n × 1000ms)</div>
+        <div class="sk">Service File</div><div class="sv"><code>claudeService.ts</code></div>
+      </div>
+    </div>
+    <div class="hl-box hl-orange">
+      <div class="ct" style="color:#b45309">⚡ Groq (LLaMA)</div>
+      <div class="spec-grid" style="margin-top:8px">
+        <div class="sk">Default Model</div><div class="sv"><code>llama-3.3-70b-versatile</code></div>
+        <div class="sk">Other Models</div><div class="sv"><code>llama-3.1-8b-instant</code>, <code>mixtral-8x7b-32768</code></div>
+        <div class="sk">Temperature</div><div class="sv"><strong>0.1</strong></div>
+        <div class="sk">Max Tokens</div><div class="sv"><strong>8,192</strong></div>
+        <div class="sk">Input Truncation</div><div class="sv">80,000 chars</div>
+        <div class="sk">Rate Limiting</div><div class="sv">Explicit detection with logged wait times</div>
+        <div class="sk">Service File</div><div class="sv"><code>groqService.ts</code></div>
+      </div>
+    </div>
+    <div class="hl-box hl-blue">
+      <div class="ct" style="color:#c2410c">🌐 OpenAI</div>
+      <div class="spec-grid" style="margin-top:8px">
+        <div class="sk">Default Model</div><div class="sv"><code>gpt-4o</code></div>
+        <div class="sk">Other Models</div><div class="sv"><code>gpt-4o-mini</code>, <code>gpt-3.5-turbo</code></div>
+        <div class="sk">Temperature</div><div class="sv"><strong>0.1</strong></div>
+        <div class="sk">Max Tokens</div><div class="sv"><strong>1,500–2,000</strong> (per call)</div>
+        <div class="sk">Fallback Role</div><div class="sv">Selectable primary only — NOT in auto-fallback chain</div>
+        <div class="sk">Service File</div><div class="sv"><code>openaiService.ts</code></div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Multi-Layer Prompt Architecture</h3>
+  <div class="c">
+    <div class="cd" style="margin-bottom:12px">The platform uses a sophisticated 4-layer prompt system for all AI operations:</div>
+    <div class="pipe">
+      <div class="ps"><div><div class="pt">Layer 1: System Prompt</div><div class="pd">Defines AI persona as "expert contract analyst". Enforces strict JSON output format. Sets accuracy rules and behavioral constraints.</div></div></div>
+      <div class="ps ps-i"><div><div class="pt">Layer 2: Instruction Layer</div><div class="pd">Operation-specific requirements: "Extract EVERY payment rule", "MANDATORY: Include sourceSpan with exact quotes from contract text", structured field requirements.</div></div></div>
+      <div class="ps ps-s"><div><div class="pt">Layer 3: Contract-Type Layer</div><div class="pd">Custom prompts fetched from database per contract type code (<code>direct_sales</code>, <code>distributor</code>, <code>royalty_license</code>). Stored in <code>defaultContractTypePrompts.ts</code>.</div></div></div>
+      <div class="ps ps-w"><div><div class="pt">Layer 4: Few-Shot Examples</div><div class="pd">Detailed sample JSON outputs included in prompts to guide AI structure. Complete example objects with all expected fields and realistic values.</div></div></div>
+    </div>
+  </div>
+
+  <h3>Prompt Templates by Operation</h3>
+  <div class="g2">
+    <div class="c bl bl-p"><div class="ct"><span class="badge b-p">Extraction</span> Entity & Rule Extraction</div><div class="cd">Zero-shot prompts for extracting parties, dates, territories, payment rules, tier structures, conditions, and formulas. Mandatory <code>sourceSpan</code> with exact contract text quotes. Outputs structured JSON arrays.</div></div>
+    <div class="c bl bl-s"><div class="ct"><span class="badge b-s">3-Stage Pipeline</span> Clause → Rule → Conflict</div><div class="cd">Stage A: "contract clause segmentation expert" prompt. Stage B: "rule template mapping" with T1–T12 templates + two-pass validation. Stage C: "conflict detection" analyzing overlapping rules.</div></div>
+    <div class="c bl bl-w"><div class="ct"><span class="badge b-w">Enrichment</span> Deep Rule Analysis</div><div class="cd">Adds calculation logic, category tags, implementation checklists, real-world examples, and source citations. Processes in batches of 5 to manage rate limits. Auto-triggered on first "Manage Rules" click.</div></div>
+    <div class="c bl bl-i"><div class="ct"><span class="badge b-i">RAG Mode</span> Chunk Processing</div><div class="cd">Specialized prompts for processing document "chunks" with mandatory citations. Each extracted fact must link to its source chunk. Designed for layout-aware chunks with preserved table context.</div></div>
+    <div class="c bl bl-d"><div class="ct"><span class="badge b-d">Q&A</span> liQ AI Answers</div><div class="cd">RAG prompt with retrieved chunks as context. Strict accuracy rules: "use ONLY provided info, never speculate". Identity rules prevent revealing underlying AI technology.</div></div>
+    <div class="c bl bl-pk"><div class="ct"><span class="badge b-pu">Validation</span> Ensemble Checking</div><div class="cd">Multi-model validation where different providers cross-check each other's extractions. Hallucination detection by comparing extracted values against source text.</div></div>
+  </div>
+
+  <h3>Token Management & Input Processing</h3>
+  <div class="c">
+    <table>
+      <tr><th>Strategy</th><th>Implementation</th><th>Purpose</th></tr>
+      <tr><td>Payload Reduction</td><td><code>extractFeeRelevantSections()</code></td><td>Keyword filtering ("royalties", "tier", "minimum") to extract only payment-relevant text</td></tr>
+      <tr><td>Input Truncation</td><td><code>substring(0, 80000)</code> for Claude/Groq</td><td>Hard limit on input text to stay within model context windows</td></tr>
+      <tr><td>Analysis Truncation</td><td><code>substring(0, 50000)</code></td><td>Shorter limit for summary/analysis operations</td></tr>
+      <tr><td>Batch Processing</td><td>Parallel batches of 5</td><td>Enrichment and reasoning processes rules in groups of 5 via <code>Promise.allSettled</code></td></tr>
+      <tr><td>Rate Limit Handling</td><td>Groq: detect + log wait time</td><td>Explicit detection of rate limit responses with backoff timing</td></tr>
+    </table>
+  </div>
+
+  <h3>JSON Sanitization & Repair Pipeline</h3>
+  <div class="hl-box hl-red">
+    <div class="ct" style="color:#dc2626">🔧 Robust JSON Recovery</div>
+    <div class="cd" style="margin-bottom:12px">AI models frequently return malformed JSON. The platform implements a multi-stage repair pipeline:</div>
+    <div class="pipe">
+      <div class="ps"><div><div class="pt">sanitizeAIPlaceholders()</div><div class="pd">Converts AI placeholder values: <code>[NA]</code> → <code>[]</code>, <code>"NA"</code> → <code>null</code>, <code>"N/A"</code> → <code>null</code></div></div></div>
+      <div class="ps ps-i"><div><div class="pt">extractAndRepairJSON()</div><div class="pd">Multi-step: strip markdown fences → find first valid JSON block → attempt parse → if truncated, close missing braces/brackets</div></div></div>
+      <div class="ps ps-s"><div><div class="pt">Truncation Recovery</div><div class="pd">Detects incomplete JSON (hit max tokens) and attempts to close open arrays/objects to salvage partial results</div></div></div>
+      <div class="ps ps-w"><div><div class="pt">Safe Fallback</div><div class="pd">If all repair attempts fail, returns empty but valid JSON structure (empty arrays/objects) — never crashes the pipeline</div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- =================== 3-STAGE PIPELINE =================== -->
+<div class="sec" id="three-stage">
+  <h2>3-Stage Contract Processing Pipeline</h2>
+  <p class="sdesc">AI-driven extraction pipeline that transforms raw contract text into structured calculation rules with conflict detection and two-pass validation.</p>
+
+  <h3>Pipeline Overview</h3>
+  <div class="stage-flow">
+    <div class="stage-card stage-active">
+      <div class="stage-label">Stage A</div>
+      <div class="stage-name">Clause Segmentation</div>
+      <div class="stage-desc">Break contract into categorized clauses with unique IDs (CL-01, CL-02...)</div>
+    </div>
+    <div class="stage-arrow">→</div>
+    <div class="stage-card">
+      <div class="stage-label">Stage B</div>
+      <div class="stage-name">Rule Template Mapping</div>
+      <div class="stage-desc">Map financial clauses to 12 standardized rule templates (T1–T12)</div>
+    </div>
+    <div class="stage-arrow">→</div>
+    <div class="stage-card">
+      <div class="stage-label">Stage C</div>
+      <div class="stage-name">Conflict Detection</div>
+      <div class="stage-desc">Identify overlapping rules, contradictions, and precedence issues</div>
+    </div>
+  </div>
+
+  <h3>Stage A: Clause Segmentation</h3>
+  <div class="c">
+    <div class="ct">Breaking contracts into logical units</div>
+    <div class="pipe" style="margin-top:12px">
+      <div class="ps"><div><div class="pt">Section Identification</div><div class="pd">AI identifies and separates contract sections using structural cues (SECTION, ARTICLE, numbered clauses).</div></div></div>
+      <div class="ps ps-i"><div><div class="pt">Clause Extraction</div><div class="pd">Each clause receives a unique identifier (e.g., <code>CL-01</code>), full text, and section reference.</div></div></div>
+      <div class="ps ps-s"><div><div class="pt">Categorization</div><div class="pd">Clauses categorized as: <strong>financial calculation</strong>, <strong>operational</strong>, <strong>adjustment</strong>, <strong>general terms</strong>, or <strong>definitions</strong>.</div></div></div>
+      <div class="ps ps-w"><div><div class="pt">Accrual Impact Flag</div><div class="pd">Each clause tagged with "affects accrual" flag indicating financial impact for downstream Finance Hub processing.</div></div></div>
+    </div>
+  </div>
+
+  <h3>Stage B: Rule Template Mapping</h3>
+  <div class="c">
+    <div class="ct">12 Standardized Rule Templates (T1–T12)</div>
+    <div class="cd" style="margin-bottom:12px">Financial clauses from Stage A are mapped to specific calculation templates:</div>
+    <div class="g4">
+      <div class="c calt"><div class="ct" style="font-size:.8rem">T1</div><div class="cd">Percentage of Revenue</div></div>
+      <div class="c calt"><div class="ct" style="font-size:.8rem">T2</div><div class="cd">Fixed Fee / Flat Rate</div></div>
+      <div class="c calt"><div class="ct" style="font-size:.8rem">T3</div><div class="cd">Tiered Rate Structure</div></div>
+      <div class="c calt"><div class="ct" style="font-size:.8rem">T4</div><div class="cd">Volume-Based</div></div>
+      <div class="c calt"><div class="ct" style="font-size:.8rem">T5</div><div class="cd">Minimum Guarantee</div></div>
+      <div class="c calt"><div class="ct" style="font-size:.8rem">T6</div><div class="cd">Maximum Cap</div></div>
+      <div class="c calt"><div class="ct" style="font-size:.8rem">T7</div><div class="cd">Sliding Scale</div></div>
+      <div class="c calt"><div class="ct" style="font-size:.8rem">T8</div><div class="cd">Performance Bonus</div></div>
+      <div class="c calt"><div class="ct" style="font-size:.8rem">T9</div><div class="cd">Display / Placement</div></div>
+      <div class="c calt"><div class="ct" style="font-size:.8rem">T10</div><div class="cd">Rebate / Discount</div></div>
+      <div class="c calt"><div class="ct" style="font-size:.8rem">T11</div><div class="cd">Revenue Share</div></div>
+      <div class="c calt"><div class="ct" style="font-size:.8rem">T12</div><div class="cd">Custom / Hybrid</div></div>
+    </div>
+    <div style="margin-top:16px">
+      <div class="ct" style="color:#ea580c">Two-Pass Validation</div>
+      <div class="pipe" style="margin-top:8px">
+        <div class="ps"><div><div class="pt">Pass 1: Heuristic Validation</div><div class="pd">Checks for missing rates, source text mismatches, and extraction confidence scoring.</div></div></div>
+        <div class="ps ps-s"><div><div class="pt">Pass 2: AI Self-Validation</div><div class="pd">AI re-verifies extracted parameters against source text to minimize hallucinations. Cross-references rates, tiers, products, and territories.</div></div></div>
+      </div>
+    </div>
+    <div class="cd" style="margin-top:8px">Parameters extracted per rule: rates, volume tiers, base metrics (net sales), eligible products, territories, and calculation frequencies.</div>
+  </div>
+
+  <h3>Stage C: Conflict Detection</h3>
+  <div class="c">
+    <div class="ct">Identifying contradictions and overlaps</div>
+    <div class="cd" style="margin-bottom:12px">Analyzes the complete rule set for logical issues:</div>
+    <div class="g3">
+      <div class="c bl bl-d"><div class="ct">Overlapping Products/Territories</div><div class="cd">Same product + territory combination with different rates across multiple rules.</div></div>
+      <div class="c bl bl-w"><div class="ct">Contradictory Conditions</div><div class="cd">Mutually exclusive conditions applied to the same transaction scope.</div></div>
+      <div class="c bl bl-i"><div class="ct">Precedence Ambiguity</div><div class="cd">Multiple rules could apply to the same transaction with no clear priority order.</div></div>
+    </div>
+    <div class="cd" style="margin-top:12px">Each conflict receives an identifier (e.g., <code>CONF-01</code>), a detailed reason, and an AI-suggested resolution. Human review queue allows approve/reject/override.</div>
+  </div>
+
+  <h3>Pipeline Database Tables</h3>
+  <table>
+    <tr><th>Table</th><th>Purpose</th></tr>
+    <tr><td><code>extraction_runs</code></td><td>Tracks each pipeline run with type <code>pipeline_3stage</code></td></tr>
+    <tr><td><code>extraction_stage_results</code></td><td>Stage A/B/C results with JSON output per stage</td></tr>
+    <tr><td><code>contract_clauses</code></td><td>Segmented clauses with categories and IDs</td></tr>
+    <tr><td><code>rule_conflicts</code></td><td>Detected conflicts with resolutions</td></tr>
+  </table>
+  <p style="margin-top:10px;font-size:.8rem;color:#888">Pipeline UI: <code>/contracts/:id/pipeline</code> — visual stage progression with clause viewer and conflict resolution interface.</p>
+</div>
+
+<!-- =================== CONTRACT PIPELINE =================== -->
+<div class="sec" id="data-pipeline">
+  <h2>Contract Processing Pipeline</h2>
+  <p class="sdesc">Performance-optimized dual-track processing: fast-path for immediate rule visibility, deferred analysis for comprehensive insights including embedding generation and AI enrichment.</p>
+
+  <h3>End-to-End Processing Flow</h3>
+  <div class="flow">
+    <div class="fs" style="border-color:#ea580c"><div class="fi">📤</div><div class="fl">Upload PDF</div><div class="fd">Multer → Object Storage</div></div>
+    <div class="fa">→</div>
+    <div class="fs" style="border-color:#111"><div class="fi">📝</div><div class="fl">Text Extraction</div><div class="fd">PDF-parse with OCR</div></div>
+    <div class="fa">→</div>
+    <div class="fs" style="border-color:#16a34a"><div class="fi">🧠</div><div class="fl">Rule Extraction</div><div class="fd">AI Zero-Shot (Fast Path)</div></div>
+    <div class="fa">→</div>
+    <div class="fs" style="border-color:#d97706"><div class="fi">💾</div><div class="fl">Save Rules</div><div class="fd">With extractionOrder</div></div>
+    <div class="fa">→</div>
+    <div class="fs" style="border-color:#0891b2"><div class="fi">✅</div><div class="fl">Status: Analyzed</div><div class="fd">Rules visible immediately</div></div>
+  </div>
+
+  <div class="c bl bl-w">
+    <div class="ct">⏳ Deferred Analysis (Background, Non-Blocking)</div>
+    <div class="cd">After fast-path rules are saved, these heavy operations run in parallel via <code>Promise.allSettled</code>:</div>
+    <div class="tags"><span class="tag">AI Summary</span><span class="tag">Risk Assessment</span><span class="tag">Key Insights</span><span class="tag">ERP Field Mapping</span><span class="tag">Table Term Extraction</span><span class="tag">Layout-Aware Chunking (3000/200)</span><span class="tag">Vector Embeddings (384-dim)</span><span class="tag">Knowledge Graph</span><span class="tag">Semantic Indexing</span><span class="tag">Term Coverage Analysis</span></div>
+  </div>
+
+  <h3>Per-Table Rule Extraction</h3>
+  <div class="c">
+    <div class="cd">When a contract PDF contains multiple pricing tables, the AI processes each table separately:</div>
+    <div class="pipe" style="margin-top:14px">
+      <div class="ps"><div><div class="pt">1. Layout-Aware Chunking</div><div class="pd">Document split preserving table boundaries and headers (3000 char chunks, 200 char overlap)</div></div></div>
+      <div class="ps ps-i"><div><div class="pt">2. Table Detection</div><div class="pd">Each pricing/rate table identified and isolated (Markdown + ASCII table detection)</div></div></div>
+      <div class="ps ps-s"><div><div class="pt">3. Individual Table Extraction</div><div class="pd">AI processes each table with its surrounding context via contract-type-aware prompts</div></div></div>
+      <div class="ps ps-w"><div><div class="pt">4. Hallucination Detection</div><div class="pd">Cross-validates extracted values against source text (ensembleValidationService)</div></div></div>
+      <div class="ps ps-d"><div><div class="pt">5. Rule Synthesis & Dedup</div><div class="pd">Merges results, removes duplicates, assigns extraction order</div></div></div>
+    </div>
+  </div>
+
+  <h3>AI Rule Enrichment Process</h3>
+  <div class="c bl bl-p">
+    <div class="ct" style="color:#ea580c">Deep AI Analysis — Auto-Triggered on "Manage Rules" Click</div>
+    <div class="cd" style="margin-bottom:12px">Auto-detects if rules need enrichment. Processes in <strong>batches of 5 rules</strong> to manage rate limits.</div>
+    <div class="flow">
+      <div class="fs" style="border-color:#ea580c"><div class="fi">👆</div><div class="fl">Button Click</div><div class="fd">"Manage Rules"</div></div>
+      <div class="fa">→</div>
+      <div class="fs" style="border-color:#111"><div class="fi">🔍</div><div class="fl">Detection</div><div class="fd">Check enrichment fields</div></div>
+      <div class="fa">→</div>
+      <div class="fs" style="border-color:#16a34a"><div class="fi">🧠</div><div class="fl">AI Enrich</div><div class="fd">Batch of 5 rules</div></div>
+      <div class="fa">→</div>
+      <div class="fs" style="border-color:#d97706"><div class="fi">📊</div><div class="fl">Progress</div><div class="fd">Real-time tracking</div></div>
+      <div class="fa">→</div>
+      <div class="fs" style="border-color:#0891b2"><div class="fi">✅</div><div class="fl">Complete</div><div class="fd">Navigate to rules</div></div>
+    </div>
+    <div style="margin-top:12px;font-size:.82rem;color:#555">
+      <strong style="color:#111">Enrichment adds to each rule:</strong>
+      <div class="tags" style="margin-top:6px">
+        <span class="tag">Calculation Logic — step-by-step formula explanation</span>
+        <span class="tag">Category Tags — auto-classification</span>
+        <span class="tag">Implementation Notes — how to code the rule</span>
+        <span class="tag">Implementation Checklists — verification steps</span>
+        <span class="tag">Real-World Examples — sample calculations with numbers</span>
+        <span class="tag">Source Citations — exact contract text references</span>
+      </div>
+    </div>
+  </div>
+
+  <h3>Term Coverage System</h3>
+  <div class="c">
+    <div class="ct">📋 "Never Miss a Term" — <code>termCoverageService.ts</code></div>
+    <div class="g3" style="margin-top:12px">
+      <div class="c calt"><div class="ct">Contract-Type Checklists</div><div class="cd">Dynamically adjusts required terms based on contract type code (<code>direct_sales</code>, <code>royalty_license</code>, etc.)</div></div>
+      <div class="c calt"><div class="ct">Section-Aware Parser</div><div class="cd">Uses regex to split contracts into functional areas (Definitions, Payment, Territory) for targeted AI extraction</div></div>
+      <div class="c calt"><div class="ct">Definitions Parser</div><div class="cd">Specifically extracts and maps terms from the "Definitions" section of legal documents</div></div>
+    </div>
+    <div class="cd" style="margin-top:12px"><strong>Coverage Score:</strong> Percentage of extracted vs. expected terms. Highlights "Missing Critical" categories. Re-extraction available for missing terms via Coverage Score API and UI panel.</div>
+  </div>
+
+  <h3>Human-in-the-Loop Rule Confirmation</h3>
+  <div class="g3">
+    <div class="c bl bl-s"><div class="ct">✅ High Confidence (≥ 85%)</div><div class="cd">Auto-confirmed. Rules proceed to calculation-ready status. Users can still review.</div></div>
+    <div class="c bl bl-w"><div class="ct">⚠️ Medium Confidence (60-84%)</div><div class="cd">Sent to Human Review Queue for manual validation.</div></div>
+    <div class="c bl bl-d"><div class="ct">❌ Low Confidence (&lt; 60%)</div><div class="cd">Flagged with hallucination warnings. Requires manual verification.</div></div>
+  </div>
+</div>
+
+<!-- =================== ALL PAGES =================== -->
+<div class="sec" id="pages">
+  <h2>All Application Pages (50+)</h2>
+  <p class="sdesc">Complete catalog of every page in the LicenseIQ platform, organized by functional area. Navigation structured into 8 main groups.</p>
+
+  <div class="coll open"><div class="coll-h" onclick="tog(this)"><div class="cht">🌐 Public Marketing Pages <span class="badge b-i">13 Pages</span></div><div class="cha">▼</div></div><div class="coll-b"><table><tr><th>Page</th><th>Route</th><th>Description</th></tr><tr><td>Landing Page</td><td><code>/</code></td><td>Hero section, product overview, early access signup, AI chatbot</td></tr><tr><td>Solutions Hub</td><td><code>/solutions</code></td><td>Industry solutions overview</td></tr><tr><td>High-Tech</td><td><code>/solutions/hightech</code></td><td>Technology & electronics licensing</td></tr><tr><td>Licensing</td><td><code>/solutions/licensing</code></td><td>IP and trademark licensing</td></tr><tr><td>CPG</td><td><code>/solutions/cpg</code></td><td>Consumer packaged goods rebates</td></tr><tr><td>SaaS</td><td><code>/solutions/saas</code></td><td>SaaS revenue share management</td></tr><tr><td>Private Equity</td><td><code>/solutions/pe</code></td><td>PE portfolio revenue optimization</td></tr><tr><td>Distributor Programs</td><td><code>/solutions/distributor-programs</code></td><td>Channel incentive management</td></tr><tr><td>Rebates</td><td><code>/solutions/rebates</code></td><td>Volume and performance rebates</td></tr><tr><td>Price Protection</td><td><code>/solutions/price-protection</code></td><td>Price protection calculations</td></tr><tr><td>About</td><td><code>/about</code></td><td>Company information</td></tr><tr><td>Pricing</td><td><code>/pricing</code></td><td>Subscription tiers</td></tr><tr><td>FAQ</td><td><code>/faq</code></td><td>Frequently asked questions</td></tr></table></div></div>
+
+  <div class="coll"><div class="coll-h" onclick="tog(this)"><div class="cht">🏦 Finance Hub <span class="badge b-p">4 Pages</span></div><div class="cha">▼</div></div><div class="coll-b"><table><tr><th>Page</th><th>Route</th><th>Description</th></tr><tr><td>Financial Control Center</td><td><code>/financial-control-center</code></td><td>Default authenticated home — financial snapshots, period close readiness, risk monitoring, liQ Agent</td></tr><tr><td>Accrual Management</td><td><code>/accrual-management</code></td><td>AI insight cards, accrual table with confidence scores, approve/reject, audit trail</td></tr><tr><td>Journal Entry Hub</td><td><code>/journal-entry-hub</code></td><td>Stage pipeline (Draft→Review→Approved→Posted), DR/CR line items, ERP sync</td></tr><tr><td>Period Close Workspace</td><td><code>/period-close-workspace</code></td><td>Close readiness score, checklist, blocker cards, contract close status</td></tr></table><p style="margin-top:10px;font-size:.82rem;color:#555"><strong>Auto-Accrual Pipeline:</strong> When a calculation completes, the system auto-creates: accrual record → audit trail → calculation trace → draft JE with DR (6100) / CR (2200).</p></div></div>
+
+  <div class="coll"><div class="coll-h" onclick="tog(this)"><div class="cht">📄 Contract Management <span class="badge b-s">7 Pages</span></div><div class="cha">▼</div></div><div class="coll-b"><table><tr><th>Page</th><th>Route</th><th>Description</th></tr><tr><td>Contracts List</td><td><code>/contracts</code></td><td>All contracts with search, filter, sort, full-text search</td></tr><tr><td>Upload Contract</td><td><code>/upload</code></td><td>Drag-and-drop PDF upload, triggers AI pipeline + 3-stage extraction</td></tr><tr><td>Contract Analysis</td><td><code>/contracts/:id</code></td><td>AI summary, risk assessment, key terms, term coverage score</td></tr><tr><td>Contract Management</td><td><code>/contracts/:id/manage</code></td><td>Metadata editing, financial fields, approvals</td></tr><tr><td>Pipeline Results</td><td><code>/contracts/:id/pipeline</code></td><td>3-stage pipeline viewer: clause segmentation, rule mapping, conflicts</td></tr><tr><td>Rules Display</td><td><code>/contracts/:id/rules-view</code></td><td>5-tab view: Rules, Terms, Examples, Sources, Term Mappings</td></tr><tr><td>Rules Management</td><td><code>/contracts/:id/rules</code></td><td>Full rule editor with 6-tab form (General, Qualifiers, Conditions, Calculation, Overrides, History)</td></tr></table></div></div>
+
+  <div class="coll"><div class="coll-h" onclick="tog(this)"><div class="cht">💰 License Fee Calculations <span class="badge b-w">5 Pages</span></div><div class="cha">▼</div></div><div class="coll-b"><table><tr><th>Page</th><th>Route</th><th>Description</th></tr><tr><td>Sales Upload</td><td><code>/sales-upload</code></td><td>CSV/Excel sales data with flexible column mapping</td></tr><tr><td>License Fee Dashboard</td><td><code>/royalty-dashboard/:id</code></td><td>Run calculations, view results, generate invoices (auto-creates accruals)</td></tr><tr><td>Calculations</td><td><code>/calculations</code></td><td>All calculation runs with history and status</td></tr><tr><td>Calculation Report</td><td><code>/calculations/:id/report</code></td><td>Multi-dimensional reports</td></tr><tr><td>Audit Trail</td><td><code>/calculations/:id/audit-trail</code></td><td>Rule-level summary, qualifier trail (why-matched), adjustment waterfall (fee build steps)</td></tr></table></div></div>
+
+  <div class="coll"><div class="coll-h" onclick="tog(this)"><div class="cht">🤖 AI & Intelligence <span class="badge b-d">4 Pages</span></div><div class="cha">▼</div></div><div class="coll-b"><table><tr><th>Page</th><th>Route</th><th>Description</th></tr><tr><td>liQ AI (Contract Q&A)</td><td><code>/contract-qna</code></td><td>RAG-powered Q&A (BAAI/bge-small-en-v1.5, top-8 cosine, citations)</td></tr><tr><td>RAG Dashboard</td><td><code>/rag-dashboard</code></td><td>RAG monitoring: coverage, performance, accuracy metrics</td></tr><tr><td>Human Review Queue</td><td><code>/review-queue</code></td><td>AI-extracted rules needing validation (confidence-based routing)</td></tr><tr><td>Rule Evaluation Playground</td><td><code>/rule-playground</code></td><td>Test JSON expression trees and formulas in standalone environment</td></tr></table><p style="margin-top:10px;font-size:.82rem;color:#555"><strong>Omnipresent liQ AI:</strong> Floating assistant on all authenticated pages. Supports contract Q&A AND natural language contract creation.</p></div></div>
+
+  <div class="coll"><div class="coll-h" onclick="tog(this)"><div class="cht">🔗 ERP & Data Integration <span class="badge b-i">8 Pages</span></div><div class="cha">▼</div></div><div class="coll-b"><table><tr><th>Page</th><th>Route</th><th>Description</th></tr><tr><td>ERP Hub</td><td><code>/erp-hub</code></td><td>Central dashboard for ERP integrations</td></tr><tr><td>ERP Catalog</td><td><code>/erp-catalog</code></td><td>ERP systems catalog with field definitions</td></tr><tr><td>LicenseIQ Schema</td><td><code>/licenseiq-schema</code></td><td>13 master data tables with dynamic form dropdowns</td></tr><tr><td>Master Data Mapping</td><td><code>/master-data-mapping</code></td><td>AI-driven field mapping with auto-population</td></tr><tr><td>ERP Integration</td><td><code>/erp-integration</code></td><td>Integration config & connection management</td></tr><tr><td>ERP Data Import</td><td><code>/erp-import</code></td><td>Import with pre-import filters</td></tr><tr><td>ERP Mapping Rules</td><td><code>/erp-mapping-rules</code></td><td>Auto-generated rules from ERP mappings</td></tr><tr><td>Company Mapping Library</td><td><code>/company-mapping-library</code></td><td>Unified term library: ERP fields, rule terms, tiers</td></tr></table></div></div>
+
+  <div class="coll"><div class="coll-h" onclick="tog(this)"><div class="cht">⚙️ Administration <span class="badge b-w">8 Pages</span></div><div class="cha">▼</div></div><div class="coll-b"><table><tr><th>Page</th><th>Route</th><th>Description</th></tr><tr><td>System Settings</td><td><code>/system-settings</code></td><td>10 tabs: AI provider, Contract Types, Calculation Fields, Email/SMTP, Finance Hub, etc.</td></tr><tr><td>Company Settings</td><td><code>/company-settings</code></td><td>Company-level configuration</td></tr><tr><td>Users</td><td><code>/users</code></td><td>User management, roles (Admin/Editor/Viewer/Accountant), organizations</td></tr><tr><td>Create User</td><td><code>/users/new</code></td><td>New user registration</td></tr><tr><td>Audit Trail</td><td><code>/audit</code></td><td>Complete system audit log</td></tr><tr><td>Navigation Manager</td><td><code>/navigation-manager</code></td><td>Drag-and-drop menu organization</td></tr><tr><td>Lead Management</td><td><code>/admin/leads</code></td><td>Early access & demo requests, account creation wizard with role selection</td></tr><tr><td>Email Templates</td><td><code>/admin/email-templates</code></td><td>6 branded templates (workspace_ready, followup, etc.) with {{variable}} placeholders</td></tr></table></div></div>
+</div>
+
+<!-- =================== BACKEND SERVICES =================== -->
+<div class="sec" id="services">
+  <h2>Backend Services Architecture</h2>
+  <p class="sdesc">37 specialized services implementing a layered architecture: Routes → Services → Storage → Database.</p>
+
+  <div class="c" style="margin-bottom:20px">
+    <div class="ct">🏗️ Layered Service Architecture</div>
+    <div class="flow">
+      <div class="fs" style="border-color:#ea580c;min-width:160px"><div class="fi">🌐</div><div class="fl">Express Routes</div><div class="fd">routes.ts, rulesRoutes.ts, financeRoutes.ts</div></div>
+      <div class="fa">→</div>
+      <div class="fs" style="border-color:#111;min-width:160px"><div class="fi">⚙️</div><div class="fl">Service Layer</div><div class="fd">37+ Services</div></div>
+      <div class="fa">→</div>
+      <div class="fs" style="border-color:#16a34a;min-width:160px"><div class="fi">🗄️</div><div class="fl">Storage Interface</div><div class="fd">IStorage → DatabaseStorage</div></div>
+      <div class="fa">→</div>
+      <div class="fs" style="border-color:#d97706;min-width:160px"><div class="fi">🐘</div><div class="fl">PostgreSQL</div><div class="fd">Drizzle ORM — 80 Tables</div></div>
+    </div>
+  </div>
+
+  <h3>Service Inventory by Category</h3>
+  <div class="g2">
+    <div class="coll open"><div class="coll-h" onclick="tog(this)"><div class="cht">🧠 AI & Provider Services <span class="badge b-p">7</span></div><div class="cha">▼</div></div><div class="coll-b"><table><tr><th>Service</th><th>Purpose</th></tr><tr><td><code>aiProviderService.ts</code></td><td>Unified router: DB config → route → fallback chain (60s cache)</td></tr><tr><td><code>claudeService.ts</code></td><td>Claude API (claude-sonnet-4-5, temp 0.1, 16K tokens, 3 retries)</td></tr><tr><td><code>groqService.ts</code></td><td>Groq LLaMA (llama-3.3-70b, 8K tokens, rate limit detection)</td></tr><tr><td><code>openaiService.ts</code></td><td>OpenAI GPT-4o (selectable primary)</td></tr><tr><td><code>zeroShotExtractionService.ts</code></td><td>Zero-shot rule extraction with sourceSpan</td></tr><tr><td><code>ragExtractionService.ts</code></td><td>RAG-enhanced extraction using embedding context</td></tr><tr><td><code>contractReasoningService.ts</code></td><td>AI clause reasoning (batches of 5)</td></tr></table></div></div>
+
+    <div class="coll"><div class="coll-h" onclick="tog(this)"><div class="cht">🔎 RAG & Search Services <span class="badge b-p">7</span></div><div class="cha">▼</div></div><div class="coll-b"><table><tr><th>Service</th><th>Purpose</th></tr><tr><td><code>ragService.ts</code></td><td>RAG pipeline: intent → embed → cosine search → AI answer → citations</td></tr><tr><td><code>embeddingService.ts</code></td><td>Vector embedding lifecycle management</td></tr><tr><td><code>huggingFaceEmbedding.ts</code></td><td>BAAI/bge-small-en-v1.5 — 384-dim via HF API</td></tr><tr><td><code>semanticSearchService.ts</code></td><td>pgvector cosine search (top-8, threshold 0.4)</td></tr><tr><td><code>knowledgeGraphService.ts</code></td><td>Knowledge graph node/edge traversal</td></tr><tr><td><code>layoutAwareChunking.ts</code></td><td>Smart chunking (3000/200, table-aware)</td></tr><tr><td><code>systemSearchService.ts</code></td><td>Full-text + keyword search</td></tr></table></div></div>
+
+    <div class="coll"><div class="coll-h" onclick="tog(this)"><div class="cht">✅ Validation & Quality <span class="badge b-p">5</span></div><div class="cha">▼</div></div><div class="coll-b"><table><tr><th>Service</th><th>Purpose</th></tr><tr><td><code>ensembleValidationService.ts</code></td><td>Cross-provider validation — models check each other</td></tr><tr><td><code>groqValidationService.ts</code></td><td>Groq-specific fast consistency checks</td></tr><tr><td><code>extractionValidationService.ts</code></td><td>Hallucination detection — compare extracted vs source</td></tr><tr><td><code>validationService.ts</code></td><td>Data integrity and business rule validation</td></tr><tr><td><code>accuracyTestingService.ts</code></td><td>Accuracy benchmarking against ground truth</td></tr></table></div></div>
+
+    <div class="coll"><div class="coll-h" onclick="tog(this)"><div class="cht">💰 Calculation Services <span class="badge b-p">8</span></div><div class="cha">▼</div></div><div class="coll-b"><table><tr><th>Service</th><th>Purpose</th></tr><tr><td><code>universalCalculationEngine.ts</code></td><td>Contract-agnostic universal calculations</td></tr><tr><td><code>universalFormulaEvaluator.ts</code></td><td>Dynamic formula evaluation with expression trees</td></tr><tr><td><code>formulaInterpreter.ts</code></td><td>JSON expression tree interpreter</td></tr><tr><td><code>calculationService.ts</code></td><td>Orchestration + auto-accrual pipeline</td></tr><tr><td><code>calculationReportService.ts</code></td><td>Multi-dimensional report generation</td></tr><tr><td><code>pdfInvoiceService.ts</code></td><td>PDF invoice generation</td></tr><tr><td><code>dynamicRulesEngine.ts</code></td><td>JSON expression tree evaluation</td></tr><tr><td><code>rulesEngine.ts</code></td><td>Core rule matching</td></tr></table></div></div>
+
+    <div class="coll"><div class="coll-h" onclick="tog(this)"><div class="cht">🔗 ERP & Pipeline Services <span class="badge b-p">7</span></div><div class="cha">▼</div></div><div class="coll-b"><table><tr><th>Service</th><th>Purpose</th></tr><tr><td><code>pipelineService.ts</code></td><td>3-stage pipeline: Clause Segment → Rule Map → Conflict Detect</td></tr><tr><td><code>erpFieldMapping.ts</code></td><td>AI-powered ERP field mapping</td></tr><tr><td><code>erpVocabularyService.ts</code></td><td>Contract-to-ERP term translation</td></tr><tr><td><code>erpRuleGenerationService.ts</code></td><td>Auto-generate rules from ERP mappings</td></tr><tr><td><code>ruleSynthesisService.ts</code></td><td>Rule synthesis & dedup</td></tr><tr><td><code>blueprintMaterializerService.ts</code></td><td>Blueprint to executable rules</td></tr><tr><td><code>termCoverageService.ts</code></td><td>Term coverage analysis ("never miss a term")</td></tr></table></div></div>
+
+    <div class="coll"><div class="coll-h" onclick="tog(this)"><div class="cht">🏗️ Infrastructure Services <span class="badge b-p">4</span></div><div class="cha">▼</div></div><div class="coll-b"><table><tr><th>Service</th><th>Purpose</th></tr><tr><td><code>documentOrchestratorService.ts</code></td><td>Pipeline orchestration & coordination</td></tr><tr><td><code>fileService.ts</code></td><td>File upload & processing</td></tr><tr><td><code>salesDataParser.ts</code></td><td>CSV/Excel sales data parsing</td></tr><tr><td><code>systemKnowledgeSeeder.ts</code></td><td>Startup data seeding</td></tr></table></div></div>
+  </div>
+</div>
+
+<!-- =================== DATABASE =================== -->
+<div class="sec" id="database">
+  <h2>Database Schema (80 Tables)</h2>
+  <p class="sdesc">PostgreSQL with Drizzle ORM, pgvector extension (HNSW index, 384-dim), and knowledge graph modeling. All schemas in <code>shared/schema.ts</code>.</p>
+
+  <div class="g4" style="margin-bottom:20px">
+    <div class="mc"><b>80</b><span>Total Tables</span></div>
+    <div class="mc"><b>315</b><span>Exports</span></div>
+    <div class="mc"><b>384-dim</b><span>Vector Columns</span></div>
+    <div class="mc"><b>HNSW</b><span>Index Type</span></div>
+  </div>
+
+  <div class="coll open"><div class="coll-h" onclick="tog(this)"><div class="cht">👤 Core Entity Tables</div><div class="cha">▼</div></div><div class="coll-b"><table><tr><th>Table</th><th>Purpose</th><th>Key Features</th></tr><tr><td><code>users</code></td><td>User accounts</td><td>Roles (admin/editor/viewer/accountant), organizations</td></tr><tr><td><code>sessions</code></td><td>Active sessions</td><td>connect-pg-simple session store</td></tr><tr><td><code>contracts</code></td><td>Contract metadata + master data</td><td>Status, parties, dates, type, location, financial fields (merged from contract_master)</td></tr><tr><td><code>contract_analysis</code></td><td>AI analysis</td><td>Summary, risks, insights, confidence scores</td></tr><tr><td><code>audit_trail</code></td><td>Audit logging</td><td>Who, what, when, which entity</td></tr></table></div></div>
+
+  <div class="coll"><div class="coll-h" onclick="tog(this)"><div class="cht">🧠 AI, RAG & Knowledge Graph Tables</div><div class="cha">▼</div></div><div class="coll-b"><table><tr><th>Table</th><th>Purpose</th><th>Key Features</th></tr><tr><td><code>contract_embeddings</code></td><td>Vector embeddings</td><td>pgvector 384-dim, HNSW index, cosine similarity</td></tr><tr><td><code>system_embeddings</code></td><td>System vectors</td><td>Platform knowledge base embeddings for liQ AI</td></tr><tr><td><code>contract_documents</code></td><td>Document chunks</td><td>Layout-aware chunks (3000 chars, 200 overlap)</td></tr><tr><td><code>contract_graph_nodes</code></td><td>Graph nodes</td><td>Entities: terms, parties, rules</td></tr><tr><td><code>contract_graph_edges</code></td><td>Graph edges</td><td>Relationships between nodes</td></tr><tr><td><code>extraction_runs</code></td><td>Extraction history</td><td>Track each AI extraction run (incl. pipeline_3stage)</td></tr><tr><td><code>extraction_stage_results</code></td><td>Pipeline stage results</td><td>Stage A/B/C output per run</td></tr><tr><td><code>contract_clauses</code></td><td>Segmented clauses</td><td>From 3-stage pipeline Stage A</td></tr><tr><td><code>rule_conflicts</code></td><td>Detected conflicts</td><td>From 3-stage pipeline Stage C</td></tr></table></div></div>
+
+  <div class="coll"><div class="coll-h" onclick="tog(this)"><div class="cht">💰 Calculation & Rules Tables</div><div class="cha">▼</div></div><div class="coll-b"><table><tr><th>Table</th><th>Purpose</th><th>Key Features</th></tr><tr><td><code>contract_rules</code></td><td>Payment rules</td><td>Type, formula, tiers, conditions, extraction_order, enrichment data</td></tr><tr><td><code>rule_definitions</code></td><td>Dynamic rules</td><td>JSON expression tree definitions</td></tr><tr><td><code>sales_data</code></td><td>Sales transactions</td><td>Uploaded sales data</td></tr><tr><td><code>contract_calculations</code></td><td>Calc results</td><td>Run results with line-item detail + qualifiersEvaluated + adjustmentSteps</td></tr><tr><td><code>calculation_rule_results</code></td><td>Per-rule snapshots</td><td>Frozen ruleSnapshot, qualificationSummary, adjustmentsApplied</td></tr><tr><td><code>human_review_tasks</code></td><td>Review queue</td><td>Rules pending validation (confidence-based)</td></tr></table></div></div>
+
+  <div class="coll"><div class="coll-h" onclick="tog(this)"><div class="cht">🏦 Finance Hub Tables (13)</div><div class="cha">▼</div></div><div class="coll-b"><table><tr><th>Table</th><th>Purpose</th></tr><tr><td><code>accruals</code></td><td>Auto-generated from calculations with confidence scores</td></tr><tr><td><code>accrual_audit_trail</code></td><td>Accrual action history (approve/reject)</td></tr><tr><td><code>accrual_calculation_trace</code></td><td>Step-by-step calculation breakdown</td></tr><tr><td><code>journal_entries</code></td><td>Auto-created draft JEs from calculations</td></tr><tr><td><code>journal_entry_lines</code></td><td>DR (Contract Fee Expense 6100) / CR (Accrued Payable 2200)</td></tr><tr><td><code>je_erp_sync_log</code></td><td>ERP sync status tracking</td></tr><tr><td><code>je_reconciliation</code></td><td>Reconciliation records</td></tr><tr><td><code>period_close</code></td><td>Fiscal period definitions</td></tr><tr><td><code>period_close_checklist</code></td><td>Required close items per period</td></tr><tr><td><code>period_close_blockers</code></td><td>Blocking issues</td></tr><tr><td><code>period_close_audit_trail</code></td><td>Close action history</td></tr><tr><td><code>period_variance</code></td><td>Period-over-period variances</td></tr><tr><td><code>contract_close_status</code></td><td>Per-contract close readiness</td></tr></table></div></div>
+
+  <div class="coll"><div class="coll-h" onclick="tog(this)"><div class="cht">🔗 ERP, Master Data & System Tables</div><div class="cha">▼</div></div><div class="coll-b"><div class="tags"><span class="tag">erp_systems</span><span class="tag">erp_entities</span><span class="tag">erp_fields</span><span class="tag">licenseiq_entities</span><span class="tag">licenseiq_fields</span><span class="tag">field_mappings</span><span class="tag">companies</span><span class="tag">business_units</span><span class="tag">locations</span><span class="tag">items</span><span class="tag">customers</span><span class="tag">territories</span><span class="tag">system_settings</span><span class="tag">email_templates</span><span class="tag">early_access_signups</span><span class="tag">demo_requests</span><span class="tag">navigation_items</span><span class="tag">user_organization_roles</span></div></div></div>
+</div>
+
+<!-- =================== ERP & MAPPING =================== -->
+<div class="sec" id="erp">
+  <h2>ERP Integration & Company Mapping Library</h2>
+  <p class="sdesc">Universal ERP support with AI-driven dual terminology mapping, linking contract terms to ERP fields and master data records.</p>
+
+  <h3>ERP Integration Data Flow</h3>
+  <div class="flow">
+    <div class="fs" style="border-color:#ea580c"><div class="fi">🏢</div><div class="fl">ERP Catalog</div><div class="fd">Define ERP systems & fields</div></div>
+    <div class="fa">→</div>
+    <div class="fs" style="border-color:#111"><div class="fi">📐</div><div class="fl">LicenseIQ Schema</div><div class="fd">13 standard entities</div></div>
+    <div class="fa">→</div>
+    <div class="fs" style="border-color:#16a34a"><div class="fi">🧠</div><div class="fl">AI Mapping</div><div class="fd">Auto-map ERP ↔ LIQ</div></div>
+    <div class="fa">→</div>
+    <div class="fs" style="border-color:#d97706"><div class="fi">📥</div><div class="fl">Data Import</div><div class="fd">With pre-import filters</div></div>
+    <div class="fa">→</div>
+    <div class="fs" style="border-color:#0891b2"><div class="fi">🔗</div><div class="fl">Value Linking</div><div class="fd">Link terms to records</div></div>
+  </div>
+
+  <h3>Dual Terminology Mapping</h3>
+  <div class="g2">
+    <div class="c"><div class="ct">📄 Contract Language</div><div class="cd">Natural language terms as they appear in the contract:</div><div class="tags"><span class="tag">Net Sales Value</span><span class="tag">Rebate Rate</span><span class="tag">Units Sold</span><span class="tag">Display Bonus</span><span class="tag">Minimum Threshold</span><span class="tag">Eligible Products</span></div></div>
+    <div class="c"><div class="ct">🔗 ERP / Schema Fields</div><div class="cd">Standardized field names in the ERP or LicenseIQ schema:</div><div class="tags"><span class="tag">sales_transactions.net_amount</span><span class="tag">contract_terms.rate_percentage</span><span class="tag">sales_transactions.quantity</span><span class="tag">incentives.bonus_amount</span><span class="tag">pricing_tiers.min_threshold</span><span class="tag">items.product_category</span></div></div>
+  </div>
+</div>
+
+<!-- =================== CALCULATION ENGINE =================== -->
+<div class="sec" id="calculation">
+  <h2>Universal Calculation Engine</h2>
+  <p class="sdesc">Contract-agnostic payment calculation system supporting any contract type. Auto-generates accruals and journal entries on completion.</p>
+
+  <div class="flow">
+    <div class="fs" style="border-color:#ea580c;min-width:120px"><div class="fi">📊</div><div class="fl">Sales Data</div><div class="fd">CSV/Excel</div></div>
+    <div class="fa">→</div>
+    <div class="fs" style="border-color:#111;min-width:120px"><div class="fi">🔍</div><div class="fl">Rule Match</div><div class="fd">Semantic + Exact</div></div>
+    <div class="fa">→</div>
+    <div class="fs" style="border-color:#16a34a;min-width:120px"><div class="fi">⚡</div><div class="fl">Formula Eval</div><div class="fd">Expression Trees</div></div>
+    <div class="fa">→</div>
+    <div class="fs" style="border-color:#d97706;min-width:120px"><div class="fi">✅</div><div class="fl">Validate</div><div class="fd">Source Citation</div></div>
+    <div class="fa">→</div>
+    <div class="fs" style="border-color:#0891b2;min-width:120px"><div class="fi">💰</div><div class="fl">Results</div><div class="fd">Reports & PDF</div></div>
+    <div class="fa">→</div>
+    <div class="fs" style="border-color:#ea580c;min-width:120px"><div class="fi">🏦</div><div class="fl">Auto-Accrual</div><div class="fd">Accrual + JE</div></div>
+  </div>
+
+  <h3>Calculation Features</h3>
+  <div class="g3">
+    <div class="c"><div class="ct">🧮 Formula Types</div><div class="cd">Percentage, fixed amount, tiered rates (T1–T12), volume-based, minimum guarantees, sliding scale, and custom JSON expression trees.</div></div>
+    <div class="c"><div class="ct">📐 Expression Trees</div><div class="cd">Dynamic formula evaluator: <code>{"op": "multiply", "left": {"ref": "salesAmount"}, "right": {"value": 0.05}}</code></div></div>
+    <div class="c"><div class="ct">📊 Audit Trail</div><div class="cd">Per-rule frozen snapshots (<code>ruleSnapshot</code>), qualifier trail (why-matched per line), and adjustment waterfall (step-by-step fee build).</div></div>
+  </div>
+</div>
+
+<!-- =================== FINANCE HUB =================== -->
+<div class="sec" id="finance-hub">
+  <h2>Finance Hub & Auto-Accrual Pipeline</h2>
+  <p class="sdesc">Complete financial automation: every calculation automatically generates accruals, journal entries, and feeds period close readiness. 13 database tables, 28+ API endpoints.</p>
+
+  <h3>Auto-Accrual Pipeline</h3>
+  <div class="flow">
+    <div class="fs" style="border-color:#ea580c"><div class="fi">💰</div><div class="fl">Calculation Runs</div><div class="fd">License fee engine</div></div>
+    <div class="fa">→</div>
+    <div class="fs" style="border-color:#111"><div class="fi">📋</div><div class="fl">Accrual Record</div><div class="fd">Auto-created</div></div>
+    <div class="fa">→</div>
+    <div class="fs" style="border-color:#16a34a"><div class="fi">📝</div><div class="fl">Audit Trail</div><div class="fd">Action history</div></div>
+    <div class="fa">→</div>
+    <div class="fs" style="border-color:#d97706"><div class="fi">🔢</div><div class="fl">Calc Trace</div><div class="fd">Step breakdown</div></div>
+    <div class="fa">→</div>
+    <div class="fs" style="border-color:#ea580c"><div class="fi">📄</div><div class="fl">Draft JE</div><div class="fd">DR 6100 / CR 2200</div></div>
+  </div>
+  <div class="c bl bl-p">
+    <div class="ct">No Manual Button Required</div>
+    <div class="cd">When a contract fee calculation completes via the Calculation Engine, the system <strong>automatically</strong> creates: (1) accrual record linked to the contract, (2) audit trail entry, (3) calculation trace with step-by-step breakdown, (4) draft journal entry with DR (Contract Fee Expense 6100) / CR (Accrued Contract Fees Payable 2200) line items.</div>
+  </div>
+
+  <h3>Finance Hub Pages</h3>
+  <div class="g3">
+    <div class="c bl bl-p"><div class="ct">🏦 Accrual Management</div><div class="cd">AI insight cards, accrual table with confidence scores, detail panel. Live CRUD: approve/reject accruals. Linked to calculation source.</div></div>
+    <div class="c bl bl-s"><div class="ct">📄 Journal Entry Hub</div><div class="cd">Stage pipeline: Draft → Pending Review → Approved → Posted. DR/CR line items. ERP sync status. Bulk approve capability.</div></div>
+    <div class="c bl bl-w"><div class="ct">📅 Period Close Workspace</div><div class="cd">Close readiness score. Automated checklists. Blocker cards with resolution. Contract close status table. "Auto-populate" maps accruals/JEs into close records.</div></div>
+  </div>
+
+  <h3>Period Close Master Data</h3>
+  <div class="c">
+    <div class="ct">System Settings — Finance Hub Tab (10th Tab)</div>
+    <div class="cd">Manage period definitions (create/edit/delete fiscal periods), period close checklists (define required items per period), and view audit trail. "Auto-populate" button maps existing accruals and JEs into contract close status records and recalculates readiness scores.</div>
+  </div>
+</div>
+
+<!-- =================== SECURITY =================== -->
+<div class="sec" id="security">
+  <h2>Security & Access Control</h2>
+  <p class="sdesc">Five-tier role-based access control with multi-location context filtering and comprehensive audit trails.</p>
+
+  <h3>5-Tier RBAC Hierarchy</h3>
+  <table>
+  <tr><th>Tier</th><th>Role</th><th>Access Level</th><th>Capabilities</th></tr>
+  <tr><td><span class="badge b-d">Tier 1</span></td><td><strong>System Admin</strong></td><td>Full Platform</td><td>All settings, all companies, user management, AI config, lead management</td></tr>
+  <tr><td><span class="badge b-w">Tier 2</span></td><td><strong>Company Admin</strong></td><td>Organization</td><td>Full company data, create users, manage contracts, Finance Hub</td></tr>
+  <tr><td><span class="badge b-p">Tier 3</span></td><td><strong>Editor / Accountant</strong></td><td>Location Scope</td><td>Create/edit contracts, run calculations, manage rules, accruals</td></tr>
+  <tr><td><span class="badge b-i">Tier 4</span></td><td><strong>Reviewer</strong></td><td>Read + Approve</td><td>View contracts, review AI extractions, approve/reject rules</td></tr>
+  <tr><td><span class="badge b-s">Tier 5</span></td><td><strong>Viewer</strong></td><td>Read Only</td><td>View dashboards, reports, contract summaries</td></tr>
+  </table>
+
+  <h3>Security Implementation</h3>
+  <div class="g3">
+    <div class="c"><div class="ct">🔐 Session Management</div><div class="cd">Passport.js with PostgreSQL session store. Secure cookies, session expiry, concurrent control.</div></div>
+    <div class="c"><div class="ct">🏢 Multi-Location Filtering</div><div class="cd">Context switcher in navigation. All queries filtered by active organization context.</div></div>
+    <div class="c"><div class="ct">📝 Audit Trail</div><div class="cd">Every action logged with user, timestamp, entity, and change details.</div></div>
+    <div class="c"><div class="ct">🔒 API Authorization</div><div class="cd">Middleware checks authentication and role permissions on every endpoint.</div></div>
+    <div class="c"><div class="ct">🛡️ Input Validation</div><div class="cd">Zod schemas validate all requests. Drizzle ORM prevents SQL injection.</div></div>
+    <div class="c"><div class="ct">🔑 Secret Management</div><div class="cd">API keys as environment secrets. SMTP passwords masked in API responses (smtpPasswordSet boolean).</div></div>
+  </div>
+</div>
+
+<!-- =================== TECH STACK =================== -->
+<div class="sec" id="tech-stack">
+  <h2>Technology Stack</h2>
+  <p class="sdesc">Full-stack TypeScript with modern tooling, AI services, and enterprise-grade infrastructure.</p>
+
+  <div class="g2">
+    <div class="c"><div class="ct">⚛️ Frontend</div><table><tr><th>Technology</th><th>Purpose</th></tr><tr><td>React 18</td><td>UI framework</td></tr><tr><td>TypeScript</td><td>Static type checking</td></tr><tr><td>Vite</td><td>Build tool with HMR</td></tr><tr><td>TailwindCSS</td><td>Utility-first CSS</td></tr><tr><td>shadcn/ui + Radix</td><td>Accessible components</td></tr><tr><td>DM Sans / Playfair Display</td><td>Brand typography</td></tr><tr><td>Wouter</td><td>Client-side routing</td></tr><tr><td>TanStack Query v5</td><td>Server state & caching</td></tr><tr><td>React Hook Form + Zod</td><td>Form management & validation</td></tr><tr><td>Recharts</td><td>Data visualization</td></tr><tr><td>Lucide React</td><td>Icon library</td></tr><tr><td>date-fns</td><td>Date utility (MM/DD/YYYY)</td></tr></table></div>
+    <div class="c"><div class="ct">🖥️ Backend</div><table><tr><th>Technology</th><th>Purpose</th></tr><tr><td>Node.js</td><td>Runtime environment</td></tr><tr><td>Express.js</td><td>HTTP framework</td></tr><tr><td>TypeScript</td><td>Type-safe server code</td></tr><tr><td>Drizzle ORM</td><td>TypeScript-first ORM</td></tr><tr><td>PostgreSQL (Neon)</td><td>Serverless PostgreSQL</td></tr><tr><td>pgvector + HNSW</td><td>Vector similarity (384-dim, cosine)</td></tr><tr><td>Passport.js</td><td>Authentication</td></tr><tr><td>connect-pg-simple</td><td>Session store</td></tr><tr><td>Multer</td><td>File uploads</td></tr><tr><td>html-pdf-node</td><td>PDF generation</td></tr><tr><td>Zod</td><td>Schema validation</td></tr></table></div>
+    <div class="c"><div class="ct">🤖 AI & ML Services</div><table><tr><th>Provider</th><th>Models</th><th>Use Case</th></tr><tr><td>Anthropic</td><td>claude-sonnet-4-5, opus, haiku</td><td>Primary: analysis, extraction, Q&A (temp 0.1, 16K)</td></tr><tr><td>Groq</td><td>llama-3.3-70b, llama-3.1-8b, mixtral</td><td>Fallback: fast inference (temp 0.1, 8K)</td></tr><tr><td>OpenAI</td><td>gpt-4o, gpt-4o-mini</td><td>Selectable primary (temp 0.1)</td></tr><tr><td>HuggingFace</td><td>BAAI/bge-small-en-v1.5</td><td>384-dim embeddings for RAG & search</td></tr></table></div>
+    <div class="c"><div class="ct">🏗️ Infrastructure</div><table><tr><th>Service</th><th>Purpose</th></tr><tr><td>Replit</td><td>Cloud development & deployment</td></tr><tr><td>Neon PostgreSQL</td><td>Serverless database</td></tr><tr><td>Replit Object Storage</td><td>File storage</td></tr><tr><td>Replit Auth</td><td>Authentication integration</td></tr><tr><td>Zoho Mail</td><td>SMTP email (primary)</td></tr><tr><td>Resend</td><td>Transactional email (backup)</td></tr></table></div>
+  </div>
+</div>
+
+<!-- =================== API REFERENCE =================== -->
+<div class="sec" id="api">
+  <h2>API Reference</h2>
+  <p class="sdesc">RESTful API endpoints organized by domain, all prefixed with <code>/api</code>.</p>
+
+  <div class="coll open"><div class="coll-h" onclick="tog(this)"><div class="cht">🔐 Authentication</div><div class="cha">▼</div></div><div class="coll-b"><table><tr><th>Method</th><th>Endpoint</th><th>Description</th></tr><tr><td><span class="badge b-s">POST</span></td><td><code>/api/login</code></td><td>User login</td></tr><tr><td><span class="badge b-s">POST</span></td><td><code>/api/logout</code></td><td>User logout</td></tr><tr><td><span class="badge b-p">GET</span></td><td><code>/api/user</code></td><td>Get current user</td></tr></table></div></div>
+
+  <div class="coll"><div class="coll-h" onclick="tog(this)"><div class="cht">📄 Contracts</div><div class="cha">▼</div></div><div class="coll-b"><table><tr><th>Method</th><th>Endpoint</th><th>Description</th></tr><tr><td><span class="badge b-p">GET</span></td><td><code>/api/contracts</code></td><td>List all contracts (RBAC filtered)</td></tr><tr><td><span class="badge b-s">POST</span></td><td><code>/api/contracts/upload</code></td><td>Upload & process PDF (triggers AI pipeline)</td></tr><tr><td><span class="badge b-s">POST</span></td><td><code>/api/contracts/:id/enrich</code></td><td>Trigger AI enrichment (batches of 5)</td></tr><tr><td><span class="badge b-s">POST</span></td><td><code>/api/contracts/:id/pipeline</code></td><td>Run 3-stage pipeline</td></tr><tr><td><span class="badge b-p">GET</span></td><td><code>/api/contracts/:id/term-coverage</code></td><td>Term coverage score & missing terms</td></tr></table></div></div>
+
+  <div class="coll"><div class="coll-h" onclick="tog(this)"><div class="cht">🤖 AI, RAG & Search</div><div class="cha">▼</div></div><div class="coll-b"><table><tr><th>Method</th><th>Endpoint</th><th>Description</th></tr><tr><td><span class="badge b-s">POST</span></td><td><code>/api/rag/query</code></td><td>RAG Q&A — embed → top-8 cosine → AI answer with citations</td></tr><tr><td><span class="badge b-s">POST</span></td><td><code>/api/ai/chat</code></td><td>liQ AI chat (floating assistant + contract creation from prompt)</td></tr><tr><td><span class="badge b-p">GET</span></td><td><code>/api/search</code></td><td>Global semantic search (384-dim cosine)</td></tr><tr><td><span class="badge b-w">PATCH</span></td><td><code>/api/system-settings</code></td><td>Update AI provider (takes effect in 60s)</td></tr></table></div></div>
+
+  <div class="coll"><div class="coll-h" onclick="tog(this)"><div class="cht">💰 Calculations</div><div class="cha">▼</div></div><div class="coll-b"><table><tr><th>Method</th><th>Endpoint</th><th>Description</th></tr><tr><td><span class="badge b-s">POST</span></td><td><code>/api/calculations/run</code></td><td>Run calculation (auto-creates accruals + JE)</td></tr><tr><td><span class="badge b-p">GET</span></td><td><code>/api/calculations/:id/audit-trail</code></td><td>Rule snapshots, qualifier trail, adjustment waterfall</td></tr></table></div></div>
+
+  <div class="coll"><div class="coll-h" onclick="tog(this)"><div class="cht">🏦 Finance Hub (28+ endpoints)</div><div class="cha">▼</div></div><div class="coll-b"><table><tr><th>Method</th><th>Endpoint</th><th>Description</th></tr><tr><td><span class="badge b-p">GET</span></td><td><code>/api/finance/accruals</code></td><td>List accruals (auto-generated from calculations)</td></tr><tr><td><span class="badge b-s">POST</span></td><td><code>/api/finance/accruals/:id/approve</code></td><td>Approve accrual</td></tr><tr><td><span class="badge b-p">GET</span></td><td><code>/api/finance/journal-entries</code></td><td>List journal entries</td></tr><tr><td><span class="badge b-s">POST</span></td><td><code>/api/finance/journal-entries/:id/transition</code></td><td>Stage transition (draft → review → approved → posted)</td></tr><tr><td><span class="badge b-s">POST</span></td><td><code>/api/finance/journal-entries/bulk-approve</code></td><td>Bulk approve JEs</td></tr><tr><td><span class="badge b-p">GET</span></td><td><code>/api/finance/period-close</code></td><td>Period close status with readiness score</td></tr><tr><td><span class="badge b-s">POST</span></td><td><code>/api/finance/period-close/:id/auto-populate</code></td><td>Map accruals/JEs to close records</td></tr></table></div></div>
+
+  <div class="coll"><div class="coll-h" onclick="tog(this)"><div class="cht">📧 Email & Admin</div><div class="cha">▼</div></div><div class="coll-b"><table><tr><th>Method</th><th>Endpoint</th><th>Description</th></tr><tr><td><span class="badge b-s">POST</span></td><td><code>/api/admin/leads/create-account</code></td><td>Create user account from lead (with role selection)</td></tr><tr><td><span class="badge b-s">POST</span></td><td><code>/api/admin/send-workspace-ready</code></td><td>Send login credentials email</td></tr><tr><td><span class="badge b-s">POST</span></td><td><code>/api/settings/smtp/test-connection</code></td><td>Test SMTP connection</td></tr></table></div></div>
+</div>
+
+<!-- =================== DEPLOYMENT =================== -->
+<div class="sec" id="deployment">
+  <h2>Deployment & Operations</h2>
+  <p class="sdesc">Production deployment on Replit with auto-scaling, environment management, and monitoring.</p>
+
+  <div class="g2">
+    <div class="c"><div class="ct">🚀 Deployment Stack</div><table><tr><th>Component</th><th>Details</th></tr><tr><td>Platform</td><td>Replit Deployments (auto-scaling)</td></tr><tr><td>Database</td><td>Neon PostgreSQL (serverless)</td></tr><tr><td>File Storage</td><td>Replit Object Storage</td></tr><tr><td>Build Tool</td><td>Vite (production build)</td></tr><tr><td>Runtime</td><td>Node.js with Express</td></tr><tr><td>Port</td><td>5000 (single port for frontend & backend)</td></tr></table></div>
+    <div class="c"><div class="ct">⚙️ Environment Variables</div><table><tr><th>Variable</th><th>Purpose</th></tr><tr><td><code>DATABASE_URL</code></td><td>PostgreSQL connection string</td></tr><tr><td><code>ANTHROPIC_API_KEY</code></td><td>Claude API access</td></tr><tr><td><code>GROQ_API_KEY</code></td><td>Groq API access</td></tr><tr><td><code>OPENAI_API_KEY</code></td><td>OpenAI API access</td></tr><tr><td><code>HUGGINGFACE_API_KEY</code></td><td>BAAI/bge-small-en-v1.5 embeddings</td></tr><tr><td><code>ZOHO_EMAIL / ZOHO_PASSWORD</code></td><td>SMTP email authentication</td></tr></table></div>
+  </div>
+
+  <h3>Build & Start Commands</h3>
+  <div class="c">
+    <table><tr><th>Command</th><th>Purpose</th></tr>
+    <tr><td><code>npm run dev</code></td><td>Start development server (Vite HMR + Express)</td></tr>
+    <tr><td><code>npm run build</code></td><td>Production build (TypeScript compile + Vite bundle)</td></tr>
+    <tr><td><code>npm run db:push</code></td><td>Push schema changes to database (Drizzle)</td></tr>
+    <tr><td><code>npm start</code></td><td>Start production server</td></tr>
+    </table>
+  </div>
+</div>
+
+</div><!-- /wrap -->
+
+<div class="foot">
+  <strong>LicenseIQ</strong> Platform v3.0 — Architecture Documentation — Updated Mar 2026<br>
+  Built with React, Express, PostgreSQL, and AI-native architecture<br>
+  &copy; 2026 CimpleIT LLC. All rights reserved.
+</div>
+
+<script>
+function go(id){
+  document.querySelectorAll('.sec').forEach(function(s){s.classList.remove('act')});
+  document.querySelectorAll('.nav div').forEach(function(t){t.classList.remove('act')});
+  var el=document.getElementById(id);
+  if(el)el.classList.add('act');
+  var tab=document.querySelector('.nav div[data-s="'+id+'"]');
+  if(tab)tab.classList.add('act');
+  window.scrollTo(0,0);
+}
+function tog(el){
+  el.parentElement.classList.toggle('open');
+}
+document.getElementById('nav').addEventListener('click',function(e){
+  var t=e.target;
+  if(t.dataset&&t.dataset.s)go(t.dataset.s);
+});
+</script>
+</body>
+</html>

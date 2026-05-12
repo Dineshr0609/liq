@@ -1,0 +1,206 @@
+transaction_date,invoice_number,customer_name,customer_code,product_name,product_code,quantity,unit_price,total_amount,territory,sales_channel,business_unit,currency
+2026-01-17,INV-10001,Sam Ash Music,CUST-006,USB Microphone UM-50,UM-50,19,89.99,1709.81,US East,Wholesale,Audio Division,USD
+2026-01-05,INV-10002,Best Buy Electronics,CUST-001,Wireless Headphones WH-100,WH-100,5,149.99,749.95,North America,Direct,Consumer Electronics,USD
+2026-01-15,INV-10003,Musician Friend,CUST-007,Audio Interface AI-400,AI-400,41,399.99,16399.59,US West,Online,Consumer Electronics,USD
+2026-01-03,INV-10004,Musician Friend,CUST-007,Wireless Headphones WH-100,WH-100,39,149.99,5849.61,US Central,Wholesale,Pro Audio,USD
+2026-01-27,INV-10005,Musician Friend,CUST-007,Pop Filter PF-5,PF-5,38,19.99,759.62,Canada,Wholesale,Pro Audio,USD
+2026-01-19,INV-10006,Guitar Center,CUST-002,USB Microphone UM-50,UM-50,8,89.99,719.92,Canada,Online,Audio Division,USD
+2026-01-08,INV-10007,Adorama Pro,CUST-008,Boom Arm BA-20,BA-20,29,59.99,1739.71,Latin America,Retail,Consumer Electronics,USD
+2026-01-21,INV-10008,B&H Photo Video,CUST-005,Studio Monitor SM-200,SM-200,36,299.99,10799.64,US East,Distributor,Audio Division,USD
+2026-01-24,INV-10009,Sweetwater Sound,CUST-003,Acoustic Panel AP-4,AP-4,39,79.99,3119.61,US Central,Retail,Audio Division,USD
+2026-01-13,INV-10010,B&H Photo Video,CUST-005,DAC Converter DC-100,DC-100,27,199.99,5399.73,Latin America,Distributor,Audio Division,USD
+2026-01-24,INV-10011,Sam Ash Music,CUST-006,Mixer Board MB-16,MB-16,22,549.99,12099.78,Canada,Retail,Audio Division,USD
+2026-01-16,INV-10012,Sweetwater Sound,CUST-003,USB Microphone UM-50,UM-50,14,89.99,1259.86,North America,Distributor,Pro Audio,USD
+2026-01-19,INV-10013,Musician Friend,CUST-007,Audio Interface AI-400,AI-400,26,399.99,10399.74,North America,Retail,Pro Audio,USD
+2026-01-17,INV-10014,Best Buy Electronics,CUST-001,Boom Arm BA-20,BA-20,17,59.99,1019.83,US East,Direct,Audio Division,USD
+2026-01-14,INV-10015,B&H Photo Video,CUST-005,Wireless Headphones WH-100,WH-100,46,149.99,6899.54,North America,Distributor,Pro Audio,USD
+2026-01-23,INV-10016,B&H Photo Video,CUST-005,USB Microphone UM-50,UM-50,49,89.99,4409.51,North America,Direct,Audio Division,USD
+2026-01-09,INV-10017,Guitar Center,CUST-002,USB Microphone UM-50,UM-50,45,89.99,4049.55,US West,Online,Consumer Electronics,USD
+2026-01-12,INV-10018,B&H Photo Video,CUST-005,DAC Converter DC-100,DC-100,34,199.99,6799.66,Canada,Retail,Consumer Electronics,USD
+2026-01-03,INV-10019,Best Buy Electronics,CUST-001,DAC Converter DC-100,DC-100,5,199.99,999.95,US Central,Retail,Audio Division,USD
+2026-01-24,INV-10020,Amazon Marketplace,CUST-004,USB Microphone UM-50,UM-50,26,89.99,2339.74,Latin America,Retail,Pro Audio,USD
+2026-01-22,INV-10021,Best Buy Electronics,CUST-001,DAC Converter DC-100,DC-100,48,199.99,9599.52,North America,Direct,Pro Audio,USD
+2026-01-04,INV-10022,Sweetwater Sound,CUST-003,Speaker Cable SC-10,SC-10,31,24.99,774.69,US West,Online,Audio Division,USD
+2026-01-25,INV-10023,B&H Photo Video,CUST-005,Audio Interface AI-400,AI-400,1,399.99,399.99,Canada,Distributor,Audio Division,USD
+2026-01-08,INV-10024,Amazon Marketplace,CUST-004,Audio Interface AI-400,AI-400,11,399.99,4399.89,North America,Online,Pro Audio,USD
+2026-01-15,INV-10025,Sam Ash Music,CUST-006,DAC Converter DC-100,DC-100,43,199.99,8599.57,US East,Retail,Audio Division,USD
+2026-01-17,INV-10026,Musician Friend,CUST-007,USB Microphone UM-50,UM-50,2,89.99,179.98,North America,Online,Consumer Electronics,USD
+2026-01-15,INV-10027,Guitar Center,CUST-002,USB Microphone UM-50,UM-50,45,89.99,4049.55,Canada,Online,Pro Audio,USD
+2026-01-23,INV-10028,Guitar Center,CUST-002,Speaker Cable SC-10,SC-10,49,24.99,1224.51,North America,Direct,Audio Division,USD
+2026-01-16,INV-10029,Musician Friend,CUST-007,Wireless Headphones WH-100,WH-100,34,149.99,5099.66,Latin America,Online,Consumer Electronics,USD
+2026-01-19,INV-10030,Sam Ash Music,CUST-006,Speaker Cable SC-10,SC-10,49,24.99,1224.51,Latin America,Retail,Audio Division,USD
+2026-01-08,INV-10031,Sweetwater Sound,CUST-003,Boom Arm BA-20,BA-20,39,59.99,2339.61,US Central,Wholesale,Audio Division,USD
+2026-01-22,INV-10032,Guitar Center,CUST-002,Wireless Headphones WH-100,WH-100,12,149.99,1799.88,US West,Online,Audio Division,USD
+2026-01-10,INV-10033,Amazon Marketplace,CUST-004,DAC Converter DC-100,DC-100,7,199.99,1399.93,North America,Distributor,Consumer Electronics,USD
+2026-01-09,INV-10034,Best Buy Electronics,CUST-001,Mixer Board MB-16,MB-16,8,549.99,4399.92,US East,Distributor,Pro Audio,USD
+2026-01-15,INV-10035,Sweetwater Sound,CUST-003,USB Microphone UM-50,UM-50,26,89.99,2339.74,US Central,Wholesale,Pro Audio,USD
+2026-01-09,INV-10036,Musician Friend,CUST-007,Acoustic Panel AP-4,AP-4,21,79.99,1679.79,Latin America,Wholesale,Pro Audio,USD
+2026-01-23,INV-10037,Adorama Pro,CUST-008,Studio Monitor SM-200,SM-200,44,299.99,13199.56,US Central,Retail,Pro Audio,USD
+2026-02-06,INV-10038,Adorama Pro,CUST-008,Studio Monitor SM-200,SM-200,24,299.99,7199.76,Latin America,Distributor,Audio Division,USD
+2026-02-13,INV-10039,Best Buy Electronics,CUST-001,Pop Filter PF-5,PF-5,6,19.99,119.94,Latin America,Retail,Pro Audio,USD
+2026-02-10,INV-10040,Amazon Marketplace,CUST-004,Studio Monitor SM-200,SM-200,4,299.99,1199.96,US East,Retail,Consumer Electronics,USD
+2026-02-23,INV-10041,B&H Photo Video,CUST-005,Wireless Headphones WH-100,WH-100,19,149.99,2849.81,US East,Wholesale,Consumer Electronics,USD
+2026-02-27,INV-10042,Musician Friend,CUST-007,USB Microphone UM-50,UM-50,2,89.99,179.98,Latin America,Direct,Pro Audio,USD
+2026-02-21,INV-10043,Sam Ash Music,CUST-006,Wireless Headphones WH-100,WH-100,18,149.99,2699.82,Latin America,Wholesale,Audio Division,USD
+2026-02-06,INV-10044,Best Buy Electronics,CUST-001,Acoustic Panel AP-4,AP-4,3,79.99,239.97,US West,Distributor,Consumer Electronics,USD
+2026-02-02,INV-10045,B&H Photo Video,CUST-005,Speaker Cable SC-10,SC-10,4,24.99,99.96,Canada,Wholesale,Pro Audio,USD
+2026-02-01,INV-10046,Musician Friend,CUST-007,Studio Monitor SM-200,SM-200,8,299.99,2399.92,Latin America,Wholesale,Consumer Electronics,USD
+2026-02-05,INV-10047,Guitar Center,CUST-002,Boom Arm BA-20,BA-20,39,59.99,2339.61,Canada,Direct,Audio Division,USD
+2026-02-20,INV-10048,Musician Friend,CUST-007,Mixer Board MB-16,MB-16,14,549.99,7699.86,Latin America,Retail,Pro Audio,USD
+2026-02-11,INV-10049,Amazon Marketplace,CUST-004,Audio Interface AI-400,AI-400,34,399.99,13599.66,Canada,Distributor,Pro Audio,USD
+2026-02-01,INV-10050,Musician Friend,CUST-007,Speaker Cable SC-10,SC-10,9,24.99,224.91,North America,Online,Audio Division,USD
+2026-02-18,INV-10051,Best Buy Electronics,CUST-001,Boom Arm BA-20,BA-20,11,59.99,659.89,US West,Distributor,Consumer Electronics,USD
+2026-02-08,INV-10052,Guitar Center,CUST-002,Mixer Board MB-16,MB-16,35,549.99,19249.65,US East,Online,Pro Audio,USD
+2026-02-26,INV-10053,Adorama Pro,CUST-008,Speaker Cable SC-10,SC-10,14,24.99,349.86,US Central,Direct,Consumer Electronics,USD
+2026-02-09,INV-10054,Adorama Pro,CUST-008,Wireless Headphones WH-100,WH-100,20,149.99,2999.80,US Central,Wholesale,Audio Division,USD
+2026-02-25,INV-10055,Sweetwater Sound,CUST-003,Speaker Cable SC-10,SC-10,39,24.99,974.61,Latin America,Online,Audio Division,USD
+2026-02-25,INV-10056,Sam Ash Music,CUST-006,Acoustic Panel AP-4,AP-4,34,79.99,2719.66,North America,Direct,Audio Division,USD
+2026-02-20,INV-10057,Adorama Pro,CUST-008,Acoustic Panel AP-4,AP-4,18,79.99,1439.82,Canada,Online,Pro Audio,USD
+2026-02-19,INV-10058,Sweetwater Sound,CUST-003,Acoustic Panel AP-4,AP-4,39,79.99,3119.61,Latin America,Distributor,Pro Audio,USD
+2026-02-16,INV-10059,Sweetwater Sound,CUST-003,Acoustic Panel AP-4,AP-4,7,79.99,559.93,US West,Direct,Audio Division,USD
+2026-02-16,INV-10060,Sweetwater Sound,CUST-003,Mixer Board MB-16,MB-16,38,549.99,20899.62,Latin America,Direct,Consumer Electronics,USD
+2026-02-17,INV-10061,Guitar Center,CUST-002,DAC Converter DC-100,DC-100,47,199.99,9399.53,Latin America,Wholesale,Audio Division,USD
+2026-02-19,INV-10062,Best Buy Electronics,CUST-001,USB Microphone UM-50,UM-50,31,89.99,2789.69,Canada,Distributor,Pro Audio,USD
+2026-02-28,INV-10063,Best Buy Electronics,CUST-001,Audio Interface AI-400,AI-400,29,399.99,11599.71,US Central,Retail,Pro Audio,USD
+2026-02-02,INV-10064,Best Buy Electronics,CUST-001,Audio Interface AI-400,AI-400,12,399.99,4799.88,North America,Distributor,Pro Audio,USD
+2026-02-10,INV-10065,Sam Ash Music,CUST-006,Wireless Headphones WH-100,WH-100,28,149.99,4199.72,US West,Direct,Consumer Electronics,USD
+2026-02-16,INV-10066,Adorama Pro,CUST-008,Audio Interface AI-400,AI-400,46,399.99,18399.54,North America,Online,Audio Division,USD
+2026-02-08,INV-10067,Amazon Marketplace,CUST-004,Studio Monitor SM-200,SM-200,25,299.99,7499.75,US West,Online,Pro Audio,USD
+2026-03-22,INV-10068,B&H Photo Video,CUST-005,Studio Monitor SM-200,SM-200,18,299.99,5399.82,North America,Retail,Consumer Electronics,USD
+2026-03-02,INV-10069,Sweetwater Sound,CUST-003,Acoustic Panel AP-4,AP-4,15,79.99,1199.85,North America,Distributor,Consumer Electronics,USD
+2026-03-20,INV-10070,Adorama Pro,CUST-008,Boom Arm BA-20,BA-20,7,59.99,419.93,US Central,Direct,Pro Audio,USD
+2026-03-12,INV-10071,Sweetwater Sound,CUST-003,Audio Interface AI-400,AI-400,39,399.99,15599.61,Latin America,Distributor,Audio Division,USD
+2026-03-04,INV-10072,B&H Photo Video,CUST-005,Acoustic Panel AP-4,AP-4,6,79.99,479.94,North America,Online,Pro Audio,USD
+2026-03-09,INV-10073,Guitar Center,CUST-002,DAC Converter DC-100,DC-100,24,199.99,4799.76,North America,Direct,Pro Audio,USD
+2026-03-17,INV-10074,Best Buy Electronics,CUST-001,Studio Monitor SM-200,SM-200,29,299.99,8699.71,Latin America,Wholesale,Audio Division,USD
+2026-03-24,INV-10075,Musician Friend,CUST-007,Acoustic Panel AP-4,AP-4,4,79.99,319.96,US Central,Retail,Pro Audio,USD
+2026-03-25,INV-10076,Amazon Marketplace,CUST-004,Studio Monitor SM-200,SM-200,5,299.99,1499.95,Latin America,Direct,Pro Audio,USD
+2026-03-10,INV-10077,Amazon Marketplace,CUST-004,Pop Filter PF-5,PF-5,48,19.99,959.52,US East,Retail,Consumer Electronics,USD
+2026-03-24,INV-10078,Sam Ash Music,CUST-006,Acoustic Panel AP-4,AP-4,24,79.99,1919.76,North America,Direct,Consumer Electronics,USD
+2026-03-28,INV-10079,Amazon Marketplace,CUST-004,Studio Monitor SM-200,SM-200,44,299.99,13199.56,US West,Retail,Consumer Electronics,USD
+2026-03-04,INV-10080,B&H Photo Video,CUST-005,DAC Converter DC-100,DC-100,5,199.99,999.95,US East,Wholesale,Audio Division,USD
+2026-03-24,INV-10081,Adorama Pro,CUST-008,Acoustic Panel AP-4,AP-4,42,79.99,3359.58,Latin America,Distributor,Consumer Electronics,USD
+2026-03-20,INV-10082,Adorama Pro,CUST-008,USB Microphone UM-50,UM-50,28,89.99,2519.72,Latin America,Wholesale,Audio Division,USD
+2026-03-27,INV-10083,Sam Ash Music,CUST-006,Pop Filter PF-5,PF-5,32,19.99,639.68,US Central,Retail,Audio Division,USD
+2026-03-26,INV-10084,Adorama Pro,CUST-008,Wireless Headphones WH-100,WH-100,24,149.99,3599.76,US East,Distributor,Consumer Electronics,USD
+2026-03-08,INV-10085,Amazon Marketplace,CUST-004,Pop Filter PF-5,PF-5,47,19.99,939.53,Canada,Wholesale,Consumer Electronics,USD
+2026-03-20,INV-10086,Sweetwater Sound,CUST-003,Pop Filter PF-5,PF-5,2,19.99,39.98,Canada,Distributor,Pro Audio,USD
+2026-03-22,INV-10087,Adorama Pro,CUST-008,Audio Interface AI-400,AI-400,41,399.99,16399.59,Latin America,Direct,Audio Division,USD
+2026-03-04,INV-10088,Amazon Marketplace,CUST-004,Wireless Headphones WH-100,WH-100,8,149.99,1199.92,US Central,Direct,Pro Audio,USD
+2026-03-14,INV-10089,Amazon Marketplace,CUST-004,DAC Converter DC-100,DC-100,20,199.99,3999.80,North America,Direct,Pro Audio,USD
+2026-03-04,INV-10090,Sweetwater Sound,CUST-003,DAC Converter DC-100,DC-100,24,199.99,4799.76,US East,Distributor,Pro Audio,USD
+2026-03-05,INV-10091,B&H Photo Video,CUST-005,Speaker Cable SC-10,SC-10,47,24.99,1174.53,US East,Retail,Audio Division,USD
+2026-03-26,INV-10092,B&H Photo Video,CUST-005,Acoustic Panel AP-4,AP-4,32,79.99,2559.68,US East,Wholesale,Pro Audio,USD
+2026-03-25,INV-10093,Adorama Pro,CUST-008,Mixer Board MB-16,MB-16,1,549.99,549.99,US East,Wholesale,Pro Audio,USD
+2026-03-14,INV-10094,Guitar Center,CUST-002,Pop Filter PF-5,PF-5,17,19.99,339.83,Latin America,Wholesale,Consumer Electronics,USD
+2026-03-11,INV-10095,Sweetwater Sound,CUST-003,DAC Converter DC-100,DC-100,15,199.99,2999.85,US Central,Retail,Consumer Electronics,USD
+2026-03-25,INV-10096,Sweetwater Sound,CUST-003,Acoustic Panel AP-4,AP-4,45,79.99,3599.55,Latin America,Direct,Consumer Electronics,USD
+2026-03-27,INV-10097,Sweetwater Sound,CUST-003,USB Microphone UM-50,UM-50,43,89.99,3869.57,US West,Distributor,Pro Audio,USD
+2026-03-07,INV-10098,Best Buy Electronics,CUST-001,Wireless Headphones WH-100,WH-100,14,149.99,2099.86,US East,Distributor,Consumer Electronics,USD
+2026-03-28,INV-10099,Guitar Center,CUST-002,USB Microphone UM-50,UM-50,28,89.99,2519.72,US West,Retail,Consumer Electronics,USD
+2026-03-19,INV-10100,Amazon Marketplace,CUST-004,Studio Monitor SM-200,SM-200,20,299.99,5999.80,Canada,Direct,Pro Audio,USD
+2026-03-28,INV-10101,Adorama Pro,CUST-008,Speaker Cable SC-10,SC-10,38,24.99,949.62,US West,Online,Audio Division,USD
+2026-03-03,INV-10102,B&H Photo Video,CUST-005,USB Microphone UM-50,UM-50,37,89.99,3329.63,Canada,Direct,Audio Division,USD
+2026-03-15,INV-10103,Sweetwater Sound,CUST-003,Audio Interface AI-400,AI-400,8,399.99,3199.92,North America,Distributor,Consumer Electronics,USD
+2026-03-05,INV-10104,Musician Friend,CUST-007,Acoustic Panel AP-4,AP-4,44,79.99,3519.56,US West,Online,Pro Audio,USD
+2026-03-03,INV-10105,Adorama Pro,CUST-008,DAC Converter DC-100,DC-100,4,199.99,799.96,Latin America,Wholesale,Audio Division,USD
+2026-03-10,INV-10106,Musician Friend,CUST-007,USB Microphone UM-50,UM-50,40,89.99,3599.60,Latin America,Online,Audio Division,USD
+2026-04-08,INV-10107,Amazon Marketplace,CUST-004,USB Microphone UM-50,UM-50,32,89.99,2879.68,US East,Retail,Pro Audio,USD
+2026-04-08,INV-10108,B&H Photo Video,CUST-005,USB Microphone UM-50,UM-50,40,89.99,3599.60,North America,Online,Audio Division,USD
+2026-04-02,INV-10109,Sweetwater Sound,CUST-003,Boom Arm BA-20,BA-20,33,59.99,1979.67,US Central,Wholesale,Consumer Electronics,USD
+2026-04-13,INV-10110,Musician Friend,CUST-007,Audio Interface AI-400,AI-400,19,399.99,7599.81,US Central,Online,Consumer Electronics,USD
+2026-04-10,INV-10111,Sam Ash Music,CUST-006,Pop Filter PF-5,PF-5,12,19.99,239.88,US Central,Wholesale,Pro Audio,USD
+2026-04-01,INV-10112,Guitar Center,CUST-002,Acoustic Panel AP-4,AP-4,13,79.99,1039.87,Canada,Distributor,Consumer Electronics,USD
+2026-04-06,INV-10113,Musician Friend,CUST-007,Pop Filter PF-5,PF-5,16,19.99,319.84,Canada,Online,Consumer Electronics,USD
+2026-04-23,INV-10114,Sam Ash Music,CUST-006,USB Microphone UM-50,UM-50,18,89.99,1619.82,Latin America,Online,Consumer Electronics,USD
+2026-04-23,INV-10115,Adorama Pro,CUST-008,Pop Filter PF-5,PF-5,42,19.99,839.58,US East,Online,Consumer Electronics,USD
+2026-04-05,INV-10116,Amazon Marketplace,CUST-004,Studio Monitor SM-200,SM-200,17,299.99,5099.83,North America,Direct,Pro Audio,USD
+2026-04-01,INV-10117,Sweetwater Sound,CUST-003,DAC Converter DC-100,DC-100,30,199.99,5999.70,US West,Retail,Audio Division,USD
+2026-04-24,INV-10118,Adorama Pro,CUST-008,Mixer Board MB-16,MB-16,25,549.99,13749.75,US East,Wholesale,Pro Audio,USD
+2026-04-28,INV-10119,Sam Ash Music,CUST-006,Pop Filter PF-5,PF-5,47,19.99,939.53,US West,Wholesale,Consumer Electronics,USD
+2026-04-23,INV-10120,Adorama Pro,CUST-008,Mixer Board MB-16,MB-16,28,549.99,15399.72,US West,Online,Audio Division,USD
+2026-04-23,INV-10121,Guitar Center,CUST-002,Audio Interface AI-400,AI-400,37,399.99,14799.63,US West,Online,Audio Division,USD
+2026-04-02,INV-10122,Best Buy Electronics,CUST-001,Studio Monitor SM-200,SM-200,33,299.99,9899.67,Latin America,Wholesale,Consumer Electronics,USD
+2026-04-07,INV-10123,Sam Ash Music,CUST-006,Mixer Board MB-16,MB-16,42,549.99,23099.58,Canada,Wholesale,Consumer Electronics,USD
+2026-04-19,INV-10124,Best Buy Electronics,CUST-001,Studio Monitor SM-200,SM-200,42,299.99,12599.58,North America,Distributor,Consumer Electronics,USD
+2026-04-22,INV-10125,B&H Photo Video,CUST-005,Boom Arm BA-20,BA-20,5,59.99,299.95,US West,Wholesale,Audio Division,USD
+2026-04-18,INV-10126,Best Buy Electronics,CUST-001,Audio Interface AI-400,AI-400,28,399.99,11199.72,US West,Online,Pro Audio,USD
+2026-04-09,INV-10127,Best Buy Electronics,CUST-001,Studio Monitor SM-200,SM-200,24,299.99,7199.76,Canada,Direct,Pro Audio,USD
+2026-04-18,INV-10128,Amazon Marketplace,CUST-004,USB Microphone UM-50,UM-50,39,89.99,3509.61,Latin America,Wholesale,Audio Division,USD
+2026-04-23,INV-10129,Best Buy Electronics,CUST-001,DAC Converter DC-100,DC-100,42,199.99,8399.58,Latin America,Retail,Consumer Electronics,USD
+2026-04-03,INV-10130,Adorama Pro,CUST-008,Speaker Cable SC-10,SC-10,36,24.99,899.64,Canada,Distributor,Pro Audio,USD
+2026-04-11,INV-10131,Adorama Pro,CUST-008,Mixer Board MB-16,MB-16,47,549.99,25849.53,Latin America,Wholesale,Audio Division,USD
+2026-04-05,INV-10132,Musician Friend,CUST-007,DAC Converter DC-100,DC-100,50,199.99,9999.50,Canada,Direct,Pro Audio,USD
+2026-04-26,INV-10133,Musician Friend,CUST-007,Audio Interface AI-400,AI-400,42,399.99,16799.58,Canada,Direct,Pro Audio,USD
+2026-04-09,INV-10134,Guitar Center,CUST-002,Audio Interface AI-400,AI-400,4,399.99,1599.96,Canada,Direct,Pro Audio,USD
+2026-04-28,INV-10135,Best Buy Electronics,CUST-001,Mixer Board MB-16,MB-16,11,549.99,6049.89,North America,Online,Pro Audio,USD
+2026-04-28,INV-10136,Musician Friend,CUST-007,Boom Arm BA-20,BA-20,17,59.99,1019.83,US West,Online,Audio Division,USD
+2026-04-15,INV-10137,Sweetwater Sound,CUST-003,Boom Arm BA-20,BA-20,41,59.99,2459.59,US Central,Direct,Audio Division,USD
+2026-04-18,INV-10138,Best Buy Electronics,CUST-001,Studio Monitor SM-200,SM-200,3,299.99,899.97,US East,Direct,Pro Audio,USD
+2026-04-21,INV-10139,Amazon Marketplace,CUST-004,Mixer Board MB-16,MB-16,35,549.99,19249.65,US East,Direct,Consumer Electronics,USD
+2026-04-05,INV-10140,Sweetwater Sound,CUST-003,Studio Monitor SM-200,SM-200,21,299.99,6299.79,US Central,Distributor,Audio Division,USD
+2026-04-17,INV-10141,Sweetwater Sound,CUST-003,Wireless Headphones WH-100,WH-100,50,149.99,7499.50,US Central,Distributor,Consumer Electronics,USD
+2026-04-16,INV-10142,Guitar Center,CUST-002,Pop Filter PF-5,PF-5,11,19.99,219.89,Latin America,Distributor,Audio Division,USD
+2026-04-14,INV-10143,Musician Friend,CUST-007,USB Microphone UM-50,UM-50,38,89.99,3419.62,US East,Online,Consumer Electronics,USD
+2026-04-16,INV-10144,Sweetwater Sound,CUST-003,Speaker Cable SC-10,SC-10,10,24.99,249.90,Canada,Wholesale,Pro Audio,USD
+2026-05-05,INV-10145,B&H Photo Video,CUST-005,Wireless Headphones WH-100,WH-100,5,149.99,749.95,US West,Online,Audio Division,USD
+2026-05-08,INV-10146,Amazon Marketplace,CUST-004,Speaker Cable SC-10,SC-10,19,24.99,474.81,US West,Direct,Audio Division,USD
+2026-05-26,INV-10147,Amazon Marketplace,CUST-004,Audio Interface AI-400,AI-400,2,399.99,799.98,US West,Retail,Consumer Electronics,USD
+2026-05-09,INV-10148,Sam Ash Music,CUST-006,Studio Monitor SM-200,SM-200,2,299.99,599.98,US Central,Direct,Audio Division,USD
+2026-05-08,INV-10149,Guitar Center,CUST-002,DAC Converter DC-100,DC-100,3,199.99,599.97,North America,Direct,Audio Division,USD
+2026-05-20,INV-10150,Best Buy Electronics,CUST-001,Wireless Headphones WH-100,WH-100,21,149.99,3149.79,US East,Retail,Audio Division,USD
+2026-05-02,INV-10151,Sam Ash Music,CUST-006,Studio Monitor SM-200,SM-200,8,299.99,2399.92,Latin America,Retail,Consumer Electronics,USD
+2026-05-12,INV-10152,Guitar Center,CUST-002,Speaker Cable SC-10,SC-10,21,24.99,524.79,North America,Online,Audio Division,USD
+2026-05-15,INV-10153,Musician Friend,CUST-007,DAC Converter DC-100,DC-100,48,199.99,9599.52,US East,Online,Pro Audio,USD
+2026-05-16,INV-10154,Sam Ash Music,CUST-006,Audio Interface AI-400,AI-400,10,399.99,3999.90,North America,Direct,Pro Audio,USD
+2026-05-14,INV-10155,Guitar Center,CUST-002,Boom Arm BA-20,BA-20,34,59.99,2039.66,North America,Wholesale,Pro Audio,USD
+2026-05-10,INV-10156,Best Buy Electronics,CUST-001,Studio Monitor SM-200,SM-200,32,299.99,9599.68,US West,Distributor,Pro Audio,USD
+2026-05-19,INV-10157,Amazon Marketplace,CUST-004,Audio Interface AI-400,AI-400,37,399.99,14799.63,US Central,Direct,Consumer Electronics,USD
+2026-05-14,INV-10158,B&H Photo Video,CUST-005,Acoustic Panel AP-4,AP-4,28,79.99,2239.72,US West,Direct,Consumer Electronics,USD
+2026-05-03,INV-10159,Sam Ash Music,CUST-006,Boom Arm BA-20,BA-20,35,59.99,2099.65,US West,Distributor,Consumer Electronics,USD
+2026-05-10,INV-10160,B&H Photo Video,CUST-005,Wireless Headphones WH-100,WH-100,11,149.99,1649.89,Latin America,Direct,Audio Division,USD
+2026-05-17,INV-10161,B&H Photo Video,CUST-005,DAC Converter DC-100,DC-100,44,199.99,8799.56,Canada,Retail,Consumer Electronics,USD
+2026-05-10,INV-10162,Best Buy Electronics,CUST-001,Wireless Headphones WH-100,WH-100,28,149.99,4199.72,North America,Distributor,Consumer Electronics,USD
+2026-05-21,INV-10163,Best Buy Electronics,CUST-001,Boom Arm BA-20,BA-20,4,59.99,239.96,Canada,Retail,Pro Audio,USD
+2026-05-23,INV-10164,Sweetwater Sound,CUST-003,Mixer Board MB-16,MB-16,38,549.99,20899.62,North America,Online,Pro Audio,USD
+2026-05-11,INV-10165,Musician Friend,CUST-007,DAC Converter DC-100,DC-100,26,199.99,5199.74,US West,Wholesale,Consumer Electronics,USD
+2026-05-19,INV-10166,B&H Photo Video,CUST-005,Wireless Headphones WH-100,WH-100,25,149.99,3749.75,US Central,Direct,Audio Division,USD
+2026-05-04,INV-10167,B&H Photo Video,CUST-005,Audio Interface AI-400,AI-400,18,399.99,7199.82,Latin America,Distributor,Consumer Electronics,USD
+2026-05-26,INV-10168,Adorama Pro,CUST-008,Studio Monitor SM-200,SM-200,9,299.99,2699.91,Latin America,Distributor,Audio Division,USD
+2026-05-20,INV-10169,Adorama Pro,CUST-008,Wireless Headphones WH-100,WH-100,43,149.99,6449.57,Latin America,Distributor,Consumer Electronics,USD
+2026-05-02,INV-10170,B&H Photo Video,CUST-005,Pop Filter PF-5,PF-5,43,19.99,859.57,US Central,Retail,Audio Division,USD
+2026-05-25,INV-10171,Sam Ash Music,CUST-006,Mixer Board MB-16,MB-16,26,549.99,14299.74,US Central,Wholesale,Pro Audio,USD
+2026-05-12,INV-10172,Amazon Marketplace,CUST-004,DAC Converter DC-100,DC-100,25,199.99,4999.75,US East,Online,Consumer Electronics,USD
+2026-05-08,INV-10173,Musician Friend,CUST-007,Acoustic Panel AP-4,AP-4,26,79.99,2079.74,North America,Wholesale,Pro Audio,USD
+2026-05-17,INV-10174,Musician Friend,CUST-007,Boom Arm BA-20,BA-20,43,59.99,2579.57,Latin America,Retail,Consumer Electronics,USD
+2026-05-24,INV-10175,Best Buy Electronics,CUST-001,Wireless Headphones WH-100,WH-100,11,149.99,1649.89,US Central,Online,Audio Division,USD
+2026-06-27,INV-10176,Sam Ash Music,CUST-006,USB Microphone UM-50,UM-50,11,89.99,989.89,Latin America,Online,Consumer Electronics,USD
+2026-06-13,INV-10177,Guitar Center,CUST-002,Mixer Board MB-16,MB-16,40,549.99,21999.60,US Central,Direct,Audio Division,USD
+2026-06-23,INV-10178,Sweetwater Sound,CUST-003,Speaker Cable SC-10,SC-10,34,24.99,849.66,US West,Retail,Audio Division,USD
+2026-06-08,INV-10179,Amazon Marketplace,CUST-004,DAC Converter DC-100,DC-100,42,199.99,8399.58,US West,Distributor,Pro Audio,USD
+2026-06-03,INV-10180,Sam Ash Music,CUST-006,Pop Filter PF-5,PF-5,17,19.99,339.83,US East,Distributor,Consumer Electronics,USD
+2026-06-01,INV-10181,Musician Friend,CUST-007,Acoustic Panel AP-4,AP-4,46,79.99,3679.54,US Central,Distributor,Pro Audio,USD
+2026-06-01,INV-10182,Sam Ash Music,CUST-006,Mixer Board MB-16,MB-16,12,549.99,6599.88,US West,Online,Consumer Electronics,USD
+2026-06-14,INV-10183,Best Buy Electronics,CUST-001,USB Microphone UM-50,UM-50,16,89.99,1439.84,US West,Distributor,Pro Audio,USD
+2026-06-26,INV-10184,Amazon Marketplace,CUST-004,Studio Monitor SM-200,SM-200,35,299.99,10499.65,North America,Online,Consumer Electronics,USD
+2026-06-05,INV-10185,Musician Friend,CUST-007,DAC Converter DC-100,DC-100,13,199.99,2599.87,North America,Online,Pro Audio,USD
+2026-06-02,INV-10186,B&H Photo Video,CUST-005,Boom Arm BA-20,BA-20,8,59.99,479.92,US East,Online,Audio Division,USD
+2026-06-21,INV-10187,Amazon Marketplace,CUST-004,Pop Filter PF-5,PF-5,17,19.99,339.83,US Central,Retail,Audio Division,USD
+2026-06-04,INV-10188,Sweetwater Sound,CUST-003,Boom Arm BA-20,BA-20,13,59.99,779.87,North America,Direct,Consumer Electronics,USD
+2026-06-20,INV-10189,Sweetwater Sound,CUST-003,Boom Arm BA-20,BA-20,17,59.99,1019.83,Latin America,Distributor,Pro Audio,USD
+2026-06-27,INV-10190,Guitar Center,CUST-002,DAC Converter DC-100,DC-100,43,199.99,8599.57,US West,Retail,Audio Division,USD
+2026-06-25,INV-10191,Best Buy Electronics,CUST-001,USB Microphone UM-50,UM-50,14,89.99,1259.86,Latin America,Online,Consumer Electronics,USD
+2026-06-28,INV-10192,Guitar Center,CUST-002,Speaker Cable SC-10,SC-10,2,24.99,49.98,Canada,Distributor,Audio Division,USD
+2026-06-01,INV-10193,Sweetwater Sound,CUST-003,Wireless Headphones WH-100,WH-100,40,149.99,5999.60,US Central,Online,Consumer Electronics,USD
+2026-06-10,INV-10194,Sam Ash Music,CUST-006,Pop Filter PF-5,PF-5,16,19.99,319.84,US West,Retail,Pro Audio,USD
+2026-06-04,INV-10195,Sweetwater Sound,CUST-003,Mixer Board MB-16,MB-16,5,549.99,2749.95,US East,Retail,Pro Audio,USD
+2026-06-08,INV-10196,Musician Friend,CUST-007,USB Microphone UM-50,UM-50,48,89.99,4319.52,Latin America,Online,Pro Audio,USD
+2026-06-20,INV-10197,Amazon Marketplace,CUST-004,Wireless Headphones WH-100,WH-100,18,149.99,2699.82,US East,Direct,Audio Division,USD
+2026-06-05,INV-10198,Musician Friend,CUST-007,Pop Filter PF-5,PF-5,31,19.99,619.69,US West,Distributor,Consumer Electronics,USD
+2026-06-11,INV-10199,Amazon Marketplace,CUST-004,DAC Converter DC-100,DC-100,12,199.99,2399.88,US East,Retail,Audio Division,USD
+2026-06-03,INV-10200,B&H Photo Video,CUST-005,Acoustic Panel AP-4,AP-4,21,79.99,1679.79,US Central,Retail,Audio Division,USD
+2026-06-03,INV-10201,Sweetwater Sound,CUST-003,Acoustic Panel AP-4,AP-4,21,79.99,1679.79,Latin America,Distributor,Consumer Electronics,USD
+2026-06-19,INV-10202,Musician Friend,CUST-007,Speaker Cable SC-10,SC-10,50,24.99,1249.50,Latin America,Wholesale,Consumer Electronics,USD
+2026-06-01,INV-10203,Guitar Center,CUST-002,Mixer Board MB-16,MB-16,39,549.99,21449.61,US West,Retail,Audio Division,USD
+2026-06-06,INV-10204,Sam Ash Music,CUST-006,DAC Converter DC-100,DC-100,18,199.99,3599.82,US Central,Wholesale,Consumer Electronics,USD
+2026-06-13,INV-10205,Guitar Center,CUST-002,Wireless Headphones WH-100,WH-100,12,149.99,1799.88,US East,Online,Pro Audio,USD

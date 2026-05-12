@@ -1,0 +1,44 @@
+[FLATTEN] Transformed extraction: 10 fields
+[FLATTEN] Extracted fields: baseRoyaltyRate, royaltyRate, mdfRate, marketingRoyalty
+[ACCURACY-DEBUG] Testing 11 ground truth fields
+[ACCURACY-DEBUG] Flattened keys: baseRoyaltyRate, royaltyRate, mdfRate, marketingRoyalty
+[FLATTEN] Transformed extraction: 10 fields
+[FLATTEN] Extracted fields: baseRoyaltyRate, royaltyRate, mdfRate, marketingRoyalty
+[ACCURACY-DEBUG] Field: baseRoyaltyRate | Expected: 6 | Extracted: 6 | Match: true
+[FLATTEN] Transformed extraction: 10 fields
+[FLATTEN] Extracted fields: baseRoyaltyRate, royaltyRate, mdfRate, marketingRoyalty
+[ACCURACY-DEBUG] Field: perCategoryCap | Expected: 500000 | Extracted: null | Match: false
+[FLATTEN] Transformed extraction: 10 fields
+[FLATTEN] Extracted fields: baseRoyaltyRate, royaltyRate, mdfRate, marketingRoyalty
+[ACCURACY-DEBUG] Field: perSkuCap | Expected: 50000 | Extracted: null | Match: false
+[FLATTEN] Transformed extraction: 10 fields
+[FLATTEN] Extracted fields: baseRoyaltyRate, royaltyRate, mdfRate, marketingRoyalty
+[ACCURACY-DEBUG] Field: aggregateCap | Expected: 2000000 | Extracted: null | Match: false
+[FLATTEN] Transformed extraction: 10 fields
+[FLATTEN] Extracted fields: baseRoyaltyRate, royaltyRate, mdfRate, marketingRoyalty
+[ACCURACY-DEBUG] Field: salesThresholdForReduction | Expected: 20000000 | Extracted: null | Match: false
+[FLATTEN] Transformed extraction: 10 fields
+[FLATTEN] Extracted fields: baseRoyaltyRate, royaltyRate, mdfRate, marketingRoyalty
+[ACCURACY-DEBUG] Field: reducedRate | Expected: 5 | Extracted: null | Match: false
+[FLATTEN] Transformed extraction: 10 fields
+[FLATTEN] Extracted fields: baseRoyaltyRate, royaltyRate, mdfRate, marketingRoyalty
+[ACCURACY-DEBUG] Field: manufacturingReduction | Expected: 1 | Extracted: null | Match: false
+[FLATTEN] Transformed extraction: 10 fields
+[FLATTEN] Extracted fields: baseRoyaltyRate, royaltyRate, mdfRate, marketingRoyalty
+[ACCURACY-DEBUG] Field: exclusiveRetailAddition | Expected: 0.5 | Extracted: null | Match: false
+[FLATTEN] Transformed extraction: 10 fields
+[FLATTEN] Extracted fields: baseRoyaltyRate, royaltyRate, mdfRate, marketingRoyalty
+[ACCURACY-DEBUG] Field: marketingRoyalty | Expected: 2 | Extracted: 2 | Match: true
+[FLATTEN] Transformed extraction: 10 fields
+[FLATTEN] Extracted fields: baseRoyaltyRate, royaltyRate, mdfRate, marketingRoyalty
+[ACCURACY-DEBUG] Field: quarterlyMinimum | Expected: 50000 | Extracted: null | Match: false
+[FLATTEN] Transformed extraction: 10 fields
+[FLATTEN] Extracted fields: baseRoyaltyRate, royaltyRate, mdfRate, marketingRoyalty
+[ACCURACY-DEBUG] Field: annualMinimum | Expected: 300000 | Extracted: null | Match: false
+[ACCURACY-DEBUG] Result: 2/11 matched = 18.2%
+3:47:14 PM [express] POST /api/accuracy/test-cases/21/run 200 in 2964ms :: {"testCaseId":21,"testCas…
+3:47:14 PM [express] GET /api/accuracy/test-cases 304 in 157ms :: [{"id":21,"name":"Conditional Roya…
+3:47:17 PM [express] GET /api/accuracy/test-cases/21 304 in 138ms :: {"id":21,"name":"Conditional Ro…
+3:47:25 PM [express] GET /api/contracts 304 in 235ms :: {"contracts":[{"id":"80bfc7e0-af6b-42eb-a1fa…
+3:47:33 PM [express] GET /api/contracts 304 in 184ms :: {"contracts":[{"id":"80bfc7e0-af6b-42eb-a1fa…
+3:48:04 PM [express] GET /api/contracts 304 in 480ms :: {"contracts":[{"id":"80bfc7e0-af6b-42eb-a1fa…

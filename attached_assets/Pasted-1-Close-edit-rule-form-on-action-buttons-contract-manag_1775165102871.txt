@@ -1,0 +1,18 @@
+1. Close edit rule form on action buttons (contract-management.tsx)
+In RulesTabContent, update updateMutation.onSuccess and reviewStatusMutation.onSuccess to call setEditingId(null), setAddingNew(false), and setEditForm({ ...defaultFormState }) before queryClient.invalidateQueries to prevent re-render race condition. This closes the form after Save Rule, Verify & Confirm, Send to Review, and Reject.
+2. Fix Cancel button not closing form (contract-management.tsx)
+Replace cancelEdit function logic — it was calling startEdit(original) keeping the form open. Simplify to always call setAddingNew(false), setEditingId(null), setEditForm({ ...defaultFormState }).
+3. Fix 500 error: value.toISOString is not a function (routes.ts)
+In PUT /api/contract-rules/:ruleId handler, add reviewedAt to the dateFields array so it gets converted from ISO string to a Date object before being passed to Drizzle ORM.
+4. Confirmation popups for Verify All and Send All to Review (contract-management.tsx)
+Wrap both bulk action buttons in AlertDialog with confirmation popups showing rule count and consequences. Verify All uses green confirm button, Send All to Review uses yellow confirm button.
+5. Re-open All for Review button (contract-management.tsx)
+Add an orange "Re-open All for Review" button that appears only when verificationProgress === 100%. Includes confirmation popup explaining the action resets all verified rules to under_review.
+6. Auto-reset verified rules on contract amendment (routes.ts)
+In POST /api/contracts/:id/reprocess and POST /api/contracts/:id/replace-pdf handlers, automatically reset all verified rules to under_review status before reprocessing/replacing, so rules require re-verification after any contract change.
+7. Hide Verify All, Verify & Confirm, and Reject buttons on pipeline page (pipeline-results.tsx)
+Comment out these three buttons on the pipeline page — they remain available on the Manage Contract Fee Rules page (/manage?tab=rules).
+8. Remove "Per" prefix from UOM dropdown and remove Per Shipment/Per Invoice (routes.ts, seed-master-data.ts)
+In GET /api/master/uom, strip "Per " prefix from all UOM names in the API response and exclude per_shipment and per_invoice from results. Update seed file to match clean names without "Per" prefix and without the two removed entries.
+9. Hide Payment Mode field on contract Policies tab (contract-management.tsx)
+Comment out the Payment Mode PolicyField in the Financial Policies section of the contract management Policies tab so it is hidden but easily restorable.

@@ -1,0 +1,271 @@
+1. Rules Engine Core Features
+
+Build a rule engine supporting:
+
+Rule hierarchy processing:
+
+Domain Rules
+ ├ Territory Rules
+ ├ Product Rules
+ ├ Customer Segment Rules
+ ├ Pricing Rules
+ ├ Rebate Rules
+ └ Compliance Rules
+
+Rule structure must support:
+
+Conditions
+
+Qualifiers
+
+Constraints
+
+Exceptions
+
+Priority weighting
+
+Effective date ranges
+
+Territory restrictions
+
+Volume tier logic
+
+Support rule expression types:
+
+Boolean logic
+
+Range comparisons
+
+List membership
+
+Pattern matching
+
+Mathematical calculations
+
+2. Contract Attribution Logic
+
+Build contract attribution capabilities including:
+
+Identify applicable contract
+
+Match based on:
+
+Customer
+
+Territory
+
+Product
+
+Channel
+
+Date validity
+
+Handle:
+
+Multiple contract conflicts
+
+Priority resolution
+
+Most specific rule wins
+
+Generate explanation metadata:
+
+Rule Applied
+Condition Matched
+Confidence Score
+Alternative Rules Considered
+Calculation Steps
+3. Rebate & Pricing Engine
+
+Support:
+
+Volume tier rebates:
+
+Example:
+
+Tier 1: 0 – 100 units → 2%
+Tier 2: 101 – 500 units → 5%
+Tier 3: 501+ units → 8%
+
+Must support:
+
+Retrospective quarterly rebate calculation
+
+Territory based pricing differences
+
+Base price enforcement (minimum price protection)
+
+Retroactive adjustments
+
+4. Hybrid AI + Rules Processing
+
+Integrate LLM reasoning for:
+
+Natural language rule interpretation
+
+Exception handling recommendations
+
+Audit explanations
+
+Rule validation suggestions
+
+But deterministic rules must always override AI output.
+
+Use OpenAI / LangChain / similar frameworks if needed.
+
+5. Data Model Requirements
+
+Create database schemas for:
+
+Contracts
+Products
+Customers
+Territories
+Transactions
+Rules
+Rebate Programs
+Audit Logs
+
+Use:
+
+PostgreSQL or SQLite
+
+ORM preferred (Prisma, SQLAlchemy, or TypeORM)
+
+6. API Layer
+
+Create REST APIs:
+
+POST /evaluate
+POST /rules
+POST /contracts
+GET /audit/{id}
+POST /rebate/calculate
+
+Return structured JSON with:
+
+Result
+
+Explanation
+
+Rule lineage
+
+Confidence score
+
+7. Frontend Dashboard
+
+Build a modern UI using:
+
+React + Tailwind
+
+Charts for:
+
+Rebate distribution
+
+Rule hits
+
+Revenue attribution
+
+Include:
+
+Rule testing playground:
+
+Upload CSV sales data
+
+Run engine
+
+Show results table + explanation panel
+
+8. Architecture Requirements
+
+Follow enterprise design principles:
+
+Microservice-style modular structure (even if in single repo)
+
+Separation of:
+
+Rules Evaluation Layer
+
+Attribution Layer
+
+AI Reasoning Layer
+
+Data Access Layer
+
+Presentation Layer
+
+Use:
+
+Backend:
+
+Node.js OR Python FastAPI
+
+Frontend:
+
+React + Vite preferred
+
+9. Logging & Auditability
+
+Every decision must log:
+
+Rule ID
+
+Input data snapshot
+
+Output decision
+
+Confidence score
+
+Timestamp
+
+Store audit trails.
+
+10. Testing Requirements
+
+Include:
+
+Unit tests for rules
+
+Integration tests
+
+Sample datasets for testing
+
+Provide sample seed data.
+
+Code Quality Requirements
+
+Follow SOLID principles
+
+Use dependency injection
+
+Write clean modular code
+
+Include comments explaining rule logic
+
+Output Requirements
+
+Generate:
+
+Complete project folder structure
+
+Working backend + frontend code
+
+Sample dataset
+
+README with setup instructions
+
+Example rule definitions
+
+Bonus Features (If Possible)
+
+Add:
+
+Rule versioning
+
+A/B testing of rules
+
+Performance optimization for large datasets
+
+Graph visualization of rule dependency
+
+Event-driven processing (Kafka-style simulation)

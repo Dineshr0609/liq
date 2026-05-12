@@ -1,0 +1,32 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "Z6ATxO7VU5w38ZtZ5xI8O"
+uri = "file://docs/DATABASE_TABLES_REFERENCE.md"
+type = "text"
+title = "LicenseIQ Database Tables Reference"
+
+[[outputs]]
+id = "vyib_UNz8bRU3SGcnVzk5"
+uri = "file://public/LicenseIQ_Contract_Data_Dictionary.xlsx"
+type = "table"
+title = "LicenseIQ Contract Data Dictionary (Excel)"
+
+[[outputs]]
+id = "fxAB4CrnUVsLDtN5PZbEX"
+uri = "file://docs/LicenseIQ_Contract_Data_Dictionary.xlsx"
+type = "table"
+title = "LicenseIQ Data Dictionary (Excel) - Updated"
+
+[[outputs]]
+id = "Gh1Cn1r7dmYx5VmmUErd_"
+uri = "file://docs/CI-DOWNSTREAM-INTERFACE-AUDIT.md"
+type = "text"
+title = "CI ↔ Downstream Interface Audit"
+
+[[outputs]]
+id = "kScJtr6UI-gx353cQi7SA"
+uri = "file://exports/licenseiq-codebase.zip"
+type = "unspecified"
+title = "LicenseIQ codebase (production source)"

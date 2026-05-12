@@ -1,0 +1,159 @@
+Wire executeRebateTieredRule() into the calculation path  [NEW]
+File: server/services/calculationService.ts — calculateWithUniversalEvaluator()
+Priority: High — quarterly rebate contracts still route to legacy engine with zero traceability
+Effort: Approximately 1 hour — the engine method is already built and correct
+Risk: Low — side-by-side validation step included before removing legacy routing
+ 
+Context
+universalCalculationEngine.ts now has two fully implemented methods: aggregateSalesByQuarter() and executeRebateTieredRule(). These were built correctly in the latest push. However, calculationService.ts still has the original hasQuarterlyRebateRules block that routes quarterly rebate contracts to calculateWithLegacyEngine(). The new engine methods exist but are not called from anywhere. This prompt wires them in.
+ 
+Step 1 — Locate the block to replace
+In calculateWithUniversalEvaluator(), find this exact block (it appears before the qualifierMap load):
+const hasQuarterlyRebateRules = rules.some(rule => {
+  const rtype = rule.ruleType || '';
+  if (rtype !== 'tiered' && rtype !== 'rebate_tiered') return false;
+  const name = (rule.ruleName || '').toLowerCase();
+  const hasRebateKeyword = name.includes('rebate') || name.includes('quarter');
+  if (!hasRebateKeyword) return false;
+  const tiers = rule.volumeTiers as any[];
+  if (!tiers || tiers.length === 0) return false;
+  const maxTierMin = Math.max(...tiers.map((t: any) => t.min || t['Unit Range'] || 0));
+  return maxTierMin < 500000;
+});
+if (hasQuarterlyRebateRules) {
+  console.log(`[CALC] Detected quarterly rebate rules — routing to legacy engine`);
+  return calculateWithLegacyEngine(contractId, salesItems);
+}
+ 
+Step 2 — Replace with universal quarterly processing
+Replace the entire block above with the following. Keep everything else in calculateWithUniversalEvaluator() unchanged.
+ 
+// ─── STEP A: Identify rebate_tiered rules ───────────────────────────────────
+const rebateTieredRules = rules.filter(r =>
+  r.ruleType === 'rebate_tiered' ||
+  ((r.ruleType === 'tiered' || r.ruleType === 'tiered_pricing') &&
+   (r.ruleName || '').toLowerCase().includes('rebate'))
+);
+ 
+// ─── STEP B: If any rebate_tiered rules exist, run them through the universal
+//             quarterly engine. salesHandledByQuarterly tracks which sale IDs
+//             were consumed so the per-sale loop below skips them (anti-double-count).
+const salesHandledByQuarterly = new Set<string>();
+ 
+if (rebateTieredRules.length > 0) {
+  for (const rule of rebateTieredRules) {
+    const fd = (rule.formulaDefinition as any) || {};
+    const fieldMappings = rule.fieldMappings as FieldMappings | undefined;
+ 
+    // Resolve amount field via baseMetric lookup (same logic as per-sale path)
+    let amountField = 'netAmount';
+    const bmCode = ((rule as any).baseMetric || '').toLowerCase().trim();
+    if (baseMetricLookup && baseMetricLookup.has(bmCode)) {
+      const dbCol = baseMetricLookup.get(bmCode)!;
+      const colToField: Record<string, string> = {
+        gross_amount: 'grossAmount', net_amount: 'netAmount',
+        quantity: 'quantity', unit_price: 'unitPrice',
+      };
+      amountField = colToField[dbCol] || 'netAmount';
+    } else if (fd.calculationBasis?.toLowerCase().includes('gross')) {
+      amountField = 'grossAmount';
+    }
+ 
+    // Build the tiers array from formulaDefinition or volumeTiers (same fallback order
+    // as per-sale path so behaviour is consistent)
+    let tiers = fd.tiers || fd.calculation?.tiers || null;
+    if (!tiers && rule.volumeTiers && Array.isArray(rule.volumeTiers)) {
+      tiers = rule.volumeTiers;
+    }
+    if (!tiers || tiers.length === 0) {
+      console.warn(`[CALC] rebate_tiered rule "${rule.ruleName}" has no tiers — skipping quarterly path`);
+      continue;
+    }
+ 
+    // Build a minimal FormulaDefinition with the tiers array and optional tierMode
+    const rebateFormula: any = {
+      type: rule.ruleType || 'rebate_tiered',
+      tiers,
+      tierMode: fd.tierMode || 'whole',
+      notes: fd.notes || [],
+    };
+ 
+    // Execute quarterly aggregation through the universal engine
+    const quarterlyResults = calculationEngine.executeRebateTieredRule(
+      rule.ruleName || 'Rebate Tiered',
+      rebateFormula,
+      salesItems as any[],
+      { amountField, quantityField: 'quantity', productField: 'productName', dateField: 'transactionDate' }
+    );
+ 
+    // Accumulate breakdown, total, and audit items
+    for (const qResult of quarterlyResults) {
+      const fee = qResult.calculatedAmount;
+      breakdown.push({
+        saleId: `quarterly-${qResult.tierDescription || 'agg'}`,
+        productName: qResult.tierDescription || rule.ruleName || '',
+        category: '',
+        territory: '',
+        quantity: 1,
+        saleAmount: qResult.inputValue,
+        calculatedFee: fee,
+        ruleApplied: rule.ruleName || 'Rebate Tiered',
+        explanation: qResult.breakdown.join(' | '),
+        auditTrail: qResult.conditionsChecked || [],
+        formulaSource: 'rebate_tiered_quarterly_universal',
+      });
+      auditItemsToInsert.push({
+        runId,
+        ruleId: rule.id,
+        contractId,
+        sourceClauseRef: (rule as any).sourceClauseId || null,
+        transactionIds: [],
+        inputValue: String(qResult.inputValue),
+        calculatedAmount: String(fee),
+        formulaSource: 'rebate_tiered_quarterly_universal',
+        formulaSnapshot: rebateFormula,
+        tierMode: rebateFormula.tierMode,
+        breakdown: { steps: qResult.breakdown, conditions: qResult.conditionsChecked },
+      });
+      totalFee += fee;
+    }
+ 
+    // Mark all sales as handled so per-sale loop skips them
+    for (const sale of salesItems) {
+      salesHandledByQuarterly.add(sale.id);
+    }
+    console.log(`[CALC] rebate_tiered "${rule.ruleName}": ${quarterlyResults.length} quarterly results, total $${totalFee.toFixed(2)}`);
+  }
+}
+ 
+Step 3 — Add the skip guard to the per-sale loop
+In the existing per-sale loop (the for (const sale of salesItems) block), add this guard as the very first line inside the loop, before the saleForMatch declaration:
+for (const sale of salesItems) {
+  // Skip sales already consumed by quarterly rebate aggregation
+  if (salesHandledByQuarterly.has(sale.id)) continue;
+ 
+  // ... rest of existing per-sale logic unchanged ...
+  let saleProcessed = false;
+  let formulaSource: string = 'unknown';
+  const saleForMatch: SaleForMatching = {
+    // ...
+  };
+ 
+Step 4 — Side-by-side validation before going live
+Before deploying, run this temporary validation on at least 3 real contracts that have rebate_tiered rules. Add to the test script or a one-off test route:
+const universalResult = await calculateWithUniversalEvaluator(contractId, salesItems);
+const legacyResult = await calculateWithLegacyEngine(contractId, salesItems);
+const diff = Math.abs(universalResult.totalLicenseFee - legacyResult.totalLicenseFee);
+console.log(`[VALIDATION] Contract ${contractId}:`);
+console.log(`  Universal: $${universalResult.totalLicenseFee.toFixed(2)}`);
+console.log(`  Legacy:    $${legacyResult.totalLicenseFee.toFixed(2)}`);
+console.log(`  Diff:      $${diff.toFixed(2)} ${diff < 0.01 ? '✅ MATCH' : '❌ MISMATCH'}`);
+Only proceed if all 3 contracts show diff < $0.01. If any mismatch is found, do not remove the legacy path — investigate the discrepancy first and report back.
+ 
+What this achieves
+•       rebate_tiered contracts now run through the universal evaluator — full traceability
+•       formulaSource = 'rebate_tiered_quarterly_universal' distinguishes this path in audit records
+•       calculationAuditItems rows are created per quarter×product combination
+•       salesHandledByQuarterly prevents double-counting with per-sale rules
+•       tierMode: 'marginal' is respected if set on the rule's formulaDefinition
+•       The legacy engine remains available as a fallback if the validation step fails

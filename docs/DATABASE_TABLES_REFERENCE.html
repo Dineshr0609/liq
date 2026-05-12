@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LicenseIQ - Database Tables Reference</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: #f8f9fa; color: #1a1a1a; line-height: 1.6; }
+  .container { max-width: 1200px; margin: 0 auto; padding: 20px 30px 60px; }
+
+  h1 { font-size: 2rem; font-weight: 700; margin-bottom: 6px; color: #111; }
+  h1 span { color: #c85a2a; }
+  .subtitle { color: #666; font-size: 0.95rem; margin-bottom: 30px; }
+
+  .toc { background: #fff; border: 1px solid #e0e0e0; border-radius: 10px; padding: 20px 28px; margin-bottom: 36px; }
+  .toc h2 { font-size: 1.05rem; margin-bottom: 10px; color: #333; }
+  .toc ol { padding-left: 20px; }
+  .toc li { margin-bottom: 4px; }
+  .toc a { color: #c85a2a; text-decoration: none; font-weight: 500; }
+  .toc a:hover { text-decoration: underline; }
+
+  .section { background: #fff; border: 1px solid #e0e0e0; border-radius: 10px; padding: 24px 28px; margin-bottom: 28px; }
+  .section h2 { font-size: 1.35rem; color: #111; border-bottom: 3px solid #c85a2a; padding-bottom: 8px; margin-bottom: 18px; }
+  .section h3 { font-size: 1.1rem; color: #c85a2a; margin: 20px 0 10px; font-family: 'Courier New', monospace; }
+  .section h3:first-of-type { margin-top: 0; }
+  .section p { margin-bottom: 12px; color: #444; }
+  .section p.table-desc { font-style: italic; color: #666; margin-bottom: 14px; font-size: 0.92rem; }
+
+  .badge { display: inline-block; background: #c85a2a; color: #fff; font-size: 0.7rem; font-weight: 700; padding: 2px 8px; border-radius: 4px; margin-left: 6px; vertical-align: middle; text-transform: uppercase; }
+  .badge.new { background: #16a34a; }
+  .badge.ref { background: #6366f1; }
+
+  table { width: 100%; border-collapse: collapse; margin-bottom: 18px; font-size: 0.88rem; }
+  thead th { background: #1a1a1a; color: #fff; text-align: left; padding: 10px 12px; font-weight: 600; font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.3px; }
+  tbody td { padding: 8px 12px; border-bottom: 1px solid #eee; vertical-align: top; }
+  tbody tr:hover { background: #fef6f1; }
+  td:first-child { font-family: 'Courier New', monospace; font-weight: 600; color: #c85a2a; white-space: nowrap; }
+  td:nth-child(2) { font-family: 'Courier New', monospace; font-size: 0.84rem; color: #555; white-space: nowrap; }
+  td.nullable-no { color: #dc2626; font-weight: 600; }
+  td.nullable-yes { color: #999; }
+
+  .sample-label { font-weight: 700; font-size: 0.92rem; color: #333; margin: 16px 0 8px; }
+  .sample-table thead th { background: #c85a2a; }
+  .sample-table tbody td:first-child { color: #333; font-family: inherit; font-weight: 400; }
+  .sample-table tbody td { font-family: inherit; }
+
+  pre { background: #1a1a1a; color: #f0f0f0; padding: 16px 20px; border-radius: 8px; overflow-x: auto; font-size: 0.84rem; line-height: 1.5; margin-bottom: 16px; }
+  pre .key { color: #c85a2a; }
+  pre .str { color: #a5d6a7; }
+  pre .num { color: #90caf9; }
+  pre .null { color: #999; }
+
+  .flow-diagram { background: #1a1a1a; color: #e0e0e0; padding: 24px; border-radius: 10px; font-family: 'Courier New', monospace; font-size: 0.82rem; line-height: 1.6; white-space: pre; overflow-x: auto; margin-bottom: 16px; }
+  .flow-diagram .hl { color: #c85a2a; font-weight: 700; }
+  .flow-diagram .green { color: #a5d6a7; }
+  .flow-diagram .blue { color: #90caf9; }
+  .flow-diagram .yellow { color: #fff59d; }
+
+  .calc-box { background: #fef6f1; border: 2px solid #c85a2a; border-radius: 10px; padding: 20px 24px; margin-top: 20px; }
+  .calc-box h4 { color: #c85a2a; margin-bottom: 12px; }
+  .calc-box .line { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px dashed #e0c5b5; font-size: 0.9rem; }
+  .calc-box .line:last-child { border-bottom: none; }
+  .calc-box .line .product { flex: 1; }
+  .calc-box .line .amount { font-weight: 700; color: #c85a2a; text-align: right; min-width: 100px; }
+  .calc-box .total-line { display: flex; justify-content: space-between; padding-top: 10px; margin-top: 6px; border-top: 3px solid #c85a2a; font-size: 1.05rem; font-weight: 700; }
+  .calc-box .total-line .amount { color: #c85a2a; }
+  .quarter-header { font-weight: 700; color: #333; margin: 10px 0 4px; font-size: 0.95rem; }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin: 16px 0; }
+  @media (max-width: 800px) { .two-col { grid-template-columns: 1fr; } }
+  .col-card { background: #f8f9fa; border: 1px solid #e0e0e0; border-radius: 8px; padding: 18px 20px; }
+  .col-card.layman { border-left: 4px solid #c85a2a; }
+  .col-card.tech { border-left: 4px solid #1a1a1a; }
+  .col-card h4 { margin-bottom: 10px; font-size: 1rem; }
+  .col-card.layman h4 { color: #c85a2a; }
+  .col-card.tech h4 { color: #1a1a1a; }
+  .col-card p, .col-card li { font-size: 0.9rem; margin-bottom: 8px; }
+  .col-card ul { padding-left: 18px; }
+  .col-card ol { padding-left: 18px; }
+  .col-card ol li { margin-bottom: 6px; }
+
+  .source-diagram { background: #fff; border: 2px dashed #c85a2a; border-radius: 10px; padding: 20px 24px; margin: 16px 0; }
+  .source-diagram h4 { color: #c85a2a; margin-bottom: 12px; }
+  .source-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; font-size: 0.9rem; }
+  .source-box { background: #1a1a1a; color: #fff; padding: 6px 14px; border-radius: 6px; font-family: 'Courier New', monospace; font-size: 0.82rem; white-space: nowrap; }
+  .source-arrow { color: #c85a2a; font-weight: 700; font-size: 1.2rem; }
+  .source-label { color: #444; }
+  .source-note { background: #fef6f1; border: 1px solid #e0c5b5; padding: 10px 14px; border-radius: 6px; margin-top: 12px; font-size: 0.85rem; color: #666; }
+  .source-note strong { color: #c85a2a; }
+
+  .step-card { background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 16px 20px; margin-bottom: 14px; position: relative; padding-left: 56px; }
+  .step-num { position: absolute; left: 16px; top: 16px; width: 28px; height: 28px; background: #c85a2a; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85rem; }
+  .step-card h5 { font-size: 0.95rem; color: #111; margin-bottom: 6px; }
+  .step-connector { width: 2px; height: 14px; background: #c85a2a; margin: 0 0 0 29px; }
+
+  .mapping-table { margin: 12px 0; }
+  .mapping-table thead th { background: #c85a2a; }
+  .mapping-table tbody td:first-child { color: #333; font-family: inherit; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<h1>License<span>IQ</span> Database Tables Reference</h1>
+<p class="subtitle">All tables used for contract rule extraction, license fee calculation, and the 3-Stage Processing Pipeline.</p>
+
+<div class="toc">
+  <h2>Table of Contents</h2>
+  <ol>
+    <li><a href="#s1">Contract Storage</a> &mdash; <code>contracts</code></li>
+    <li><a href="#s2">Rule Extraction &amp; Storage</a> &mdash; <code>royalty_rules</code>, <code>extraction_runs</code></li>
+    <li><a href="#s3">Sales Data</a> &mdash; <code>sales_data</code></li>
+    <li><a href="#s4">Calculation Engine</a> &mdash; <code>contract_royalty_calculations</code>, <code>calculation_line_items</code>, <code>calculation_blueprints</code>, <code>org_calculation_settings</code></li>
+    <li><a href="#s5">3-Stage Pipeline Tables</a> <span class="badge new">NEW</span> &mdash; <code>contract_clauses</code>, <code>rule_conflicts</code>, <code>extraction_stage_results</code></li>
+    <li><a href="#s6">Pipeline Reference Data</a> <span class="badge new">NEW</span> &mdash; <code>flow_types</code>, <code>clause_execution_groups</code>, <code>rule_templates</code>, <code>base_metrics</code>, <code>clause_categories</code></li>
+    <li><a href="#s7">Data Flow Diagram</a></li>
+    <li><a href="#s8">Calculation Example</a> &mdash; TechSound Quarterly Rebate walkthrough</li>
+    <li><a href="#s9">Where Does Base Metric Come From?</a> &mdash; Source mapping &amp; database field linkage</li>
+    <li><a href="#s10">Full Calculation Process After Rule Saving</a> &mdash; Plain language vs. Technical language</li>
+  </ol>
+</div>
+
+<!-- ===== SECTION 1: CONTRACTS ===== -->
+<div class="section" id="s1">
+  <h2>1. Contract Storage</h2>
+
+  <h3>contracts</h3>
+  <p class="table-desc">Primary table storing uploaded contract documents and their metadata.</p>
+  <table>
+    <thead><tr><th>Column</th><th>Type</th><th>Null?</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td>id</td><td>varchar (PK)</td><td class="nullable-no">NO</td><td>UUID, auto-generated</td></tr>
+      <tr><td>file_name</td><td>varchar</td><td class="nullable-no">NO</td><td>Stored filename (UUID-based)</td></tr>
+      <tr><td>original_name</td><td>varchar</td><td class="nullable-no">NO</td><td>Original uploaded filename</td></tr>
+      <tr><td>file_size</td><td>integer</td><td class="nullable-no">NO</td><td>File size in bytes</td></tr>
+      <tr><td>file_type</td><td>varchar</td><td class="nullable-no">NO</td><td>MIME type (e.g., application/pdf)</td></tr>
+      <tr><td>file_path</td><td>varchar</td><td class="nullable-no">NO</td><td>Server file path</td></tr>
+      <tr><td>contract_type</td><td>varchar</td><td class="nullable-yes">YES</td><td>Type code (e.g., royalty_license)</td></tr>
+      <tr><td>status</td><td>varchar</td><td class="nullable-no">NO</td><td>uploaded &rarr; processing &rarr; analyzed</td></tr>
+      <tr><td>counterparty_name</td><td>varchar</td><td class="nullable-yes">YES</td><td>Other party in the contract</td></tr>
+      <tr><td>company_id</td><td>varchar (FK)</td><td class="nullable-yes">YES</td><td>Links to <code>companies</code></td></tr>
+      <tr><td>business_unit_id</td><td>varchar (FK)</td><td class="nullable-yes">YES</td><td>Links to <code>business_units</code></td></tr>
+      <tr><td>location_id</td><td>varchar (FK)</td><td class="nullable-yes">YES</td><td>Links to <code>locations</code></td></tr>
+      <tr><td>contract_number</td><td>varchar</td><td class="nullable-yes">YES</td><td>User-assigned contract number</td></tr>
+      <tr><td>display_name</td><td>varchar</td><td class="nullable-yes">YES</td><td>Human-readable name</td></tr>
+      <tr><td>effective_start</td><td>timestamp</td><td class="nullable-yes">YES</td><td>Contract start date</td></tr>
+      <tr><td>effective_end</td><td>timestamp</td><td class="nullable-yes">YES</td><td>Contract end date</td></tr>
+      <tr><td>approval_state</td><td>varchar</td><td class="nullable-no">NO</td><td>draft, pending_approval, approved, rejected</td></tr>
+      <tr><td>current_version</td><td>integer</td><td class="nullable-no">NO</td><td>Version counter (default: 1)</td></tr>
+      <tr><td>raw_text</td><td>text</td><td class="nullable-yes">YES</td><td>Full extracted text content from PDF</td></tr>
+      <tr><td>created_at</td><td>timestamp</td><td class="nullable-yes">YES</td><td>Record creation timestamp</td></tr>
+    </tbody>
+  </table>
+
+  <p class="sample-label">Sample Data:</p>
+  <table class="sample-table">
+    <thead><tr><th>id</th><th>original_name</th><th>contract_type</th><th>status</th><th>counterparty</th></tr></thead>
+    <tbody>
+      <tr><td>303d2cc0-...</td><td>MVP_Distributor_Rebate_Agreement_TechSound.pdf</td><td>royalty_license</td><td>analyzed</td><td>Tech Sound Audio</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ===== SECTION 2: RULES ===== -->
+<div class="section" id="s2">
+  <h2>2. Rule Extraction &amp; Storage</h2>
+
+  <h3>royalty_rules</h3>
+  <p class="table-desc">Central table for all AI-extracted and manually created contract rules. Powers the calculation engine.</p>
+  <table>
+    <thead><tr><th>Column</th><th>Type</th><th>Null?</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td>id</td><td>varchar (PK)</td><td class="nullable-no">NO</td><td>UUID, auto-generated</td></tr>
+      <tr><td>contract_id</td><td>varchar (FK)</td><td class="nullable-no">NO</td><td>Links to <code>contracts</code></td></tr>
+      <tr><td>rule_type</td><td>varchar</td><td class="nullable-no">NO</td><td>tiered, percentage, fixed_fee, container_size_tiered, rebate_tiered, condition, data-only, payment_schedule, offset, etc.</td></tr>
+      <tr><td>rule_name</td><td>varchar</td><td class="nullable-no">NO</td><td>Human-readable rule name</td></tr>
+      <tr><td>description</td><td>text</td><td class="nullable-yes">YES</td><td>Detailed description</td></tr>
+      <tr><td>product_categories</td><td>text[]</td><td class="nullable-yes">YES</td><td>Array of product names/categories this rule applies to</td></tr>
+      <tr><td>territories</td><td>text[]</td><td class="nullable-yes">YES</td><td>Array of territories (e.g., United States, Canada)</td></tr>
+      <tr><td>volume_tiers</td><td>jsonb</td><td class="nullable-yes">YES</td><td>Tiered pricing structure (see JSON sample below)</td></tr>
+      <tr><td>base_rate</td><td>numeric</td><td class="nullable-yes">YES</td><td>Base percentage or per-unit rate</td></tr>
+      <tr><td>minimum_guarantee</td><td>numeric</td><td class="nullable-yes">YES</td><td>Minimum payment amount</td></tr>
+      <tr><td>formula_definition</td><td>jsonb</td><td class="nullable-yes">YES</td><td>Structured formula for universal evaluator</td></tr>
+      <tr><td>priority</td><td>integer</td><td class="nullable-yes">YES</td><td>Rule priority (lower = higher priority)</td></tr>
+      <tr><td>is_active</td><td>boolean</td><td class="nullable-yes">YES</td><td>Whether rule is active for calculations</td></tr>
+      <tr><td>confidence</td><td>numeric</td><td class="nullable-yes">YES</td><td>AI extraction confidence (0&ndash;1)</td></tr>
+      <tr><td>source_section</td><td>varchar</td><td class="nullable-yes">YES</td><td>Contract section where rule was found</td></tr>
+      <tr><td>clause_category</td><td>varchar</td><td class="nullable-yes">YES</td><td>Category code (general, pricing, payment)</td></tr>
+      <tr><td>customer_segments</td><td>text[]</td><td class="nullable-yes">YES</td><td>Array of customer segments</td></tr>
+      <tr><td>channel</td><td>varchar</td><td class="nullable-yes">YES</td><td>Sales channel filter</td></tr>
+      <tr><td>seasonal_adjustments</td><td>jsonb</td><td class="nullable-yes">YES</td><td>Season-based rate multipliers</td></tr>
+      <tr><td>territory_premiums</td><td>jsonb</td><td class="nullable-yes">YES</td><td>Territory-based rate multipliers</td></tr>
+      <tr><td>extraction_order</td><td>integer</td><td class="nullable-yes">YES</td><td>Order rule was extracted from document</td></tr>
+      <tr><td>template_code</td><td>varchar</td><td class="nullable-yes">YES</td><td>Pipeline rule template (T1&ndash;T12) <span class="badge new">PIPELINE</span></td></tr>
+      <tr><td>execution_group</td><td>varchar</td><td class="nullable-yes">YES</td><td>Pipeline execution group <span class="badge new">PIPELINE</span></td></tr>
+      <tr><td>base_metric</td><td>varchar</td><td class="nullable-yes">YES</td><td>Pipeline base metric (net_sales, units) <span class="badge new">PIPELINE</span></td></tr>
+      <tr><td>effective_date</td><td>timestamp</td><td class="nullable-yes">YES</td><td>Rule effective start</td></tr>
+      <tr><td>expiry_date</td><td>timestamp</td><td class="nullable-yes">YES</td><td>Rule expiry date</td></tr>
+      <tr><td>review_status</td><td>varchar</td><td class="nullable-yes">YES</td><td>pending, approved, rejected</td></tr>
+      <tr><td>field_mappings</td><td>jsonb</td><td class="nullable-yes">YES</td><td>Dynamic column name mappings for ERP fields</td></tr>
+    </tbody>
+  </table>
+
+  <p class="sample-label">volume_tiers JSON structure:</p>
+  <pre>[
+  {<span class="key">"min"</span>: <span class="num">0</span>, <span class="key">"max"</span>: <span class="num">1000</span>, <span class="key">"rate"</span>: <span class="num">0.02</span>, <span class="key">"description"</span>: <span class="str">"Tier 1: 0-1,000 units"</span>},
+  {<span class="key">"min"</span>: <span class="num">1001</span>, <span class="key">"max"</span>: <span class="num">5000</span>, <span class="key">"rate"</span>: <span class="num">0.05</span>, <span class="key">"description"</span>: <span class="str">"Tier 2: 1,001-5,000 units"</span>},
+  {<span class="key">"min"</span>: <span class="num">5001</span>, <span class="key">"max"</span>: <span class="null">null</span>, <span class="key">"rate"</span>: <span class="num">0.08</span>, <span class="key">"description"</span>: <span class="str">"Tier 3: 5,001+ units"</span>}
+]</pre>
+
+  <p class="sample-label">formula_definition JSON structure (AI-extracted):</p>
+  <pre>{
+  <span class="key">"type"</span>: <span class="str">"tiered"</span>,
+  <span class="key">"baseRate"</span>: <span class="num">0.05</span>,
+  <span class="key">"calculationBasis"</span>: <span class="str">"net_sales"</span>,
+  <span class="key">"tiers"</span>: [
+    {<span class="key">"min"</span>: <span class="num">0</span>, <span class="key">"max"</span>: <span class="num">1000</span>, <span class="key">"rate"</span>: <span class="num">0.02</span>},
+    {<span class="key">"min"</span>: <span class="num">1001</span>, <span class="key">"max"</span>: <span class="num">5000</span>, <span class="key">"rate"</span>: <span class="num">0.05</span>},
+    {<span class="key">"min"</span>: <span class="num">5001</span>, <span class="key">"max"</span>: <span class="null">null</span>, <span class="key">"rate"</span>: <span class="num">0.08</span>}
+  ]
+}</pre>
+
+  <p class="sample-label">All 15 Rules &mdash; TechSound Rebate Contract:</p>
+  <table class="sample-table">
+    <thead><tr><th>#</th><th>Rule Name</th><th>Rule Type</th><th>Category</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>Agreement Type</td><td>data-only</td><td>general</td></tr>
+      <tr><td>2</td><td>Term Duration</td><td>condition</td><td>general</td></tr>
+      <tr><td>3</td><td>Territory</td><td>data-only</td><td>general</td></tr>
+      <tr><td>4</td><td>Eligible Products List</td><td>data-only</td><td>general</td></tr>
+      <tr><td>5</td><td>Quarterly Volume Rebate Tiers</td><td>container_size_tiered</td><td>general</td></tr>
+      <tr><td>6</td><td>Rebate Application Basis</td><td>condition</td><td>general</td></tr>
+      <tr><td>7</td><td>Calculation Period</td><td>condition</td><td>general</td></tr>
+      <tr><td>8</td><td>Eligible Sales Definition</td><td>condition</td><td>general</td></tr>
+      <tr><td>9</td><td>Excluded Sales</td><td>condition</td><td>general</td></tr>
+      <tr><td>10</td><td>Reporting Requirement</td><td>condition</td><td>general</td></tr>
+      <tr><td>11</td><td>Rebate Payment Terms</td><td>payment_schedule</td><td>general</td></tr>
+      <tr><td>12</td><td>Adjustments for Returns and Credits</td><td>condition</td><td>general</td></tr>
+      <tr><td>13</td><td>Termination Payment Terms</td><td>condition</td><td>general</td></tr>
+      <tr><td>14</td><td>Quarterly Volume Rebate - Tiered by Units</td><td>tiered</td><td>general</td></tr>
+      <tr><td>15</td><td>Rebate Overpayment Offset</td><td>offset</td><td>general</td></tr>
+    </tbody>
+  </table>
+
+  <h3>extraction_runs</h3>
+  <p class="table-desc">Tracks each AI extraction run, including 3-stage pipeline runs.</p>
+  <table>
+    <thead><tr><th>Column</th><th>Type</th><th>Null?</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td>id</td><td>varchar (PK)</td><td class="nullable-no">NO</td><td>UUID</td></tr>
+      <tr><td>contract_id</td><td>varchar (FK)</td><td class="nullable-no">NO</td><td>Links to <code>contracts</code></td></tr>
+      <tr><td>run_type</td><td>varchar</td><td class="nullable-no">NO</td><td>zero_shot, pipeline, re_extraction</td></tr>
+      <tr><td>status</td><td>varchar</td><td class="nullable-no">NO</td><td>pending, running, completed, failed</td></tr>
+      <tr><td>overall_confidence</td><td>numeric</td><td class="nullable-yes">YES</td><td>Average confidence score</td></tr>
+      <tr><td>rules_extracted</td><td>integer</td><td class="nullable-yes">YES</td><td>Number of rules extracted</td></tr>
+      <tr><td>ai_model</td><td>varchar</td><td class="nullable-yes">YES</td><td>AI model used</td></tr>
+      <tr><td>processing_time</td><td>integer</td><td class="nullable-yes">YES</td><td>Duration in milliseconds</td></tr>
+      <tr><td>current_stage</td><td>varchar</td><td class="nullable-yes">YES</td><td>stage_a, stage_b, stage_c <span class="badge new">PIPELINE</span></td></tr>
+      <tr><td>stage_a_status</td><td>varchar</td><td class="nullable-yes">YES</td><td>Clause Segmentation status <span class="badge new">PIPELINE</span></td></tr>
+      <tr><td>stage_b_status</td><td>varchar</td><td class="nullable-yes">YES</td><td>Rule Template Mapping status <span class="badge new">PIPELINE</span></td></tr>
+      <tr><td>stage_c_status</td><td>varchar</td><td class="nullable-yes">YES</td><td>Conflict Detection status <span class="badge new">PIPELINE</span></td></tr>
+      <tr><td>pipeline_mode</td><td>varchar</td><td class="nullable-yes">YES</td><td>Pipeline execution mode <span class="badge new">PIPELINE</span></td></tr>
+      <tr><td>created_at</td><td>timestamp</td><td class="nullable-yes">YES</td><td>Run start time</td></tr>
+      <tr><td>completed_at</td><td>timestamp</td><td class="nullable-yes">YES</td><td>Run completion time</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ===== SECTION 3: SALES DATA ===== -->
+<div class="section" id="s3">
+  <h2>3. Sales Data</h2>
+
+  <h3>sales_data</h3>
+  <p class="table-desc">Stores uploaded sales/transaction data that gets matched to contracts for fee calculation.</p>
+  <table>
+    <thead><tr><th>Column</th><th>Type</th><th>Null?</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td>id</td><td>varchar (PK)</td><td class="nullable-no">NO</td><td>UUID</td></tr>
+      <tr><td>matched_contract_id</td><td>varchar (FK)</td><td class="nullable-yes">YES</td><td>Contract this sale is matched to</td></tr>
+      <tr><td>match_confidence</td><td>numeric</td><td class="nullable-yes">YES</td><td>AI matching confidence</td></tr>
+      <tr><td>transaction_date</td><td>timestamp</td><td class="nullable-no">NO</td><td>Date of the transaction</td></tr>
+      <tr><td>transaction_id</td><td>varchar</td><td class="nullable-yes">YES</td><td>External transaction reference</td></tr>
+      <tr><td>product_code</td><td>varchar</td><td class="nullable-yes">YES</td><td>SKU or product code</td></tr>
+      <tr><td>product_name</td><td>varchar</td><td class="nullable-yes">YES</td><td>Product display name</td></tr>
+      <tr><td>category</td><td>varchar</td><td class="nullable-yes">YES</td><td>Product category</td></tr>
+      <tr><td>territory</td><td>varchar</td><td class="nullable-yes">YES</td><td>Sales territory</td></tr>
+      <tr><td>currency</td><td>varchar</td><td class="nullable-yes">YES</td><td>Transaction currency</td></tr>
+      <tr><td>gross_amount</td><td>numeric</td><td class="nullable-no">NO</td><td>Gross sale amount</td></tr>
+      <tr><td>net_amount</td><td>numeric</td><td class="nullable-yes">YES</td><td>Net amount after deductions</td></tr>
+      <tr><td>quantity</td><td>numeric</td><td class="nullable-yes">YES</td><td>Units sold</td></tr>
+      <tr><td>unit_price</td><td>numeric</td><td class="nullable-yes">YES</td><td>Price per unit</td></tr>
+      <tr><td>custom_fields</td><td>jsonb</td><td class="nullable-yes">YES</td><td>Additional CSV fields (transaction_type, rebate_eligible, quarter, etc.)</td></tr>
+      <tr><td>import_job_id</td><td>varchar (FK)</td><td class="nullable-yes">YES</td><td>Links to <code>data_import_jobs</code></td></tr>
+      <tr><td>company_id</td><td>varchar (FK)</td><td class="nullable-yes">YES</td><td>Company context</td></tr>
+    </tbody>
+  </table>
+
+  <p class="sample-label">Sample Data (9 matched sales):</p>
+  <table class="sample-table">
+    <thead><tr><th>Product Name</th><th>Qty</th><th>Gross Amount</th><th>Date</th></tr></thead>
+    <tbody>
+      <tr><td>SoundPro Wireless Headphones - Black</td><td>300</td><td>$76,500.00</td><td>01/15/2026</td></tr>
+      <tr><td>SoundPro Wireless Headphones - White</td><td>250</td><td>$63,750.00</td><td>02/10/2026</td></tr>
+      <tr><td>EssentialSound Wireless - Black</td><td>400</td><td>$51,000.00</td><td>03/05/2026</td></tr>
+      <tr><td>Studio Wired Pro - Black</td><td>80</td><td>$13,600.00</td><td>03/18/2026</td></tr>
+      <tr><td>SoundPro Wireless Headphones - Silver</td><td>50</td><td>$9,000.00</td><td>03/25/2026</td></tr>
+      <tr><td>PremiumSound Max - Black</td><td>600</td><td>$180,000.00</td><td>04/12/2026</td></tr>
+      <tr><td>PremiumSound Max - White</td><td>500</td><td>$150,000.00</td><td>05/09/2026</td></tr>
+      <tr><td>EssentialSound Wireless - White</td><td>450</td><td>$57,375.00</td><td>06/02/2026</td></tr>
+      <tr><td>SoundPro Wireless Headphones - Black</td><td>75</td><td>$19,125.00</td><td>06/20/2026</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ===== SECTION 4: CALCULATION ENGINE ===== -->
+<div class="section" id="s4">
+  <h2>4. Calculation Engine</h2>
+
+  <h3>contract_royalty_calculations</h3>
+  <p class="table-desc">Stores saved calculation results. Each "Run Calculation" creates one record.</p>
+  <table>
+    <thead><tr><th>Column</th><th>Type</th><th>Null?</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td>id</td><td>varchar (PK)</td><td class="nullable-no">NO</td><td>UUID</td></tr>
+      <tr><td>contract_id</td><td>varchar (FK)</td><td class="nullable-no">NO</td><td>Contract calculated against</td></tr>
+      <tr><td>name</td><td>varchar</td><td class="nullable-no">NO</td><td>User-given calculation name</td></tr>
+      <tr><td>period_start</td><td>timestamp</td><td class="nullable-yes">YES</td><td>Calculation period start</td></tr>
+      <tr><td>period_end</td><td>timestamp</td><td class="nullable-yes">YES</td><td>Calculation period end</td></tr>
+      <tr><td>status</td><td>varchar</td><td class="nullable-yes">YES</td><td>pending, completed, approved, rejected</td></tr>
+      <tr><td>total_sales_amount</td><td>numeric</td><td class="nullable-yes">YES</td><td>Sum of all sale amounts</td></tr>
+      <tr><td>total_royalty</td><td>numeric</td><td class="nullable-yes">YES</td><td>Final calculated license fee</td></tr>
+      <tr><td>sales_count</td><td>integer</td><td class="nullable-yes">YES</td><td>Number of sales processed</td></tr>
+      <tr><td>breakdown</td><td>jsonb</td><td class="nullable-yes">YES</td><td>Per-product calculation breakdown</td></tr>
+      <tr><td>chart_data</td><td>jsonb</td><td class="nullable-yes">YES</td><td>Visualization data</td></tr>
+      <tr><td>calculated_by</td><td>varchar (FK)</td><td class="nullable-yes">YES</td><td>User who ran calculation</td></tr>
+      <tr><td>company_id</td><td>varchar (FK)</td><td class="nullable-yes">YES</td><td>Company context</td></tr>
+    </tbody>
+  </table>
+
+  <p class="sample-label">breakdown JSON structure:</p>
+  <pre>[
+  {
+    <span class="key">"saleId"</span>: <span class="str">"quarterly-2026-Q1-SoundPro..."</span>,
+    <span class="key">"productName"</span>: <span class="str">"SoundPro Wireless Headphones - Black"</span>,
+    <span class="key">"territory"</span>: <span class="str">"All"</span>,
+    <span class="key">"quantity"</span>: <span class="num">300</span>,
+    <span class="key">"saleAmount"</span>: <span class="num">76500</span>,
+    <span class="key">"royaltyAmount"</span>: <span class="str">"3825.00"</span>,
+    <span class="key">"ruleApplied"</span>: <span class="str">"Quarterly Volume Rebate - Tiered by Units"</span>,
+    <span class="key">"explanation"</span>: <span class="str">"Q1 2026 Rebate: $76,500 x 5.0% = $3,825.00 [Quarterly total: 1,080 units]"</span>
+  }
+]</pre>
+
+  <h3>calculation_line_items</h3>
+  <p class="table-desc">Granular line-item detail for each calculation (used by the universal formula evaluator).</p>
+  <table>
+    <thead><tr><th>Column</th><th>Type</th><th>Null?</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td>id</td><td>varchar (PK)</td><td class="nullable-no">NO</td><td>UUID</td></tr>
+      <tr><td>calculation_id</td><td>varchar (FK)</td><td class="nullable-no">NO</td><td>Parent calculation</td></tr>
+      <tr><td>contract_id</td><td>varchar (FK)</td><td class="nullable-no">NO</td><td>Contract reference</td></tr>
+      <tr><td>sales_data_id</td><td>varchar (FK)</td><td class="nullable-yes">YES</td><td>Source sale record</td></tr>
+      <tr><td>rule_id</td><td>varchar (FK)</td><td class="nullable-yes">YES</td><td>Rule that was applied</td></tr>
+      <tr><td>calculated_fee</td><td>numeric</td><td class="nullable-no">NO</td><td>Calculated license fee</td></tr>
+      <tr><td>applied_rate</td><td>numeric</td><td class="nullable-yes">YES</td><td>Rate used</td></tr>
+      <tr><td>rule_name</td><td>varchar</td><td class="nullable-yes">YES</td><td>Name of applied rule</td></tr>
+      <tr><td>tier_applied</td><td>varchar</td><td class="nullable-yes">YES</td><td>Which tier was matched</td></tr>
+      <tr><td>dimensions</td><td>jsonb</td><td class="nullable-no">NO</td><td>Multi-dimensional attributes</td></tr>
+    </tbody>
+  </table>
+
+  <h3>calculation_blueprints</h3>
+  <p class="table-desc">Pre-materialized calculation templates combining contract rules with ERP field mappings.</p>
+  <table>
+    <thead><tr><th>Column</th><th>Type</th><th>Null?</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td>id</td><td>varchar (PK)</td><td class="nullable-no">NO</td><td>UUID</td></tr>
+      <tr><td>contract_id</td><td>varchar (FK)</td><td class="nullable-no">NO</td><td>Contract reference</td></tr>
+      <tr><td>royalty_rule_id</td><td>varchar (FK)</td><td class="nullable-no">NO</td><td>Source rule</td></tr>
+      <tr><td>name</td><td>varchar</td><td class="nullable-no">NO</td><td>Blueprint name</td></tr>
+      <tr><td>calculation_logic</td><td>jsonb</td><td class="nullable-no">NO</td><td>Calculation formula structure</td></tr>
+      <tr><td>erp_field_bindings</td><td>jsonb</td><td class="nullable-yes">YES</td><td>ERP field mappings</td></tr>
+      <tr><td>dual_terminology_map</td><td>jsonb</td><td class="nullable-yes">YES</td><td>Contract term &harr; ERP field mapping</td></tr>
+      <tr><td>matching_criteria</td><td>jsonb</td><td class="nullable-yes">YES</td><td>Product/territory matching rules</td></tr>
+      <tr><td>status</td><td>varchar</td><td class="nullable-no">NO</td><td>active, draft, deprecated</td></tr>
+    </tbody>
+  </table>
+
+  <h3>org_calculation_settings</h3>
+  <p class="table-desc">Organization-level calculation configuration.</p>
+  <table>
+    <thead><tr><th>Column</th><th>Type</th><th>Null?</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td>id</td><td>varchar (PK)</td><td class="nullable-no">NO</td><td>UUID</td></tr>
+      <tr><td>company_id</td><td>varchar (FK)</td><td class="nullable-no">NO</td><td>Company reference</td></tr>
+      <tr><td>calculation_approach</td><td>varchar</td><td class="nullable-no">NO</td><td>manual, erp_rules, erp_mapping_rules, hybrid</td></tr>
+      <tr><td>default_approach</td><td>boolean</td><td class="nullable-no">NO</td><td>Is this the default?</td></tr>
+      <tr><td>allow_contract_override</td><td>boolean</td><td class="nullable-no">NO</td><td>Can contracts override?</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ===== SECTION 5: 3-STAGE PIPELINE TABLES ===== -->
+<div class="section" id="s5">
+  <h2>5. 3-Stage Pipeline Tables <span class="badge new">NEW</span></h2>
+
+  <h3>contract_clauses</h3>
+  <p class="table-desc"><strong>Stage A output.</strong> Individual clauses segmented from a contract by AI.</p>
+  <table>
+    <thead><tr><th>Column</th><th>Type</th><th>Null?</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td>id</td><td>varchar (PK)</td><td class="nullable-no">NO</td><td>UUID</td></tr>
+      <tr><td>contract_id</td><td>varchar (FK)</td><td class="nullable-no">NO</td><td>Source contract</td></tr>
+      <tr><td>extraction_run_id</td><td>varchar (FK)</td><td class="nullable-yes">YES</td><td>Pipeline run that created this</td></tr>
+      <tr><td>clause_identifier</td><td>varchar</td><td class="nullable-yes">YES</td><td>Sequential ID (CL-01, CL-02, ...)</td></tr>
+      <tr><td>section_ref</td><td>varchar</td><td class="nullable-yes">YES</td><td>Contract section (e.g., "6. Rebate Tiers")</td></tr>
+      <tr><td>text</td><td>text</td><td class="nullable-no">NO</td><td>Full clause text</td></tr>
+      <tr><td>clause_category_code</td><td>varchar (FK)</td><td class="nullable-yes">YES</td><td>Links to <code>clause_categories</code></td></tr>
+      <tr><td>flow_type_code</td><td>varchar (FK)</td><td class="nullable-yes">YES</td><td>Links to <code>flow_types</code></td></tr>
+      <tr><td>affects_accrual</td><td>boolean</td><td class="nullable-no">NO</td><td>Whether this clause affects financial accruals</td></tr>
+      <tr><td>confidence</td><td>real</td><td class="nullable-yes">YES</td><td>AI classification confidence (0&ndash;1)</td></tr>
+      <tr><td>evidence</td><td>jsonb</td><td class="nullable-yes">YES</td><td>Supporting evidence for classification</td></tr>
+    </tbody>
+  </table>
+
+  <p class="sample-label">Sample Data:</p>
+  <table class="sample-table">
+    <thead><tr><th>ID</th><th>Section</th><th>Category</th><th>Flow Type</th><th>Accrual?</th><th>Conf.</th></tr></thead>
+    <tbody>
+      <tr><td>CL-01</td><td>1. Parties</td><td>governance_risk</td><td>rebate</td><td>No</td><td>1.0</td></tr>
+      <tr><td>CL-02</td><td>2. Agreement Type</td><td>governance_risk</td><td>rebate</td><td>No</td><td>1.0</td></tr>
+      <tr><td>CL-03</td><td>3. Effective Dates</td><td>governance_risk</td><td>rebate</td><td>No</td><td>1.0</td></tr>
+      <tr><td>CL-04</td><td>4. Territory</td><td>qualification</td><td>rebate</td><td>Yes</td><td>1.0</td></tr>
+      <tr><td>CL-05</td><td>5. Eligible Products</td><td>qualification</td><td>rebate</td><td>Yes</td><td>1.0</td></tr>
+    </tbody>
+  </table>
+
+  <h3>rule_conflicts</h3>
+  <p class="table-desc"><strong>Stage C output.</strong> Detected conflicts between extracted rules.</p>
+  <table>
+    <thead><tr><th>Column</th><th>Type</th><th>Null?</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td>id</td><td>varchar (PK)</td><td class="nullable-no">NO</td><td>UUID</td></tr>
+      <tr><td>contract_id</td><td>varchar (FK)</td><td class="nullable-no">NO</td><td>Source contract</td></tr>
+      <tr><td>extraction_run_id</td><td>varchar (FK)</td><td class="nullable-yes">YES</td><td>Pipeline run</td></tr>
+      <tr><td>conflict_identifier</td><td>varchar</td><td class="nullable-yes">YES</td><td>Conflict ID (CF-01, CF-02, ...)</td></tr>
+      <tr><td>rule_ids</td><td>jsonb</td><td class="nullable-yes">YES</td><td>Array of conflicting rule IDs</td></tr>
+      <tr><td>reason</td><td>text</td><td class="nullable-yes">YES</td><td>Description of the conflict</td></tr>
+      <tr><td>resolution</td><td>text</td><td class="nullable-yes">YES</td><td>Suggested resolution</td></tr>
+    </tbody>
+  </table>
+
+  <h3>extraction_stage_results</h3>
+  <p class="table-desc">Tracks the output of each pipeline stage (A, B, C) per extraction run.</p>
+  <table>
+    <thead><tr><th>Column</th><th>Type</th><th>Null?</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td>id</td><td>varchar (PK)</td><td class="nullable-no">NO</td><td>UUID</td></tr>
+      <tr><td>extraction_run_id</td><td>varchar (FK)</td><td class="nullable-no">NO</td><td>Parent extraction run</td></tr>
+      <tr><td>stage</td><td>varchar</td><td class="nullable-no">NO</td><td>stage_a, stage_b, stage_c</td></tr>
+      <tr><td>status</td><td>varchar</td><td class="nullable-no">NO</td><td>pending, running, completed, failed</td></tr>
+      <tr><td>raw_output</td><td>jsonb</td><td class="nullable-yes">YES</td><td>Full AI response for this stage</td></tr>
+      <tr><td>error_message</td><td>text</td><td class="nullable-yes">YES</td><td>Error details if failed</td></tr>
+      <tr><td>started_at</td><td>timestamp</td><td class="nullable-yes">YES</td><td>Stage start time</td></tr>
+      <tr><td>completed_at</td><td>timestamp</td><td class="nullable-yes">YES</td><td>Stage completion time</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ===== SECTION 6: PIPELINE REFERENCE DATA ===== -->
+<div class="section" id="s6">
+  <h2>6. Pipeline Reference Data <span class="badge ref">SEEDED</span></h2>
+
+  <h3>flow_types</h3>
+  <p class="table-desc">Types of financial flows a contract clause can represent.</p>
+  <table class="sample-table">
+    <thead><tr><th>Code</th><th>Name</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td>rebate</td><td>Rebate</td><td>Rebate payments based on volume or performance targets</td></tr>
+      <tr><td>commission</td><td>Commission</td><td>Sales commission payments based on performance</td></tr>
+      <tr><td>royalty</td><td>Royalty</td><td>Royalty payments based on licensed IP usage</td></tr>
+      <tr><td>price_protection</td><td>Price Protection</td><td>Price protection adjustments for inventory value changes</td></tr>
+      <tr><td>chargeback</td><td>Chargeback</td><td>Chargeback claims for price differences or returns</td></tr>
+      <tr><td>mdf</td><td>MDF</td><td>Market Development Fund allocations and claims</td></tr>
+      <tr><td>ship_and_debit</td><td>Ship and Debit</td><td>Ship and debit programs for competitive pricing</td></tr>
+      <tr><td>other</td><td>Other</td><td>Other financial flow types</td></tr>
+    </tbody>
+  </table>
+
+  <h3>clause_execution_groups</h3>
+  <p class="table-desc">Defines when/how clauses are executed in the calculation engine.</p>
+  <table class="sample-table">
+    <thead><tr><th>Code</th><th>Name</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td>periodic</td><td>Periodic</td><td>Clauses for accrual calculations on a recurring basis</td></tr>
+      <tr><td>adjustment</td><td>Adjustment</td><td>Adjustments on top of periodic calculations (caps, floors, true-ups)</td></tr>
+      <tr><td>event</td><td>Event</td><td>Event-based clauses not part of regular accrual cycles</td></tr>
+    </tbody>
+  </table>
+
+  <h3>rule_templates</h3>
+  <p class="table-desc">The 12 standard rule templates (T1&ndash;T12) used in Stage B of the pipeline.</p>
+  <table class="sample-table">
+    <thead><tr><th>Code</th><th>Name</th><th>Execution Group</th><th>Required Fields</th></tr></thead>
+    <tbody>
+      <tr><td>T1</td><td>Percentage Revenue</td><td>periodic</td><td>base_metric, rate_or_amount, frequency</td></tr>
+      <tr><td>T2</td><td>Per Unit</td><td>periodic</td><td>rate_or_amount, frequency</td></tr>
+      <tr><td>T3</td><td>Tiered Rate</td><td>periodic</td><td>base_metric, tier_table, frequency</td></tr>
+      <tr><td>T4</td><td>Threshold Trigger</td><td>periodic</td><td>base_metric, threshold, rate_or_amount</td></tr>
+      <tr><td>T5</td><td>Revenue Split</td><td>periodic</td><td>base_metric, rate_or_amount, frequency</td></tr>
+      <tr><td>T6</td><td>Fixed Amount Payment</td><td>periodic</td><td>rate_or_amount, frequency</td></tr>
+      <tr><td>T7</td><td>Cap</td><td>adjustment</td><td>cap_or_floor</td></tr>
+      <tr><td>T8</td><td>Floor / Minimum Payout</td><td>adjustment</td><td>cap_or_floor</td></tr>
+      <tr><td>T9</td><td>Minimum Guarantee True-Up</td><td>adjustment</td><td>cap_or_floor, frequency</td></tr>
+      <tr><td>T10</td><td>Offset / Deduction</td><td>adjustment</td><td>offset</td></tr>
+      <tr><td>T11</td><td>Late Payment Interest</td><td>event</td><td>rate_or_amount, trigger_event, grace_period</td></tr>
+      <tr><td>T12</td><td>Reporting Compliance Penalty</td><td>event</td><td>rate_or_amount, trigger_event</td></tr>
+    </tbody>
+  </table>
+
+  <h3>base_metrics</h3>
+  <p class="table-desc">Standard metrics that rules can be calculated against.</p>
+  <table class="sample-table">
+    <thead><tr><th>Code</th><th>Name</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td>gross_sales</td><td>Gross Sales</td><td>Gross sales amount before deductions</td></tr>
+      <tr><td>net_sales</td><td>Net Sales</td><td>Net sales amount after returns and allowances</td></tr>
+      <tr><td>units</td><td>Units</td><td>Quantity of units sold or shipped</td></tr>
+      <tr><td>margin</td><td>Margin</td><td>Profit margin (revenue minus cost)</td></tr>
+      <tr><td>invoice_amount</td><td>Invoice Amount</td><td>Total invoice amount billed</td></tr>
+      <tr><td>subscription_revenue</td><td>Subscription Revenue</td><td>Recurring subscription-based revenue</td></tr>
+      <tr><td>outstanding_balance</td><td>Outstanding Balance</td><td>Amount currently owed</td></tr>
+      <tr><td>other</td><td>Other</td><td>Custom base metric</td></tr>
+    </tbody>
+  </table>
+
+  <h3>clause_categories</h3>
+  <p class="table-desc">Classification categories for contract clauses.</p>
+  <table class="sample-table">
+    <thead><tr><th>Code</th><th>Name</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td>financial_calculation</td><td>Financial Calculation</td><td>Clauses defining how payments, rebates, or fees are calculated</td></tr>
+      <tr><td>qualification</td><td>Qualification</td><td>Eligibility criteria, conditions, prerequisites</td></tr>
+      <tr><td>adjustment</td><td>Adjustment</td><td>Modifiers to calculated amounts (caps, floors, true-ups)</td></tr>
+      <tr><td>operational</td><td>Operational</td><td>Reporting, data submission, process obligations</td></tr>
+      <tr><td>event_penalty</td><td>Event / Penalty</td><td>Triggered by late payment, non-compliance, etc.</td></tr>
+      <tr><td>governance_risk</td><td>Governance / Risk</td><td>Governance, audit rights, compliance obligations</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ===== SECTION 7: DATA FLOW DIAGRAM ===== -->
+<div class="section" id="s7">
+  <h2>7. Data Flow Diagram</h2>
+  <div class="flow-diagram"><span class="hl">CONTRACT UPLOAD</span>
+     |
+     v
++----------------+
+| <span class="blue">contracts</span>      |  <span class="green">&larr; Stores PDF, metadata, raw_text</span>
++-------+--------+
+        |
+        v
++------------------+
+| <span class="blue">extraction_runs</span>  |  <span class="green">&larr; Tracks each AI extraction attempt</span>
++-------+----------+
+        |
+        +--- <span class="yellow">Standard Extraction (zero_shot)</span> --------+
+        |                                                |
+        |    +------------------+                        |
+        |    | <span class="blue">royalty_rules</span>    |  <span class="green">&larr; AI-extracted rules</span>  |
+        |    |  volume_tiers    |    <span class="green">formula_definition</span>  |
+        |    |  product_cats    |    <span class="green">territories</span>         |
+        |    +------------------+                        |
+        |                                                |
+        +--- <span class="hl">3-Stage Pipeline (pipeline)</span> ---------------+
+             |                                           |
+             |  <span class="yellow">Stage A: Clause Segmentation</span>              |
+             |  +-------------------+                    |
+             |  | <span class="blue">contract_clauses</span>  |  <span class="green">&larr; clause_category</span>  |
+             |  |                   |    <span class="green">flow_type, accrual</span> |
+             |  +-------------------+                    |
+             |                                           |
+             |  <span class="yellow">Stage B: Rule Template Mapping</span>            |
+             |  +------------------+                     |
+             |  | <span class="blue">royalty_rules</span>    |  <span class="green">&larr; T1-T12 templates</span>  |
+             |  |  template_code   |    <span class="green">execution_group</span>   |
+             |  |  base_metric     |                     |
+             |  +------------------+                     |
+             |                                           |
+             |  <span class="yellow">Stage C: Conflict Detection</span>               |
+             |  +-----------------+                      |
+             |  | <span class="blue">rule_conflicts</span>  |  <span class="green">&larr; Detected issues</span>    |
+             |  +-----------------+                      |
+             |                                           |
+             |  +---------------------------+            |
+             |  | <span class="blue">extraction_stage_results</span> |  <span class="green">&larr; Per-stage</span> |
+             |  +---------------------------+            |
+             +-------------------------------------------+
+
+<span class="hl">SALES DATA UPLOAD</span>
+     |
+     v
++-------------+
+| <span class="blue">sales_data</span>  |  <span class="green">&larr; CSV: product, qty, amount, date</span>
++------+------+
+       |  <span class="green">(matched to contract)</span>
+       v
++------------------------+
+| <span class="hl">CALCULATION ENGINE</span>      |
+|                        |
+| Mode: <span class="yellow">universal</span> ----> calculationService.ts
+|   (detects quarterly   |  <span class="green">(routes rebate to legacy)</span>
+|    rebate rules)       |
+|                        |
+| Mode: <span class="yellow">legacy</span> -------> dynamicRulesEngine.ts
+|   (quarterly agg,     |  <span class="green">(tiered rate lookup)</span>
+|    scope matching)     |
++----------+-------------+
+           |
+           v
++--------------------------------+
+| <span class="blue">contract_royalty_calculations</span>  |  <span class="green">&larr; Saved result + breakdown</span>
++--------------------------------+
+           |
+           v
++------------------------+
+| <span class="blue">calculation_line_items</span>  |  <span class="green">&larr; Granular line items</span>
++------------------------+</div>
+</div>
+
+<!-- ===== SECTION 8: CALCULATION EXAMPLE ===== -->
+<div class="section" id="s8">
+  <h2>8. Calculation Example &mdash; TechSound Quarterly Rebate</h2>
+  <p>End-to-end walkthrough showing how the 9 sales rows produce a $31,017.50 license fee.</p>
+
+  <p class="sample-label">Step 1: Tier Structure (from volume_tiers):</p>
+  <table class="sample-table">
+    <thead><tr><th>Tier</th><th>Unit Range</th><th>Rate</th></tr></thead>
+    <tbody>
+      <tr><td>Tier 1</td><td>0 &ndash; 1,000 units</td><td>2%</td></tr>
+      <tr><td>Tier 2</td><td>1,001 &ndash; 5,000 units</td><td>5%</td></tr>
+      <tr><td>Tier 3</td><td>5,001+ units</td><td>8%</td></tr>
+    </tbody>
+  </table>
+
+  <p class="sample-label">Step 2: Quarterly Unit Aggregation:</p>
+  <table class="sample-table">
+    <thead><tr><th>Quarter</th><th>Total Units</th><th>Matched Tier</th><th>Rate</th></tr></thead>
+    <tbody>
+      <tr><td>Q1 2026</td><td>1,080 (300+250+400+80+50)</td><td>Tier 2</td><td>5.0%</td></tr>
+      <tr><td>Q2 2026</td><td>1,625 (600+500+450+75)</td><td>Tier 2</td><td>5.0%</td></tr>
+    </tbody>
+  </table>
+
+  <div class="calc-box">
+    <h4>Step 3: Per-Product Rebate Calculation</h4>
+
+    <p class="quarter-header">Q1 2026 &mdash; 1,080 units &rarr; Tier 2 @ 5.0%</p>
+    <div class="line"><span class="product">SoundPro Wireless Headphones - Black (300 units) &mdash; $76,500 &times; 5%</span><span class="amount">$3,825.00</span></div>
+    <div class="line"><span class="product">SoundPro Wireless Headphones - White (250 units) &mdash; $63,750 &times; 5%</span><span class="amount">$3,187.50</span></div>
+    <div class="line"><span class="product">EssentialSound Wireless - Black (400 units) &mdash; $51,000 &times; 5%</span><span class="amount">$2,550.00</span></div>
+    <div class="line"><span class="product">Studio Wired Pro - Black (80 units) &mdash; $13,600 &times; 5%</span><span class="amount">$680.00</span></div>
+    <div class="line"><span class="product">SoundPro Wireless Headphones - Silver (50 units) &mdash; $9,000 &times; 5%</span><span class="amount">$450.00</span></div>
+
+    <p class="quarter-header">Q2 2026 &mdash; 1,625 units &rarr; Tier 2 @ 5.0%</p>
+    <div class="line"><span class="product">PremiumSound Max - Black (600 units) &mdash; $180,000 &times; 5%</span><span class="amount">$9,000.00</span></div>
+    <div class="line"><span class="product">PremiumSound Max - White (500 units) &mdash; $150,000 &times; 5%</span><span class="amount">$7,500.00</span></div>
+    <div class="line"><span class="product">EssentialSound Wireless - White (450 units) &mdash; $57,375 &times; 5%</span><span class="amount">$2,868.75</span></div>
+    <div class="line"><span class="product">SoundPro Wireless Headphones - Black (75 units) &mdash; $19,125 &times; 5%</span><span class="amount">$956.25</span></div>
+
+    <div class="total-line"><span class="product">Total License Fee</span><span class="amount">$31,017.50</span></div>
+  </div>
+</div>
+
+<!-- ===== SECTION 9: BASE METRIC SOURCING ===== -->
+<div class="section" id="s9">
+  <h2>9. Where Does Base Metric Come From?</h2>
+
+  <p>The Base Metric dropdown (Net Sales, Gross Sales, Units, etc.) you see on the Rule Edit form tells the system <strong>which dollar amount or quantity to use</strong> when calculating the fee. Here is exactly where those values come from and how they map to real database fields:</p>
+
+  <div class="source-diagram">
+    <h4>Current Source: Hardcoded in Frontend</h4>
+    <p style="font-size: 0.88rem; color: #666; margin-bottom: 14px;">The dropdown values are currently defined as a constant array in the frontend code. A database table exists with the same values, but the dropdown does not yet fetch from it.</p>
+
+    <div class="source-row">
+      <span class="source-box">pipeline-results.tsx</span>
+      <span class="source-arrow">&rarr;</span>
+      <span class="source-label">Hardcoded <code>BASE_METRICS</code> array with 8 options</span>
+    </div>
+    <div class="source-row">
+      <span class="source-box">base_metrics (DB table)</span>
+      <span class="source-arrow">&rarr;</span>
+      <span class="source-label">Same 8 values seeded into the database (exists but not used by dropdown yet)</span>
+    </div>
+    <div class="source-row">
+      <span class="source-box">GET /api/pipeline/base-metrics</span>
+      <span class="source-arrow">&rarr;</span>
+      <span class="source-label">API endpoint exists, returns all rows from <code>base_metrics</code> table</span>
+    </div>
+
+    <div class="source-note">
+      <strong>Future improvement:</strong> The dropdown should fetch from the API <code>/api/pipeline/base-metrics</code> instead of using the hardcoded array, so new metrics can be added via the database without code changes.
+    </div>
+  </div>
+
+  <p class="sample-label">How Base Metric Maps to Sales Data Fields:</p>
+  <p>When the calculation engine runs, the Base Metric tells it which column from the <code>sales_data</code> table to use as the dollar amount for the formula. Here is the exact mapping:</p>
+
+  <table class="mapping-table">
+    <thead><tr><th>Base Metric (Dropdown)</th><th>Sales Data Column Used</th><th>What It Means</th></tr></thead>
+    <tbody>
+      <tr><td>Net Sales</td><td><code>sales_data.net_amount</code></td><td>Sale amount after returns and deductions</td></tr>
+      <tr><td>Gross Sales</td><td><code>sales_data.gross_amount</code></td><td>Full sale amount before any deductions</td></tr>
+      <tr><td>Units</td><td><code>sales_data.quantity</code></td><td>Number of units sold (not dollars)</td></tr>
+      <tr><td>Margin</td><td><code>sales_data.gross_amount - cost</code></td><td>Profit margin (revenue minus cost)</td></tr>
+      <tr><td>Invoice Amount</td><td><code>sales_data.gross_amount</code></td><td>Total billed amount (similar to gross)</td></tr>
+      <tr><td>Subscription Revenue</td><td><code>sales_data.net_amount</code></td><td>Recurring subscription amounts</td></tr>
+      <tr><td>Outstanding Balance</td><td><code>custom_fields</code></td><td>Amount currently owed</td></tr>
+      <tr><td>Other</td><td><code>custom_fields</code></td><td>Custom metric defined per contract</td></tr>
+    </tbody>
+  </table>
+
+  <p class="sample-label">Where the Mapping Happens in Code:</p>
+  <pre><span class="green">// In calculationService.ts (lines 507-540)</span>
+<span class="green">// The system checks what base_metric was set on the rule:</span>
+
+if (basis includes <span class="str">"net"</span>)      &rarr; use <span class="key">sale.netAmount</span>
+if (basis includes <span class="str">"gross"</span>)    &rarr; use <span class="key">sale.grossAmount</span>
+if (basis includes <span class="str">"unit"</span>)     &rarr; use <span class="key">sale.quantity</span>
+otherwise                      &rarr; default to <span class="key">sale.grossAmount</span></pre>
+
+  <div class="two-col">
+    <div class="col-card layman">
+      <h4>In Plain Language</h4>
+      <p>When you pick "Net Sales" from the Base Metric dropdown, you're telling the system: <em>"When calculating the fee, use the net sale amount (after deductions) as the number you multiply the rate against."</em></p>
+      <p>If you pick "Units" instead, the system uses the quantity of items sold, not the dollar amount.</p>
+      <p>Think of it like choosing which column on a spreadsheet to run your formula against.</p>
+    </div>
+    <div class="col-card tech">
+      <h4>In Technical Language</h4>
+      <p>The <code>base_metric</code> field on <code>royalty_rules</code> is persisted as a varchar. During calculation, <code>calculationService.ts</code> reads this value and resolves it to a <code>SalesContext</code> field reference (<code>netAmount</code>, <code>grossAmount</code>, or <code>quantity</code>).</p>
+      <p>For universal evaluator mode, the metric is encoded into the <code>formula_definition</code> JSON as a <code>ReferenceNode</code> (e.g., <code>{"type": "reference", "field": "netAmount"}</code>). The <code>FormulaInterpreter</code> then resolves this reference against the sales context at runtime.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SECTION 10: FULL CALCULATION PROCESS ===== -->
+<div class="section" id="s10">
+  <h2>10. Full Calculation Process After Rule Saving</h2>
+
+  <p>Using the TechSound "Standard Royalty on Net Sales" example from the screenshot (T1: Percentage Revenue, Base Metric: Net Sales, 5% rate), here is the complete process that happens from the moment you click "Save Rule" to the final fee number.</p>
+
+  <div class="two-col">
+    <div class="col-card layman">
+      <h4>In Plain Language (What Happens)</h4>
+      <ol>
+        <li><strong>You save the rule.</strong> The system stores your choices &mdash; the rule name, the rate (5%), what to calculate against (Net Sales), which products it applies to, and the priority. It's like writing down instructions: "Take 5% of net sales for these products."</li>
+        <li><strong>Sales data comes in.</strong> Someone uploads a spreadsheet of sales &mdash; which products were sold, how many units, what dates, and for how much money.</li>
+        <li><strong>You hit "Calculate."</strong> The system pulls up the contract, finds all the rules, and finds all the sales that belong to this contract.</li>
+        <li><strong>Matching starts.</strong> For each sale, the system asks: "Does this sale match this rule?" It checks: Is this product in the rule's product list? Is this territory covered? Is this within the rule's date range?</li>
+        <li><strong>The math runs.</strong> For each matching sale, the system looks at the Base Metric (Net Sales = use the net_amount column), multiplies it by the rate (5%), and that gives the fee for that sale.</li>
+        <li><strong>Special handling for quarterly rebates.</strong> If the rule is a tiered rebate (like TechSound), the system first groups all sales by quarter, totals up the units, finds the right tier, and THEN applies that tier's rate to each individual sale's dollar amount.</li>
+        <li><strong>Results are saved.</strong> The total fee, plus a detailed breakdown showing each product and its calculated fee, gets stored so you can review, approve, or export it.</li>
+      </ol>
+    </div>
+    <div class="col-card tech">
+      <h4>In Technical Language (What Happens)</h4>
+      <ol>
+        <li><strong>Rule persistence.</strong> <code>POST /api/contracts/:id/rules</code> writes to <code>royalty_rules</code> table with <code>rule_type</code>, <code>base_rate</code>, <code>base_metric</code>, <code>volume_tiers</code>, <code>formula_definition</code> (if universal mode), <code>product_categories</code>, <code>territories</code>.</li>
+        <li><strong>Sales ingestion.</strong> CSV upload via <code>SalesDataParser</code> normalizes column names, parses amounts, and inserts into <code>sales_data</code> table with <code>matched_contract_id</code> set via AI semantic matching or manual assignment.</li>
+        <li><strong>Calculation trigger.</strong> <code>POST /api/contracts/:id/calculate</code> calls <code>calculationService.calculateLicenseFees()</code>. Loads all active rules via <code>royalty_rules</code> WHERE <code>contract_id = :id AND is_active = true</code>.</li>
+        <li><strong>Engine routing.</strong> <code>calculationService</code> inspects rule types. If it detects tiered/rebate rules with quarterly keywords and <code>maxTierMin < 500K</code>, it routes to <code>dynamicRulesEngine.calculateRoyalty()</code> (legacy mode). Otherwise, uses the universal <code>FormulaInterpreter</code>.</li>
+        <li><strong>Legacy mode execution.</strong> <code>dynamicRulesEngine</code> groups sales by quarter (<code>getQuarter(sale.transactionDate)</code>), sums <code>quantity</code> per quarter, matches to <code>volume_tiers</code> to find the applicable rate, then calculates: <code>sale.grossAmount * matchedTier.rate</code> for each sale.</li>
+        <li><strong>Universal mode execution.</strong> <code>FormulaInterpreter</code> walks the <code>formula_definition</code> expression tree. A <code>MultiplyNode</code> with child <code>ReferenceNode("netAmount")</code> resolves <code>sale.netAmount</code> from the <code>SalesContext</code>, multiplies by the <code>LiteralNode(0.05)</code>.</li>
+        <li><strong>Result persistence.</strong> Inserts into <code>contract_royalty_calculations</code> (<code>total_royalty</code>, <code>breakdown</code> JSONB) and optionally <code>calculation_line_items</code> for granular audit trail.</li>
+      </ol>
+    </div>
+  </div>
+
+  <p class="sample-label">Visual Step-by-Step Flow:</p>
+
+  <div class="step-card">
+    <div class="step-num">1</div>
+    <h5>Rule Saved to Database</h5>
+    <p style="font-size:0.88rem;color:#555;">Your rule choices are written to the <code>royalty_rules</code> table. The Base Metric you selected (e.g., "Net Sales") is stored in the <code>base_metric</code> column. The rate, tiers, products, and territories are all stored alongside it.</p>
+    <pre style="font-size:0.8rem;margin-top:8px;margin-bottom:0;">INSERT INTO <span class="key">royalty_rules</span> (contract_id, rule_name, rule_type, base_rate, base_metric, 
+  template_code, execution_group, product_categories, territories)
+VALUES (<span class="str">'303d2cc0-...'</span>, <span class="str">'Standard Royalty on Net Sales'</span>, <span class="str">'percentage'</span>, 
+  <span class="num">0.05</span>, <span class="str">'net_sales'</span>, <span class="str">'T1'</span>, <span class="str">'periodic'</span>, 
+  <span class="str">'{SoundPro..., PremiumSound...}'</span>, <span class="str">'{United States, Canada}'</span>)</pre>
+  </div>
+  <div class="step-connector"></div>
+
+  <div class="step-card">
+    <div class="step-num">2</div>
+    <h5>Sales Data Uploaded &amp; Matched</h5>
+    <p style="font-size:0.88rem;color:#555;">Sales CSV is uploaded. Each row is stored in <code>sales_data</code> with product name, quantity, gross and net amounts, and date. The system either auto-matches rows to the contract or you assign them manually.</p>
+  </div>
+  <div class="step-connector"></div>
+
+  <div class="step-card">
+    <div class="step-num">3</div>
+    <h5>Calculation Engine Decides Which Mode to Use</h5>
+    <p style="font-size:0.88rem;color:#555;">The engine checks all rules for the contract. If it finds tiered rebate rules with quarterly keywords, it uses the <strong>legacy engine</strong> (groups by quarter first). Otherwise, it uses the <strong>universal evaluator</strong> (processes each sale individually).</p>
+    <pre style="font-size:0.8rem;margin-top:8px;margin-bottom:0;"><span class="green">// Decision logic in calculationService.ts:</span>
+Has tiered/rebate rules with quarterly keywords? &rarr; <span class="key">Legacy Engine</span> (dynamicRulesEngine.ts)
+Has formula_definition on rules?                 &rarr; <span class="key">Universal Evaluator</span> (formulaInterpreter.ts)
+Default fallback                                 &rarr; <span class="key">Universal Evaluator</span></pre>
+  </div>
+  <div class="step-connector"></div>
+
+  <div class="step-card">
+    <div class="step-num">4</div>
+    <h5>Sales Matched to Rules</h5>
+    <p style="font-size:0.88rem;color:#555;">For each sale, the engine checks if the product name appears in the rule's <code>product_categories</code> array and the territory is in the rule's <code>territories</code> array. Only matching sales proceed to calculation.</p>
+    <table class="mapping-table" style="font-size:0.82rem;">
+      <thead><tr><th>Check</th><th>Sale Field</th><th>Rule Field</th><th>Match Logic</th></tr></thead>
+      <tbody>
+        <tr><td>Product</td><td><code>sales_data.product_name</code></td><td><code>royalty_rules.product_categories</code></td><td>Fuzzy text match (contains, stripped codes)</td></tr>
+        <tr><td>Territory</td><td><code>sales_data.territory</code></td><td><code>royalty_rules.territories</code></td><td>Exact match or empty = match all</td></tr>
+        <tr><td>Date</td><td><code>sales_data.transaction_date</code></td><td><code>royalty_rules.effective_date / expiry_date</code></td><td>Must fall within range</td></tr>
+        <tr><td>Segment</td><td><code>sales_data.custom_fields</code></td><td><code>royalty_rules.customer_segments</code></td><td>If specified, must match</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="step-connector"></div>
+
+  <div class="step-card">
+    <div class="step-num">5</div>
+    <h5>Base Metric Resolves to a Dollar Amount</h5>
+    <p style="font-size:0.88rem;color:#555;">The <code>base_metric</code> value determines which column from the sales data is used as the calculation input:</p>
+    <pre style="font-size:0.8rem;margin-top:8px;margin-bottom:0;">base_metric = <span class="str">"net_sales"</span>    &rarr;  use <span class="key">sale.net_amount</span>   = <span class="num">$76,500</span>
+base_metric = <span class="str">"gross_sales"</span>  &rarr;  use <span class="key">sale.gross_amount</span> = <span class="num">$76,500</span>
+base_metric = <span class="str">"units"</span>        &rarr;  use <span class="key">sale.quantity</span>     = <span class="num">300</span></pre>
+  </div>
+  <div class="step-connector"></div>
+
+  <div class="step-card">
+    <div class="step-num">6</div>
+    <h5>Fee Calculated Per Sale</h5>
+    <p style="font-size:0.88rem;color:#555;">The formula is applied. For a simple 5% percentage rule on net sales:</p>
+    <pre style="font-size:0.8rem;margin-top:8px;margin-bottom:0;"><span class="green">// Simple percentage:</span>
+fee = sale.net_amount &times; base_rate
+fee = <span class="num">$76,500</span> &times; <span class="num">0.05</span> = <span class="key">$3,825.00</span>
+
+<span class="green">// Tiered (quarterly aggregation first):</span>
+Q1 total units = <span class="num">1,080</span> &rarr; matches Tier 2 (1,001-5,000) &rarr; rate = <span class="num">5%</span>
+fee = sale.gross_amount &times; tier_rate
+fee = <span class="num">$76,500</span> &times; <span class="num">0.05</span> = <span class="key">$3,825.00</span></pre>
+  </div>
+  <div class="step-connector"></div>
+
+  <div class="step-card">
+    <div class="step-num">7</div>
+    <h5>Results Stored &amp; Displayed</h5>
+    <p style="font-size:0.88rem;color:#555;">All individual fees are summed up. The total and the per-product breakdown are saved to <code>contract_royalty_calculations</code>. You see the result on the Calculation Engine page with charts, breakdowns, and the option to approve or reject.</p>
+    <pre style="font-size:0.8rem;margin-top:8px;margin-bottom:0;">INSERT INTO <span class="key">contract_royalty_calculations</span>
+  (contract_id, total_royalty, total_sales_amount, sales_count, breakdown)
+VALUES (<span class="str">'303d2cc0-...'</span>, <span class="num">31017.50</span>, <span class="num">620350.00</span>, <span class="num">9</span>, <span class="str">'[{...per-product detail...}]'</span>)</pre>
+  </div>
+
+  <div class="two-col" style="margin-top:24px;">
+    <div class="col-card layman">
+      <h4>The Short Version (Plain Language)</h4>
+      <p><strong>Save Rule</strong> = Write down the instructions (5% of net sales for these products)</p>
+      <p><strong>Upload Sales</strong> = Give the system the actual sales data to work with</p>
+      <p><strong>Calculate</strong> = The system matches each sale to the right rule, looks up which dollar amount to use (net vs gross vs units), applies the rate, and adds it all up</p>
+      <p><strong>Result</strong> = You get a total fee ($31,017.50) with a line-by-line breakdown showing exactly how each product contributed</p>
+    </div>
+    <div class="col-card tech">
+      <h4>The Short Version (Technical)</h4>
+      <p><strong>Persistence:</strong> Rule &rarr; <code>royalty_rules</code> (base_metric, formula_definition, volume_tiers)</p>
+      <p><strong>Ingestion:</strong> CSV &rarr; <code>sales_data</code> (matched_contract_id via semantic matching)</p>
+      <p><strong>Routing:</strong> <code>calculationService</code> inspects rule types &rarr; legacy (quarterly agg) or universal (formula tree)</p>
+      <p><strong>Resolution:</strong> <code>base_metric</code> &rarr; <code>SalesContext</code> field reference &rarr; actual numeric value from sales row</p>
+      <p><strong>Execution:</strong> rate &times; resolved_amount per sale, with optional quarterly grouping for tiered rules</p>
+      <p><strong>Storage:</strong> <code>contract_royalty_calculations</code> + <code>calculation_line_items</code> with full audit trail</p>
+    </div>
+  </div>
+</div>
+
+</div>
+</body>
+</html>

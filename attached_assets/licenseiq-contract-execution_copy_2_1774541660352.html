@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LicenseIQ — Contract Execution</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0a0f;--surface:#111118;--surface2:#1a1a24;--surface3:#2d2d3a;
+  --border:#2a2830;--border2:#3a3848;
+  --text:#fafaf8;--text2:#8a8578;--text3:#5a584f;
+  --accent:#c85a2a;--accent-light:#e8734a;--accent-glow:rgba(200,90,42,.12);
+  --ok:#1a9b7a;--ok-glow:rgba(26,155,122,.12);
+  --warn:#c47a1a;--critical:#d94040;--purple:#7a5af8;
+  --ai-from:#c85a2a;--ai-to:#1a9b7a;
+  --r:8px;--rsm:6px;--rpill:100px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);height:100vh;display:flex;flex-direction:column;overflow:hidden;font-family:'DM Sans',system-ui,sans-serif}
+.topnav{height:50px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 18px;gap:14px;flex-shrink:0}
+.brand{display:flex;align-items:center;gap:9px;text-decoration:none;color:var(--text)}
+.brand-icon{width:28px;height:28px;background:linear-gradient(135deg,var(--ai-from),var(--ai-to));border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px}
+.brand-name{font-size:15px;font-weight:700;font-family:'Playfair Display',serif;letter-spacing:-.3px}
+.brand-name em{font-style:normal;background:linear-gradient(90deg,var(--ai-from),var(--ai-to));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.spacer{flex:1}
+.topnav-search{background:var(--surface2);border:1px solid var(--border);border-radius:var(--rsm);padding:6px 11px;color:var(--text);font-size:12px;width:220px;outline:none;font-family:'DM Sans',sans-serif}
+.topnav-search:focus{border-color:var(--accent)}
+.avatar{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--ai-from),var(--ai-to));display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;cursor:pointer}
+.btn{padding:6px 14px;border-radius:var(--rsm);border:none;font-size:12px;font-weight:500;cursor:pointer;transition:all .15s;font-family:'DM Sans',sans-serif;white-space:nowrap}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-primary:hover{background:var(--accent-light)}
+.btn-sm{padding:4px 10px;font-size:11px;border-radius:var(--rsm);border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:500}
+.btn-ghost{background:transparent;border:1px solid var(--border2);color:var(--text2)}
+.btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
+.btn-ok{background:var(--ok-glow);border:1px solid rgba(26,155,122,.3);color:var(--ok)}
+.btn-ok:hover{background:rgba(26,155,122,.2)}
+.layout{display:flex;flex:1;overflow:hidden}
+.sidebar{width:220px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:10px 8px;gap:1px;overflow-y:auto;flex-shrink:0}
+.sidebar-section{font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.8px;text-transform:uppercase;padding:10px 10px 4px}
+.sidebar-item{display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:var(--rsm);color:var(--text2);cursor:pointer;font-size:12px;transition:all .15s;text-decoration:none}
+.sidebar-item:hover{background:var(--surface2);color:var(--text)}
+.sidebar-item.active{background:var(--accent-glow);color:var(--accent);font-weight:500}
+.sidebar-item .icon{font-size:13px;width:15px;text-align:center;flex-shrink:0}
+.sidebar-badge{margin-left:auto;background:var(--warn);color:#000;font-size:9px;font-weight:700;border-radius:var(--rpill);padding:1px 5px}
+.sidebar-badge.ok{background:var(--ok);color:#fff}
+.sidebar-divider{height:1px;background:var(--border);margin:4px 8px}
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+.page-header{background:var(--surface);border-bottom:1px solid var(--border);padding:12px 20px;flex-shrink:0}
+.page-header h1{font-size:19px;font-weight:700;font-family:'Playfair Display',serif;letter-spacing:-.2px}
+.page-header p{font-size:12px;color:var(--text2);margin-top:2px}
+.pipeline-strip{background:var(--surface2);border-bottom:1px solid var(--border);padding:7px 20px;display:flex;align-items:center;gap:0;flex-shrink:0;overflow-x:auto}
+.pipe-step{display:flex;flex-direction:column;align-items:center;gap:2px;flex:1;min-width:80px;padding:3px 6px;border-radius:var(--rsm);cursor:pointer;transition:background .15s;text-decoration:none}
+.pipe-step:hover{background:var(--surface3)}
+.pipe-step.active-stage{background:var(--accent-glow)}
+.pipe-step-label{font-size:10px;color:var(--text2);font-weight:500;text-align:center}
+.pipe-step.active-stage .pipe-step-label{color:var(--accent)}
+.pipe-step-status{font-size:9px;color:var(--text3);text-align:center}
+.pipe-arrow{color:var(--text3);font-size:13px;margin:0 2px;padding-bottom:8px;flex-shrink:0}
+.pipe-dot{width:8px;height:8px;border-radius:50%;margin:0 auto 2px}
+.pipe-dot.ok{background:var(--ok)}
+.pipe-dot.active{background:var(--accent);box-shadow:0 0 6px rgba(200,90,42,.4)}
+.pipe-dot.pending{background:var(--surface3);border:1px solid var(--border2)}
+.pipe-dot.warn{background:var(--warn)}
+.main-tabs{display:flex;background:var(--surface);border-bottom:1px solid var(--border);padding:0 20px;flex-shrink:0}
+.main-tab{display:flex;align-items:center;gap:7px;padding:11px 18px;font-size:12px;font-weight:500;color:var(--text2);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;white-space:nowrap}
+.main-tab:hover{color:var(--text)}
+.main-tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.work-area{flex:1;display:flex;overflow:hidden}
+.tab-content{flex:1;overflow:hidden;display:flex;flex-direction:column}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:var(--rpill);font-size:10px;font-weight:600;white-space:nowrap}
+.badge-ok{background:rgba(26,155,122,.15);color:var(--ok)}
+.badge-warn{background:rgba(196,122,26,.15);color:var(--warn)}
+.badge-critical{background:rgba(217,64,64,.15);color:var(--critical)}
+.badge-muted{background:rgba(138,133,120,.1);color:var(--text2)}
+.badge-accent{background:rgba(200,90,42,.15);color:var(--accent)}
+.section-title{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.7px;margin:0 0 10px}
+
+/* ─── INGEST ─── */
+.ingest-layout{flex:1;display:flex;overflow:hidden}
+.ingest-sources{width:260px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0;padding:14px}
+.ingest-main{flex:1;overflow-y:auto;padding:16px 20px}
+.src-label{font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.7px;text-transform:uppercase;margin:14px 0 8px}
+.src-label:first-child{margin-top:0}
+.upload-card{background:var(--surface2);border:2px dashed var(--border2);border-radius:var(--r);padding:13px;margin-bottom:7px;cursor:pointer;transition:all .15s;text-align:center}
+.upload-card:hover{border-color:var(--accent);background:var(--accent-glow)}
+.upload-card.loaded{border-style:solid;border-color:rgba(26,155,122,.4);background:var(--ok-glow)}
+.upload-card-icon{font-size:18px;margin-bottom:5px}
+.upload-card-title{font-size:12px;font-weight:600}
+.upload-card.loaded .upload-card-title{color:var(--ok)}
+.upload-card-sub{font-size:10px;color:var(--text3);margin-top:2px}
+.iface-row{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid rgba(42,40,48,.5);font-size:12px}
+.iface-row:last-child{border-bottom:none}
+.iface-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.ds-table{width:100%;border-collapse:collapse;font-size:12.5px}
+.ds-table thead th{background:var(--surface);position:sticky;top:0;padding:9px 12px;text-align:left;color:var(--text2);font-weight:600;font-size:11px;border-bottom:1px solid var(--border);white-space:nowrap}
+.ds-table tbody tr{border-bottom:1px solid var(--border);cursor:pointer;transition:background .1s}
+.ds-table tbody tr:hover{background:var(--surface2)}
+.ds-table td{padding:9px 12px;vertical-align:middle}
+.val-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin-top:12px;display:none}
+.val-panel.open{display:block}
+.conf-bar-outer{height:5px;background:var(--surface3);border-radius:3px;overflow:hidden;width:80px}
+.conf-bar-inner{height:100%;border-radius:3px}
+
+/* ─── CALCULATE ─── */
+.calc-layout{flex:1;display:flex;overflow:hidden}
+.calc-setup{width:300px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;flex-shrink:0}
+.calc-setup-body{flex:1;overflow-y:auto;padding:14px}
+.calc-setup-foot{padding:10px 14px;border-top:1px solid var(--border);flex-shrink:0}
+.calc-main{flex:1;overflow-y:auto;padding:16px 20px}
+.form-group{margin-bottom:12px}
+.form-label{font-size:11px;color:var(--text2);font-weight:500;margin-bottom:5px}
+.form-sel{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:var(--rsm);color:var(--text);font-size:12px;padding:7px 9px;outline:none;cursor:pointer;font-family:'DM Sans',sans-serif}
+.form-sel:focus{border-color:var(--accent)}
+.check-row{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid rgba(42,40,48,.4);font-size:12px;cursor:pointer}
+.check-row:last-child{border-bottom:none}
+.radio-row{display:flex;align-items:center;gap:8px;padding:5px 0;font-size:12px;cursor:pointer}
+.run-card{background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);padding:11px 14px;margin-bottom:8px;cursor:pointer;transition:all .15s}
+.run-card:hover{border-color:var(--border2)}
+.run-card.sel{border-color:rgba(200,90,42,.4);background:var(--accent-glow)}
+.run-id-mono{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700}
+.run-detail-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;margin-bottom:10px}
+.kv-row{display:flex;justify-content:space-between;align-items:center;font-size:12px;padding:5px 0;border-bottom:1px solid rgba(42,40,48,.4)}
+.kv-row:last-child{border-bottom:none}
+.progress-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;align-items:center;justify-content:center}
+.progress-overlay.open{display:flex}
+.progress-card{background:var(--surface);border:1px solid var(--border2);border-radius:var(--r);padding:28px 32px;width:440px;max-width:90vw}
+.prog-counters{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px}
+.prog-c{background:var(--surface2);border:1px solid var(--border);border-radius:var(--rsm);padding:10px 12px;text-align:center}
+.prog-c-val{font-size:20px;font-weight:800;font-family:'JetBrains Mono',monospace;color:var(--accent)}
+.prog-c-label{font-size:10px;color:var(--text3);margin-top:2px}
+.prog-bar-outer{background:var(--surface3);border-radius:4px;height:8px;overflow:hidden;margin:8px 0 4px}
+.prog-bar-inner{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--ai-from),var(--ai-to));transition:width .3s ease}
+
+/* ─── LOG ─── */
+.log-toolbar{display:flex;align-items:center;gap:8px;padding:10px 20px;background:var(--surface);border-bottom:1px solid var(--border);flex-shrink:0;flex-wrap:wrap}
+.log-wrap{flex:1;display:flex;overflow:hidden}
+.log-table-wrap{flex:1;overflow:auto}
+.log-table{width:100%;border-collapse:collapse;font-size:12px}
+.log-table thead th{background:var(--surface);position:sticky;top:0;z-index:2;padding:9px 16px;text-align:left;color:var(--text2);font-weight:600;font-size:11px;border-bottom:1px solid var(--border);white-space:nowrap}
+.log-table tbody tr{border-bottom:1px solid var(--border);cursor:pointer;transition:background .1s}
+.log-table tbody tr:hover{background:var(--surface2)}
+.log-table tbody tr.sel{background:var(--accent-glow)}
+.log-table td{padding:9px 16px;vertical-align:middle}
+.log-detail{width:360px;background:var(--surface);border-left:1px solid var(--border);overflow-y:auto;flex-shrink:0;padding:14px 16px;display:none}
+
+/* ─── EXPLAIN ─── */
+.explain-layout{flex:1;display:flex;overflow:hidden}
+.explain-left{width:280px;background:var(--surface);border-right:1px solid var(--border);overflow-y:auto;flex-shrink:0;padding:14px}
+.explain-main{flex:1;overflow-y:auto;padding:16px 20px}
+.xrun-card{background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);padding:10px 12px;margin-bottom:7px;cursor:pointer;transition:all .15s}
+.xrun-card:hover{border-color:var(--border2)}
+.xrun-card.sel{border-color:rgba(200,90,42,.4);background:var(--accent-glow)}
+.explain-block{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:13px 15px;margin-bottom:10px}
+.explain-block-title{font-size:12px;font-weight:700;margin-bottom:9px;display:flex;align-items:center;gap:6px}
+.xrule{display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid rgba(42,40,48,.4);font-size:12px}
+.xrule:last-child{border-bottom:none}
+.xrule-dot{width:6px;height:6px;border-radius:50%;margin-top:5px;flex-shrink:0;background:var(--ok)}
+.driver-bar{height:5px;border-radius:3px;background:var(--accent);margin-top:3px;opacity:.8}
+
+/* AI PANEL */
+.ai-panel{width:300px;background:var(--surface);border-left:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0}
+.ai-header{padding:12px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;flex-shrink:0}
+.ai-badge{font-size:10px;font-weight:700;background:linear-gradient(90deg,var(--ai-from),var(--ai-to));-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:.5px}
+.ai-messages{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px}
+.ai-msg{padding:9px 11px;border-radius:var(--r);font-size:12px;line-height:1.5}
+.ai-msg.assistant{background:var(--surface2);border:1px solid var(--border)}
+.ai-msg.user{background:var(--accent-glow);border:1px solid rgba(200,90,42,.2);text-align:right}
+.ai-input-row{display:flex;gap:6px;padding:10px 12px;border-top:1px solid var(--border);flex-shrink:0}
+.ai-input{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:var(--rsm);padding:7px 10px;color:var(--text);font-size:12px;outline:none;font-family:'DM Sans',sans-serif}
+.ai-input:focus{border-color:var(--accent)}
+.ai-send{background:linear-gradient(135deg,var(--ai-from),var(--ai-to));border:none;border-radius:var(--rsm);width:30px;height:30px;cursor:pointer;color:#fff;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+
+/* MODAL */
+.modal-ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:100;align-items:center;justify-content:center}
+.modal-ov.open{display:flex}
+.modal-card{background:var(--surface);border:1px solid var(--border2);border-radius:var(--r);padding:22px 24px;width:480px;max-width:95vw}
+.modal-title{font-size:15px;font-weight:700;font-family:'Playfair Display',serif;margin-bottom:14px}
+.drop-zone{border:2px dashed var(--border2);border-radius:var(--r);padding:26px;text-align:center;cursor:pointer;margin-bottom:14px;transition:all .15s}
+.drop-zone:hover{border-color:var(--accent);background:var(--accent-glow)}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:16px}
+</style>
+</head>
+<body>
+<nav class="topnav">
+  <a class="brand" href="licenseiq-financial-control-center.html">
+    <div class="brand-icon">✦</div>
+    <div class="brand-name">License<em>IQ</em></div>
+  </a>
+  <div style="width:1px;height:22px;background:var(--border)"></div>
+  <input class="topnav-search" placeholder="Search runs, datasets, contracts…"/>
+  <div class="spacer"></div>
+  <div class="avatar">CT</div>
+</nav>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-section">Financial Control</div>
+    <a class="sidebar-item" href="licenseiq-financial-control-center.html"><span class="icon">🏠</span> Control Center</a>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-section">Contract Intelligence</div>
+    <a class="sidebar-item" href="licenseiq-contract-intelligence.html"><span class="icon">🔍</span> Search &amp; Manage</a>
+    <a class="sidebar-item" href="licenseiq-term-mapping.html"><span class="icon">🗺️</span> Term Mapping</a>
+    <a class="sidebar-item" href="licenseiq-pending-queue.html"><span class="icon">🕐</span> Pending Queue <span class="sidebar-badge">7</span></a>
+    <div class="sidebar-item"><span class="icon">⬆️</span> Upload &amp; Process</div>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-section">Contract Execution</div>
+    <div class="sidebar-item active" id="si-ingest" onclick="switchTab('ingest')"><span class="icon">📥</span> Data Ingestion</div>
+    <div class="sidebar-item" id="si-calculate" onclick="switchTab('calculate')"><span class="icon">▶️</span> Calculate</div>
+    <div class="sidebar-item" id="si-log" onclick="switchTab('log')"><span class="icon">📋</span> Execution Log</div>
+    <div class="sidebar-item" id="si-explain" onclick="switchTab('explain')"><span class="icon">✦</span> Explain</div>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-section">Finance Hub</div>
+    <a class="sidebar-item" href="licenseiq-accrual-management.html"><span class="icon">📋</span> Accrual Management</a>
+    <a class="sidebar-item" href="licenseiq-journal-entry-hub.html"><span class="icon">📓</span> Journal Entry Hub</a>
+    <a class="sidebar-item" href="licenseiq-period-close.html"><span class="icon">🗂️</span> Period Close <span class="sidebar-badge ok">2</span></a>
+    <div class="sidebar-item"><span class="icon">⚖️</span> Adjustments &amp; Disputes</div>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-section">Financial Intelligence</div>
+    <div class="sidebar-item"><span class="icon">📈</span> Analytics</div>
+    <div class="sidebar-item"><span class="icon">📄</span> Reports</div>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-section">Financial Data Layer</div>
+    <div class="sidebar-item"><span class="icon">🗄️</span> Enterprise Data Mgmt</div>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-section">System Administration</div>
+    <div class="sidebar-item"><span class="icon">🏢</span> Enterprise Master</div>
+    <div class="sidebar-item"><span class="icon">⚙️</span> Enterprise Config</div>
+    <div class="sidebar-item"><span class="icon">👤</span> User Management</div>
+    <div class="sidebar-item"><span class="icon">🔐</span> Access &amp; Roles</div>
+    <div class="sidebar-item"><span class="icon">🔗</span> Integrations</div>
+    <div class="sidebar-item"><span class="icon">🕵️</span> Audit Trail</div>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-section">Advanced AI</div>
+    <div class="sidebar-item"><span class="icon">🧠</span> Knowledge Base</div>
+    <div class="sidebar-item"><span class="icon">🤖</span> RAG Management</div>
+    <div class="sidebar-item"><span class="icon">✦</span> System Settings</div>
+  </aside>
+
+  <div class="main">
+    <div class="page-header">
+      <div style="display:flex;align-items:flex-end;justify-content:space-between">
+        <div><h1 id="pageTitle">Data Ingestion</h1><p id="pageSub">Load sales, POS, and external feed data for the calculation period</p></div>
+        <div id="pageActions"><button class="btn btn-ghost" style="font-size:11px" onclick="document.getElementById('uploadModal').classList.add('open')">+ Add Dataset</button></div>
+      </div>
+    </div>
+
+    <div class="pipeline-strip">
+      <div class="pipe-step active-stage" onclick="switchTab('ingest')">
+        <div class="pipe-dot active"></div>
+        <div class="pipe-step-label">Ingest</div>
+        <div class="pipe-step-status">3 datasets</div>
+      </div>
+      <div class="pipe-arrow">›</div>
+      <div class="pipe-step" onclick="switchTab('calculate')">
+        <div class="pipe-dot pending" id="pipeDotCalc"></div>
+        <div class="pipe-step-label">Calculate</div>
+        <div class="pipe-step-status" id="pipeCalcStatus">Ready</div>
+      </div>
+      <div class="pipe-arrow">›</div>
+      <a class="pipe-step" href="licenseiq-accrual-management.html">
+        <div class="pipe-dot ok"></div>
+        <div class="pipe-step-label" style="color:var(--ok)">Accruals</div>
+        <div class="pipe-step-status">$4.11M</div>
+      </a>
+      <div class="pipe-arrow">›</div>
+      <a class="pipe-step" href="licenseiq-journal-entry-hub.html">
+        <div class="pipe-dot ok"></div>
+        <div class="pipe-step-label" style="color:var(--ok)">JE Hub</div>
+        <div class="pipe-step-status">10 JEs</div>
+      </a>
+      <div class="pipe-arrow">›</div>
+      <a class="pipe-step" href="licenseiq-period-close.html">
+        <div class="pipe-dot warn"></div>
+        <div class="pipe-step-label" style="color:var(--warn)">Period Close</div>
+        <div class="pipe-step-status">78% ready</div>
+      </a>
+    </div>
+
+    <div class="main-tabs">
+      <div class="main-tab active" id="tab-ingest" onclick="switchTab('ingest')">📥 Data Ingestion</div>
+      <div class="main-tab" id="tab-calculate" onclick="switchTab('calculate')">▶ Calculate</div>
+      <div class="main-tab" id="tab-log" onclick="switchTab('log')">📋 Execution Log</div>
+      <div class="main-tab" id="tab-explain" onclick="switchTab('explain')">✦ Explain</div>
+    </div>
+
+    <div class="work-area">
+
+      <!-- ══ INGEST ══ -->
+      <div class="tab-content" id="tc-ingest">
+        <div class="ingest-layout">
+          <div class="ingest-sources">
+            <div class="src-label">Upload Files</div>
+            <div class="upload-card loaded">
+              <div class="upload-card-icon">📊</div>
+              <div class="upload-card-title">Sales Data</div>
+              <div class="upload-card-sub">Q1_Sales_2026.csv · 2.1M rows</div>
+            </div>
+            <div class="upload-card loaded">
+              <div class="upload-card-icon">🏪</div>
+              <div class="upload-card-title">POS Data</div>
+              <div class="upload-card-sub">Q1_POS_Export.csv · 847K rows</div>
+            </div>
+            <div class="upload-card" onclick="document.getElementById('uploadModal').classList.add('open')">
+              <div class="upload-card-icon">📎</div>
+              <div class="upload-card-title">Royalty Report</div>
+              <div class="upload-card-sub">Drop or click to upload</div>
+            </div>
+            <div class="upload-card" onclick="document.getElementById('uploadModal').classList.add('open')">
+              <div class="upload-card-icon">⚖️</div>
+              <div class="upload-card-title">Adjustment File</div>
+              <div class="upload-card-sub">Drop or click to upload</div>
+            </div>
+            <div class="src-label">Live Interfaces</div>
+            <div class="iface-row">
+              <div class="iface-dot" style="background:var(--ok)"></div>
+              <div style="flex:1"><div style="font-size:12px;font-weight:500">ERP Feed</div><div style="font-size:10px;color:var(--text3)">SAP S/4HANA</div></div>
+              <span class="badge badge-ok">Live</span>
+            </div>
+            <div class="iface-row">
+              <div class="iface-dot" style="background:var(--warn)"></div>
+              <div style="flex:1"><div style="font-size:12px;font-weight:500">Distributor POS</div><div style="font-size:10px;color:var(--text3)">SFTP · Partial</div></div>
+              <span class="badge badge-warn">Partial</span>
+            </div>
+            <div class="iface-row">
+              <div class="iface-dot" style="background:var(--text3)"></div>
+              <div style="flex:1"><div style="font-size:12px;font-weight:500">Partner Portal</div><div style="font-size:10px;color:var(--text3)">OAuth · Awaiting</div></div>
+              <span class="badge badge-muted">Pending</span>
+            </div>
+          </div>
+
+          <div class="ingest-main">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+              <div class="section-title">Loaded Datasets — Q1 2026</div>
+              <div style="display:flex;gap:8px">
+                <select style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--rsm);color:var(--text2);font-size:11px;padding:4px 7px;outline:none;cursor:pointer;font-family:'DM Sans',sans-serif"><option>Q1 2026</option><option>Q4 2025</option></select>
+                <button class="btn btn-ghost btn-sm" onclick="document.getElementById('uploadModal').classList.add('open')">+ Add Dataset</button>
+              </div>
+            </div>
+            <table class="ds-table">
+              <thead><tr><th>Dataset</th><th>Source</th><th>Records</th><th>Status</th><th>Validated</th><th></th></tr></thead>
+              <tbody id="dsTable"></tbody>
+            </table>
+            <div class="val-panel" id="valPanel">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+                <div style="font-size:13px;font-weight:700;font-family:'Playfair Display',serif" id="valTitle">Validation</div>
+                <button class="btn btn-ghost btn-sm" onclick="document.getElementById('valPanel').classList.remove('open')">×</button>
+              </div>
+              <div id="valBody"></div>
+              <div style="display:flex;gap:6px;margin-top:12px">
+                <button class="btn btn-ok btn-sm" onclick="document.getElementById('valPanel').classList.remove('open');alert('Dataset approved.')">✓ Approve</button>
+                <button class="btn btn-ghost btn-sm" onclick="alert('Opening mapping editor…')">Fix Mappings</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ CALCULATE ══ -->
+      <div class="tab-content" id="tc-calculate" style="display:none">
+        <div class="calc-layout">
+          <div class="calc-setup">
+            <div class="calc-setup-body">
+              <div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:12px">Run Setup</div>
+              <div class="form-group">
+                <div class="form-label">Period</div>
+                <select class="form-sel"><option>Q1 2026 (Jan–Mar)</option><option>Q4 2025</option></select>
+              </div>
+              <div class="form-group">
+                <div class="form-label">Datasets</div>
+                <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--rsm);padding:8px 10px">
+                  <label class="check-row"><input type="checkbox" checked style="accent-color:var(--accent)"> Q1 Sales Data <span style="color:var(--text3);font-size:10px;margin-left:4px">2.1M rows</span></label>
+                  <label class="check-row"><input type="checkbox" checked style="accent-color:var(--accent)"> Q1 POS Export <span style="color:var(--text3);font-size:10px;margin-left:4px">847K rows</span></label>
+                  <label class="check-row"><input type="checkbox" checked style="accent-color:var(--accent)"> ERP GL Feed <span style="color:var(--text3);font-size:10px;margin-left:4px">Live</span></label>
+                </div>
+              </div>
+              <div class="form-group">
+                <div class="form-label">Contract Scope</div>
+                <label class="radio-row"><input type="radio" name="scope" checked style="accent-color:var(--accent)"> All active (8 contracts)</label>
+                <label class="radio-row"><input type="radio" name="scope" style="accent-color:var(--accent)"> Selected contracts</label>
+              </div>
+              <div class="form-group">
+                <div class="form-label">Run Type</div>
+                <label class="radio-row"><input type="radio" name="rtype" checked style="accent-color:var(--accent)"> Preview (no write)</label>
+                <label class="radio-row"><input type="radio" name="rtype" style="accent-color:var(--accent)"> Final</label>
+                <label class="radio-row"><input type="radio" name="rtype" style="accent-color:var(--accent)"> Adjustment</label>
+              </div>
+            </div>
+            <div class="calc-setup-foot">
+              <button class="btn btn-primary" style="width:100%;padding:9px" onclick="startRun()">▶ Run Calculations</button>
+            </div>
+          </div>
+          <div class="calc-main">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+              <div class="section-title">Recent Runs</div>
+              <button class="btn btn-ghost btn-sm" onclick="switchTab('log')">Full Log →</button>
+            </div>
+            <div id="runsList"></div>
+            <div id="runDetail" style="display:none;margin-top:4px"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ LOG ══ -->
+      <div class="tab-content" id="tc-log" style="display:none;flex-direction:column">
+        <div class="log-toolbar">
+          <input style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--rsm);padding:6px 10px;color:var(--text);font-size:12px;width:200px;outline:none;font-family:'DM Sans',sans-serif" placeholder="🔍  Search runs…" oninput="renderLog(this.value)"/>
+          <select style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--rsm);color:var(--text2);font-size:12px;padding:5px 8px;outline:none;cursor:pointer;font-family:'DM Sans',sans-serif"><option>All Types</option><option>Preview</option><option>Final</option><option>Adjustment</option></select>
+          <div class="spacer"></div>
+          <button class="btn btn-ghost btn-sm">Export CSV</button>
+        </div>
+        <div class="log-wrap">
+          <div class="log-table-wrap">
+            <table class="log-table">
+              <thead><tr><th>Run ID</th><th>Triggered By</th><th>Period</th><th>Type</th><th>Datasets</th><th>Contracts</th><th>Accrual Value</th><th>Status</th><th></th></tr></thead>
+              <tbody id="logTable"></tbody>
+            </table>
+          </div>
+          <div class="log-detail" id="logDetail"></div>
+        </div>
+      </div>
+
+      <!-- ══ EXPLAIN ══ -->
+      <div class="tab-content" id="tc-explain" style="display:none">
+        <div class="explain-layout">
+          <div class="explain-left">
+            <div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px">Select a Run</div>
+            <div id="xRunList"></div>
+          </div>
+          <div class="explain-main" id="xMain">
+            <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:200px;color:var(--text3);gap:10px">
+              <div style="font-size:28px">✦</div><div>Select a run to explain</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- AI PANEL -->
+      <div class="ai-panel">
+        <div class="ai-header">
+          <div style="font-size:14px">✦</div>
+          <div class="ai-badge">liQ AGENT</div>
+          <div style="font-size:10px;color:var(--text3);margin-left:auto" id="aiCtx">Ingestion</div>
+        </div>
+        <div class="ai-messages" id="aiMessages">
+          <div class="ai-msg assistant">Contract Execution loaded. <strong>3 datasets</strong> ready for Q1 2026 — Sales (2.1M rows), POS (847K rows), and ERP Feed (live).<br><br>⚠ The Distributor POS interface is partial — 3 distributors missing. This affects Amazon and BMG confidence scores. Want me to flag those for resolution before you run calculations?</div>
+        </div>
+        <div class="ai-input-row">
+          <input class="ai-input" id="aiInput" placeholder="Ask about execution…" onkeydown="if(event.key==='Enter')sendAI()"/>
+          <button class="ai-send" onclick="sendAI()">↑</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- UPLOAD MODAL -->
+<div class="modal-ov" id="uploadModal">
+  <div class="modal-card">
+    <div class="modal-title">Upload Dataset</div>
+    <div class="drop-zone" onclick="alert('File picker')">
+      <div style="font-size:28px;margin-bottom:8px">📎</div>
+      <div style="font-size:13px;font-weight:600">Drop file here or click to browse</div>
+      <div style="font-size:11px;color:var(--text3);margin-top:4px">CSV, XLSX — Sales, POS, Royalty Reports, Adjustments, External Feeds</div>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px">
+      <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer"><input type="radio" name="dt" checked style="accent-color:var(--accent)"> Sales</label>
+      <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer"><input type="radio" name="dt" style="accent-color:var(--accent)"> POS</label>
+      <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer"><input type="radio" name="dt" style="accent-color:var(--accent)"> Royalty Report</label>
+      <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer"><input type="radio" name="dt" style="accent-color:var(--accent)"> Adjustment</label>
+      <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer"><input type="radio" name="dt" style="accent-color:var(--accent)"> External Feed</label>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="document.getElementById('uploadModal').classList.remove('open')">Cancel</button>
+      <button class="btn btn-primary" onclick="document.getElementById('uploadModal').classList.remove('open');alert('Dataset uploaded — AI validation running…')">Upload &amp; Validate</button>
+    </div>
+  </div>
+</div>
+
+<!-- PROGRESS OVERLAY -->
+<div class="progress-overlay" id="progOverlay">
+  <div class="progress-card">
+    <div style="font-size:16px;font-weight:700;font-family:'Playfair Display',serif;margin-bottom:4px">Running Calculations…</div>
+    <div style="font-size:12px;color:var(--text2);margin-bottom:16px" id="progLabel">Initializing · Q1 2026</div>
+    <div class="prog-counters">
+      <div class="prog-c"><div class="prog-c-val" id="cTx">0</div><div class="prog-c-label">Transactions</div></div>
+      <div class="prog-c"><div class="prog-c-val" id="cCont">0</div><div class="prog-c-label">Contracts</div></div>
+      <div class="prog-c"><div class="prog-c-val" id="cRules">0</div><div class="prog-c-label">Rules Applied</div></div>
+      <div class="prog-c"><div class="prog-c-val" id="cLines">0</div><div class="prog-c-label">Accrual Lines</div></div>
+    </div>
+    <div class="prog-bar-outer"><div class="prog-bar-inner" id="progBar" style="width:0%"></div></div>
+    <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text3)"><span id="progPct">0%</span><span id="progETA">ETA ~28s</span></div>
+  </div>
+</div>
+
+<script>
+const TABS = ['ingest','calculate','log','explain'];
+const tabMeta = {
+  ingest:    {title:'Data Ingestion',    sub:'Load sales, POS, and external feed data for the calculation period', act:'<button class="btn btn-ghost" style="font-size:11px" onclick="document.getElementById(\'uploadModal\').classList.add(\'open\')">+ Add Dataset</button>'},
+  calculate: {title:'Calculate',         sub:'Configure and run royalty calculations across all active contracts',   act:'<button class="btn btn-primary" onclick="startRun()">▶ Run Calculations</button>'},
+  log:       {title:'Execution Log',     sub:'Immutable audit trail of all calculation runs and their outputs',     act:'<button class="btn btn-ghost" style="font-size:11px">Export CSV</button>'},
+  explain:   {title:'Explain',           sub:'AI-powered breakdown of calculation results — rules, drivers, variances', act:'<button class="btn btn-ghost" style="font-size:11px">Share Explanation</button>'},
+};
+const aiCtxLabels = {ingest:'Ingestion',calculate:'Calculate',log:'Log',explain:'Explain'};
+
+function switchTab(t){
+  TABS.forEach(x=>{
+    document.getElementById('tc-'+x).style.display = x===t?'flex':'none';
+    document.getElementById('tab-'+x).classList.toggle('active', x===t);
+    document.getElementById('si-'+x).classList.toggle('active', x===t);
+  });
+  document.getElementById('pageTitle').textContent = tabMeta[t].title;
+  document.getElementById('pageSub').textContent   = tabMeta[t].sub;
+  document.getElementById('pageActions').innerHTML  = tabMeta[t].act;
+  document.getElementById('aiCtx').textContent     = aiCtxLabels[t];
+  // update pipeline active
+  document.querySelectorAll('.pipe-step').forEach(el=>el.classList.remove('active-stage'));
+  if(t==='ingest') document.querySelector('.pipe-step').classList.add('active-stage');
+}
+
+/* ── DATASETS ── */
+const datasets = [
+  {id:'ds1',name:'Q1 Sales Data',source:'Manual Upload',records:'2,147,382',status:'Complete',validated:true,issues:{unmapped:0,territory:0,currency:0},conf:{Product:98,Territory:97,Partner:99}},
+  {id:'ds2',name:'Q1 POS Export',source:'Distributor SFTP',records:'847,291',status:'Partial',validated:true,issues:{unmapped:12,territory:8,currency:0},conf:{Product:91,Territory:87,Partner:94}},
+  {id:'ds3',name:'ERP GL Feed',source:'SAP S/4HANA Live',records:'14,203',status:'Complete',validated:true,issues:{unmapped:0,territory:0,currency:0},conf:{Product:99,Territory:99,Partner:99}},
+  {id:'ds4',name:'Royalty Report',source:'Pending Upload',records:'—',status:'Pending',validated:false,issues:{},conf:{}},
+];
+function renderDatasets(){
+  document.getElementById('dsTable').innerHTML = datasets.map(d=>`
+    <tr onclick="openVal('${d.id}')">
+      <td><div style="font-weight:600;font-size:13px">${d.name}</div></td>
+      <td style="color:var(--text2);font-size:11px">${d.source}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:11px">${d.records}</td>
+      <td><span class="badge ${d.status==='Complete'?'badge-ok':d.status==='Partial'?'badge-warn':'badge-muted'}">${d.status}</span></td>
+      <td>${d.validated?'<span style="color:var(--ok);font-size:11px">✓ Validated</span>':'<span style="color:var(--text3);font-size:11px">Pending</span>'}</td>
+      <td>${d.validated?`<button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();openVal('${d.id}')">Review</button>`:''}</td>
+    </tr>`).join('');
+}
+function openVal(id){
+  const d=datasets.find(x=>x.id===id);if(!d.validated)return;
+  const p=document.getElementById('valPanel'); p.classList.add('open');
+  document.getElementById('valTitle').textContent=d.name+' — Validation';
+  const tot=Object.values(d.issues).reduce((a,b)=>a+b,0);
+  document.getElementById('valBody').innerHTML=`
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--rsm);padding:9px;text-align:center"><div style="font-size:18px;font-weight:800;font-family:'JetBrains Mono',monospace">${d.records}</div><div style="font-size:10px;color:var(--text3)">Records</div></div>
+      <div style="background:${tot?'rgba(196,122,26,.08)':'var(--ok-glow)'};border:1px solid ${tot?'rgba(196,122,26,.3)':'rgba(26,155,122,.3)'};border-radius:var(--rsm);padding:9px;text-align:center"><div style="font-size:18px;font-weight:800;font-family:'JetBrains Mono',monospace;color:${tot?'var(--warn)':'var(--ok)'}">${tot||'0'}</div><div style="font-size:10px;color:var(--text3)">Issues</div></div>
+    </div>
+    ${tot?`<div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--rsm);padding:10px 12px;margin-bottom:10px;font-size:12px">
+      ${Object.entries(d.issues).map(([k,v])=>`<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid rgba(42,40,48,.5)"><span style="color:var(--text2);text-transform:capitalize">${k}</span><span style="font-weight:600;color:${v?'var(--warn)':'var(--ok)'}">${v}</span></div>`).join('')}
+    </div>`:''}
+    <div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px">Confidence</div>
+    ${Object.entries(d.conf).map(([k,v])=>`
+      <div style="display:flex;align-items:center;gap:8px;font-size:11px;margin-bottom:6px">
+        <span style="color:var(--text2);min-width:60px">${k}</span>
+        <div class="conf-bar-outer"><div class="conf-bar-inner" style="width:${v}%;background:${v>=95?'var(--ok)':v>=85?'var(--warn)':'var(--critical)'}"></div></div>
+        <span style="min-width:32px;text-align:right;font-weight:600;color:${v>=95?'var(--ok)':v>=85?'var(--warn)':'var(--critical)'}">${v}%</span>
+      </div>`).join('')}`;
+}
+
+/* ── RUNS ── */
+const runs = [
+  {id:'RUN-001',dt:'2026-03-14 09:41',period:'Q1 2026',type:'Preview',ds:2,contracts:8,accrual:'$3,921,400',status:'Complete',by:'liQ Agent'},
+  {id:'RUN-002',dt:'2026-03-14 14:22',period:'Q1 2026',type:'Preview',ds:3,contracts:8,accrual:'$4,111,500',status:'Complete',by:'CT'},
+  {id:'RUN-003',dt:'2026-03-15 10:05',period:'Q1 2026',type:'Final',  ds:3,contracts:8,accrual:'$4,111,500',status:'Complete',by:'CT'},
+];
+let selRun=null, selLog=null;
+function renderRuns(){
+  document.getElementById('runsList').innerHTML=runs.map(r=>`
+    <div class="run-card ${selRun===r.id?'sel':''}" onclick="selectRun('${r.id}')">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+        <span class="run-id-mono">${r.id}</span>
+        <span class="badge ${r.type==='Final'?'badge-ok':'badge-muted'}">${r.type}</span>
+      </div>
+      <div style="font-size:11px;color:var(--text2)">${r.dt} · ${r.by}</div>
+      <div style="display:flex;gap:12px;margin-top:5px">
+        <span style="font-size:11px;color:var(--text3)">${r.ds} datasets</span>
+        <span style="font-size:11px;color:var(--text3)">${r.contracts} contracts</span>
+        <span style="font-size:11px;color:var(--ok);font-weight:700;font-family:'JetBrains Mono',monospace;margin-left:auto">${r.accrual}</span>
+      </div>
+    </div>`).join('');
+}
+function selectRun(id){
+  selRun=id; renderRuns();
+  const r=runs.find(x=>x.id===id);
+  const d=document.getElementById('runDetail'); d.style.display='block';
+  d.innerHTML=`
+    <div class="run-detail-box">
+      ${[['Period',r.period],['Run Type',r.type],['Triggered By',r.by],['Datasets',r.ds],['Contracts',r.contracts],['Accrual Value',r.accrual],['Status',r.status]].map(([k,v])=>`
+        <div class="kv-row"><span style="color:var(--text2)">${k}</span><span style="font-weight:${k==='Accrual Value'?'700':'500'};color:${k==='Accrual Value'?'var(--ok)':'var(--text)'};font-family:${k==='Accrual Value'?'JetBrains Mono,monospace':'inherit'}">${v}</span></div>`).join('')}
+    </div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap">
+      <a class="btn btn-ok btn-sm" href="licenseiq-accrual-management.html">→ Accruals</a>
+      <button class="btn btn-ghost btn-sm" onclick="switchTab('explain')">✦ Explain</button>
+      <button class="btn btn-ghost btn-sm" onclick="switchTab('log')">📋 Log</button>
+    </div>`;
+}
+function startRun(){
+  const ov=document.getElementById('progOverlay'); ov.classList.add('open');
+  let pct=0;
+  const iv=setInterval(()=>{
+    pct+=3+Math.random()*2.5; if(pct>=100){pct=100;clearInterval(iv);
+      setTimeout(()=>{
+        ov.classList.remove('open');
+        const nr={id:'RUN-00'+(runs.length+1),dt:new Date().toISOString().slice(0,16).replace('T',' '),period:'Q1 2026',type:'Final',ds:3,contracts:8,accrual:'$4,111,500',status:'Complete',by:'CT'};
+        runs.unshift(nr); renderRuns(); selectRun(nr.id);
+        renderLog(); renderXRunList();
+        document.getElementById('pipeDotCalc').className='pipe-dot ok';
+        document.getElementById('pipeCalcStatus').textContent='Complete';
+        addAI(nr.id+' complete. Final accrual: <strong>$4,111,500</strong>. Ready to push to Accrual Management.');
+      },500);
+    }
+    document.getElementById('progBar').style.width=pct+'%';
+    document.getElementById('progPct').textContent=Math.round(pct)+'%';
+    document.getElementById('cTx').textContent=Math.floor(pct/100*2961585).toLocaleString();
+    document.getElementById('cCont').textContent=Math.floor(pct/100*8);
+    document.getElementById('cRules').textContent=Math.floor(pct/100*247);
+    document.getElementById('cLines').textContent=Math.floor(pct/100*8);
+    document.getElementById('progETA').textContent='ETA ~'+Math.max(0,Math.round((100-pct)/7))+'s';
+    const stages=['Initializing engine','Loading datasets','Applying contract rules','Calculating accruals','Writing results','Complete'];
+    document.getElementById('progLabel').textContent=stages[Math.min(Math.floor(pct/20),5)]+' · Q1 2026';
+  },100);
+}
+
+/* ── LOG ── */
+function renderLog(filter=''){
+  const filtered=runs.filter(r=>!filter||r.id.toLowerCase().includes(filter.toLowerCase())||r.by.toLowerCase().includes(filter.toLowerCase()));
+  document.getElementById('logTable').innerHTML=filtered.map(r=>`
+    <tr class="${selLog===r.id?'sel':''}" onclick="selectLog('${r.id}')">
+      <td><span style="font-family:'JetBrains Mono',monospace;font-size:11px">${r.id}</span></td>
+      <td><div style="font-size:12px">${r.by}</div><div style="font-size:10px;color:var(--text3)">${r.dt}</div></td>
+      <td style="font-size:11px;color:var(--text2)">${r.period}</td>
+      <td><span class="badge ${r.type==='Final'?'badge-ok':'badge-muted'}">${r.type}</span></td>
+      <td style="font-size:11px;color:var(--text2)">${r.ds} files</td>
+      <td style="font-size:11px;color:var(--text2)">${r.contracts}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ok);font-weight:700">${r.accrual}</td>
+      <td><span class="badge badge-ok">${r.status}</span></td>
+      <td><button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();switchTab('explain')">✦ Explain</button></td>
+    </tr>`).join('');
+}
+function selectLog(id){
+  selLog=id; renderLog();
+  const r=runs.find(x=>x.id===id);
+  const ld=document.getElementById('logDetail'); ld.style.display='block';
+  ld.innerHTML=`
+    <div style="font-size:13px;font-weight:700;font-family:'Playfair Display',serif;margin-bottom:10px">${r.id}</div>
+    ${[['Period',r.period],['Run Type',r.type],['Triggered By',r.by],['Timestamp',r.dt],['Datasets',r.ds+' files'],['Contracts',r.contracts],['Accrual',r.accrual],['Status',r.status]].map(([k,v])=>`
+      <div class="kv-row"><span style="color:var(--text2)">${k}</span><span style="font-weight:500">${v}</span></div>`).join('')}
+    <div style="margin-top:12px;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Audit Events</div>
+    ${['Engine initialized','Datasets validated','247 rules applied','Accrual lines generated','Results committed','Marked Complete'].map(e=>`
+      <div style="display:flex;gap:8px;padding:5px 0;border-bottom:1px solid rgba(42,40,48,.4);font-size:11px">
+        <div style="width:5px;height:5px;border-radius:50%;background:var(--ok);margin-top:4px;flex-shrink:0"></div>
+        <span style="color:var(--text2)">${e}</span>
+      </div>`).join('')}
+    <div style="display:flex;gap:6px;margin-top:12px;flex-wrap:wrap">
+      <button class="btn btn-ghost btn-sm" onclick="switchTab('explain')">✦ Explain</button>
+      <a class="btn btn-ok btn-sm" href="licenseiq-accrual-management.html">→ Accruals</a>
+    </div>`;
+}
+
+/* ── EXPLAIN ── */
+function renderXRunList(){
+  document.getElementById('xRunList').innerHTML=runs.map(r=>`
+    <div class="xrun-card" onclick="showExplain('${r.id}',this)">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+        <span style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700">${r.id}</span>
+        <span class="badge ${r.type==='Final'?'badge-ok':'badge-muted'}">${r.type}</span>
+      </div>
+      <div style="font-size:11px;color:var(--text2)">${r.dt}</div>
+      <div style="font-size:12px;color:var(--ok);font-weight:700;font-family:'JetBrains Mono',monospace;margin-top:4px">${r.accrual}</div>
+    </div>`).join('');
+}
+function showExplain(id,el){
+  document.querySelectorAll('.xrun-card').forEach(c=>c.classList.remove('sel'));
+  el.classList.add('sel');
+  const r=runs.find(x=>x.id===id);
+  const hasVar=id!=='RUN-003';
+  document.getElementById('xMain').innerHTML=`
+    <div style="font-size:16px;font-weight:700;font-family:'Playfair Display',serif;margin-bottom:3px">${r.id} — Explanation</div>
+    <div style="font-size:12px;color:var(--text2);margin-bottom:16px">${r.period} · ${r.type} · ${r.dt}</div>
+
+    <div class="explain-block">
+      <div class="explain-block-title">📊 Run Summary</div>
+      ${[['Total Accrual',r.accrual,'ok'],['Contracts Processed',r.contracts,''],['Rules Applied','247',''],['Datasets Used',r.ds+' files',''],hasVar?['Δ vs Previous','+$190,100 (+4.8%)','ok']:null].filter(Boolean).map(([k,v,c])=>`
+        <div class="kv-row"><span style="color:var(--text2)">${k}</span><span style="font-weight:600${c?';color:var(--'+c+');font-family:JetBrains Mono,monospace':''}">${v}</span></div>`).join('')}
+    </div>
+
+    <div class="explain-block">
+      <div class="explain-block-title">⚙️ Rules Fired</div>
+      ${[
+        {rule:'Mechanical Rate — Standard',n:3,impact:'$1,407,500',conf:97},
+        {rule:'Performance Rate — Blended',n:2,impact:'$766,800',conf:81},
+        {rule:'Sync License — Per Placement',n:1,impact:'$615,200',conf:95},
+        {rule:'Catalog Rev Share 12.5%',n:1,impact:'$987,100',conf:98},
+        {rule:'Master Use — Fixed Fee',n:1,impact:'$128,900',conf:99},
+      ].map(x=>`
+        <div class="xrule">
+          <div class="xrule-dot"></div>
+          <div style="flex:1">
+            <div style="font-weight:600">${x.rule}</div>
+            <div style="font-size:11px;color:var(--text2);margin-top:2px">${x.n} contracts · <span style="color:${x.conf>=90?'var(--ok)':x.conf>=80?'var(--warn)':'var(--critical)'}">${x.conf}% conf</span></div>
+          </div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ok);font-weight:700">${x.impact}</div>
+        </div>`).join('')}
+    </div>
+
+    ${hasVar?`
+    <div class="explain-block">
+      <div class="explain-block-title">📈 Why +$190,100 vs RUN-001?</div>
+      <div style="background:rgba(26,155,122,.08);border:1px solid rgba(26,155,122,.2);border-radius:var(--rsm);padding:9px 12px;margin-bottom:10px;font-size:12px;color:var(--ok)">4 drivers explain the full variance</div>
+      ${[
+        {d:'ERP Feed added (new in RUN-002)',v:'+$112,400',pct:59},
+        {d:'POS territory gap corrected',v:'+$44,200',pct:23},
+        {d:'Spotify rate tier refined',v:'+$28,300',pct:15},
+        {d:'Rounding adjustments',v:'+$5,200',pct:3},
+      ].map(x=>`
+        <div style="margin-bottom:10px">
+          <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px">
+            <span style="color:var(--text2)">${x.d}</span>
+            <span style="color:var(--ok);font-weight:700;font-family:'JetBrains Mono',monospace">${x.v}</span>
+          </div>
+          <div class="driver-bar" style="width:${x.pct}%"></div>
+        </div>`).join('')}
+    </div>`:''}
+
+    <div class="explain-block">
+      <div class="explain-block-title">🔍 Contract-Level</div>
+      ${[
+        {p:'Universal Catalog',a:'$987,100',c:98,n:'Catalog rev share applied correctly.'},
+        {p:'Universal Music Group',a:'$842,500',c:97,n:'Rate and volume both within expected range.'},
+        {p:'BMG Rights',a:'$566,600',c:72,n:'⚠ Multi-territory sub-publisher split pending.'},
+        {p:'Apple Music',a:'$449,000',c:96,n:'Combined mechanical + performance applied.'},
+        {p:'Warner Music Group',a:'$615,200',c:95,n:'500 sync placements confirmed.'},
+        {p:'Spotify AB',a:'$317,800',c:81,n:'⚠ Rate dispute — clause 4.2 ambiguity.'},
+        {p:'Amazon Music',a:'$203,400',c:78,n:'⚠ 3.2M unlicensed territory streams.'},
+        {p:'Netflix Inc.',a:'$128,900',c:99,n:'Fixed fee — no variance.'},
+      ].map(x=>`
+        <div style="padding:7px 0;border-bottom:1px solid rgba(42,40,48,.4)">
+          <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:2px">
+            <span style="font-weight:600">${x.p}</span>
+            <span style="font-family:'JetBrains Mono',monospace;color:var(--ok);font-weight:700">${x.a}</span>
+          </div>
+          <div style="font-size:11px;color:${x.c>=90?'var(--ok)':x.c>=80?'var(--warn)':'var(--critical)'}">${x.c}% · ${x.n}</div>
+        </div>`).join('')}
+    </div>
+    <div style="display:flex;gap:8px">
+      <a class="btn btn-ok btn-sm" href="licenseiq-accrual-management.html">→ Review Accruals</a>
+      <button class="btn btn-ghost btn-sm" onclick="alert('Exporting explanation…')">Export PDF</button>
+    </div>`;
+}
+
+/* ── AI ── */
+function addAI(txt){
+  const m=document.getElementById('aiMessages');
+  m.innerHTML+=`<div class="ai-msg assistant">${txt}</div>`;
+  m.scrollTop=9999;
+}
+function sendAI(){
+  const i=document.getElementById('aiInput');const msg=i.value.trim();if(!msg)return;
+  const m=document.getElementById('aiMessages');
+  m.innerHTML+=`<div class="ai-msg user">${msg}</div>`;i.value='';
+  const ctxMap={ingest:'3 datasets are loaded. POS is partial — 3 distributors missing, affecting 20 records across Amazon and BMG. Fix those mappings before running a final calculation.',calculate:'RUN-003 (Final) produced $4,111,500. The $190K variance from RUN-001 was from the ERP feed addition (+$112K) and a POS territory correction (+$44K). Switch to Explain for the full breakdown.',log:'3 runs logged for Q1 2026 — 2 preview, 1 final. All inputs and outputs are immutable. Select any run to view its full audit trail.',explain:'Biggest risks: BMG at 72% confidence (sub-publisher split) and Amazon at 78% (3.2M unlicensed streams). Resolving those 2 would bring weighted confidence above 95%.'};
+  const cur=TABS.find(t=>document.getElementById('tc-'+t).style.display!=='none')||'ingest';
+  setTimeout(()=>addAI(ctxMap[cur]||'How can I help with Contract Execution?'),400);
+}
+
+/* INIT */
+renderDatasets();
+renderRuns();
+renderLog();
+renderXRunList();
+</script>
+</body>
+</html>

@@ -1,0 +1,51 @@
+contract_id,transaction_id,transaction_date,partner_name,territory,channel,product_id,product_name,quantity,unit_price,net_sales_value,currency
+CTR-TS-006,CTR-TS-006-TXN-001,2024-10-24,Premium Audio Boutique,North America,E-commerce,TS-P-006,EssentialSound Wireless - Black,392,274.51,107607.92,USD
+CTR-TS-006,CTR-TS-006-TXN-002,2024-01-22,Elite Sound Gallery,North America,E-commerce,TS-KIT-001,Holiday Bundle Pack,38,196.71,7474.98,USD
+CTR-TS-006,CTR-TS-006-TXN-003,2024-05-08,Premium Audio Boutique,North America,Marketplace,TS-P-024,Essential Soundbar,210,114.43,24030.3,USD
+CTR-TS-006,CTR-TS-006-TXN-004,2024-03-21,Premium Audio Boutique,United States,Distribution,TS-P-007,EssentialSound Wireless - White,84,363.64,30545.76,USD
+CTR-TS-006,CTR-TS-006-TXN-005,2024-01-24,Premium Audio Boutique,United States,Distribution,TS-P-007,EssentialSound Wireless - White,367,232.49,85323.83,USD
+CTR-TS-006,CTR-TS-006-TXN-006,2024-07-03,Premium Audio Boutique,EMEA,Distribution,TS-KIT-001,Holiday Bundle Pack,97,360.98,35015.06,USD
+CTR-TS-006,CTR-TS-006-TXN-007,2024-07-12,Premium Audio Boutique,United States,Marketplace,TS-P-010,Essential Wired - Black,143,410.68,58727.24,USD
+CTR-TS-006,CTR-TS-006-TXN-008,2024-11-23,Elite Sound Gallery,EMEA,E-commerce,TS-P-007,EssentialSound Wireless - White,236,391.62,92422.32,USD
+CTR-TS-006,CTR-TS-006-TXN-009,2024-02-18,Premium Audio Boutique,EMEA,Marketplace,TS-P-007,EssentialSound Wireless - White,49,317.38,15551.62,USD
+CTR-TS-006,CTR-TS-006-TXN-010,2024-10-17,Elite Sound Gallery,United States,Marketplace,TS-P-010,Essential Wired - Black,38,212.32,8068.16,USD
+CTR-TS-006,CTR-TS-006-TXN-011,2024-09-07,Premium Audio Boutique,EMEA,Marketplace,TS-P-024,Essential Soundbar,151,419.77,63385.27,USD
+CTR-TS-006,CTR-TS-006-TXN-012,2024-09-07,Premium Audio Boutique,North America,Marketplace,TS-P-006,EssentialSound Wireless - Black,135,168.13,22697.55,USD
+CTR-TS-006,CTR-TS-006-TXN-013,2024-02-14,Premium Audio Boutique,North America,Distribution,TS-KIT-001,Holiday Bundle Pack,66,76.05,5019.3,USD
+CTR-TS-006,CTR-TS-006-TXN-014,2024-05-11,Premium Audio Boutique,United States,Distribution,TS-P-007,EssentialSound Wireless - White,87,171.58,14927.46,USD
+CTR-TS-006,CTR-TS-006-TXN-015,2024-11-10,Elite Sound Gallery,Canada,Retail,TS-P-024,Essential Soundbar,134,341.5,45761.0,USD
+CTR-TS-006,CTR-TS-006-TXN-016,2024-07-31,Premium Audio Boutique,United States,Retail,TS-P-007,EssentialSound Wireless - White,162,317.54,51441.48,USD
+CTR-TS-006,CTR-TS-006-TXN-017,2024-07-26,Premium Audio Boutique,Canada,Marketplace,TS-P-010,Essential Wired - Black,285,159.52,45463.2,USD
+CTR-TS-006,CTR-TS-006-TXN-018,2024-08-21,Premium Audio Boutique,North America,Distribution,TS-P-007,EssentialSound Wireless - White,340,418.36,142242.4,USD
+CTR-TS-006,CTR-TS-006-TXN-019,2024-05-17,Elite Sound Gallery,EMEA,Retail,TS-P-006,EssentialSound Wireless - Black,328,373.34,122455.52,USD
+CTR-TS-006,CTR-TS-006-TXN-020,2024-10-26,Elite Sound Gallery,United States,Marketplace,TS-KIT-001,Holiday Bundle Pack,358,203.77,72949.66,USD
+CTR-TS-006,CTR-TS-006-TXN-021,2024-01-13,Premium Audio Boutique,Canada,Distribution,TS-P-010,Essential Wired - Black,57,262.94,14987.58,USD
+CTR-TS-006,CTR-TS-006-TXN-022,2024-11-07,Premium Audio Boutique,United States,Retail,TS-P-006,EssentialSound Wireless - Black,63,310.38,19553.94,USD
+CTR-TS-006,CTR-TS-006-TXN-023,2024-08-27,Elite Sound Gallery,Canada,Retail,TS-P-007,EssentialSound Wireless - White,244,116.92,28528.48,USD
+CTR-TS-006,CTR-TS-006-TXN-024,2024-12-05,Elite Sound Gallery,Canada,Marketplace,TS-P-010,Essential Wired - Black,11,147.39,1621.29,USD
+CTR-TS-006,CTR-TS-006-TXN-025,2024-12-15,Elite Sound Gallery,Canada,E-commerce,TS-P-006,EssentialSound Wireless - Black,183,265.55,48595.65,USD
+CTR-TS-006,CTR-TS-006-TXN-026,2024-07-02,Premium Audio Boutique,Canada,Retail,TS-KIT-001,Holiday Bundle Pack,21,267.37,5614.77,USD
+CTR-TS-006,CTR-TS-006-TXN-027,2024-07-02,Premium Audio Boutique,North America,Distribution,TS-KIT-001,Holiday Bundle Pack,386,411.71,158920.06,USD
+CTR-TS-006,CTR-TS-006-TXN-028,2024-10-10,Elite Sound Gallery,Canada,Retail,TS-P-007,EssentialSound Wireless - White,345,300.42,103644.9,USD
+CTR-TS-006,CTR-TS-006-TXN-029,2024-02-01,Elite Sound Gallery,North America,Retail,TS-P-007,EssentialSound Wireless - White,14,198.57,2779.98,USD
+CTR-TS-006,CTR-TS-006-TXN-030,2024-08-25,Premium Audio Boutique,EMEA,Marketplace,TS-P-006,EssentialSound Wireless - Black,113,422.14,47701.82,USD
+CTR-TS-006,CTR-TS-006-TXN-031,2024-01-12,Elite Sound Gallery,EMEA,E-commerce,TS-KIT-001,Holiday Bundle Pack,257,333.43,85691.51,USD
+CTR-TS-006,CTR-TS-006-TXN-032,2024-08-19,Elite Sound Gallery,Canada,Distribution,TS-P-006,EssentialSound Wireless - Black,379,102.8,38961.2,USD
+CTR-TS-006,CTR-TS-006-TXN-033,2024-11-08,Premium Audio Boutique,EMEA,Marketplace,TS-P-010,Essential Wired - Black,166,344.15,57128.9,USD
+CTR-TS-006,CTR-TS-006-TXN-034,2024-07-17,Elite Sound Gallery,United States,E-commerce,TS-P-024,Essential Soundbar,309,341.19,105427.71,USD
+CTR-TS-006,CTR-TS-006-TXN-035,2024-07-02,Premium Audio Boutique,EMEA,E-commerce,TS-P-010,Essential Wired - Black,202,258.03,52122.06,USD
+CTR-TS-006,CTR-TS-006-TXN-036,2024-05-13,Premium Audio Boutique,North America,Marketplace,TS-KIT-001,Holiday Bundle Pack,372,144.45,53735.4,USD
+CTR-TS-006,CTR-TS-006-TXN-037,2024-06-05,Premium Audio Boutique,Canada,Distribution,TS-KIT-001,Holiday Bundle Pack,303,395.43,119815.29,USD
+CTR-TS-006,CTR-TS-006-TXN-038,2024-10-21,Premium Audio Boutique,United States,Distribution,TS-P-007,EssentialSound Wireless - White,359,85.2,30586.8,USD
+CTR-TS-006,CTR-TS-006-TXN-039,2024-09-13,Premium Audio Boutique,Canada,E-commerce,TS-P-006,EssentialSound Wireless - Black,154,446.28,68727.12,USD
+CTR-TS-006,CTR-TS-006-TXN-040,2024-12-07,Elite Sound Gallery,EMEA,Marketplace,TS-P-006,EssentialSound Wireless - Black,381,370.36,141107.16,USD
+CTR-TS-006,CTR-TS-006-TXN-041,2024-01-18,Premium Audio Boutique,United States,Retail,TS-P-006,EssentialSound Wireless - Black,137,100.33,13745.21,USD
+CTR-TS-006,CTR-TS-006-TXN-042,2024-09-10,Elite Sound Gallery,Canada,Marketplace,TS-P-007,EssentialSound Wireless - White,218,105.66,23033.88,USD
+CTR-TS-006,CTR-TS-006-TXN-043,2024-01-23,Premium Audio Boutique,North America,E-commerce,TS-P-007,EssentialSound Wireless - White,376,198.08,74478.08,USD
+CTR-TS-006,CTR-TS-006-TXN-044,2024-10-27,Premium Audio Boutique,United States,Distribution,TS-P-010,Essential Wired - Black,52,174.89,9094.28,USD
+CTR-TS-006,CTR-TS-006-TXN-045,2024-12-07,Elite Sound Gallery,Canada,E-commerce,TS-P-006,EssentialSound Wireless - Black,307,405.92,124617.44,USD
+CTR-TS-006,CTR-TS-006-TXN-046,2024-05-26,Elite Sound Gallery,EMEA,Distribution,TS-P-010,Essential Wired - Black,75,140.66,10549.5,USD
+CTR-TS-006,CTR-TS-006-TXN-047,2024-01-24,Premium Audio Boutique,United States,Distribution,TS-P-006,EssentialSound Wireless - Black,76,399.88,30390.88,USD
+CTR-TS-006,CTR-TS-006-TXN-048,2024-10-21,Premium Audio Boutique,North America,Marketplace,TS-P-006,EssentialSound Wireless - Black,22,369.15,8121.3,USD
+CTR-TS-006,CTR-TS-006-TXN-049,2024-02-21,Premium Audio Boutique,United States,Marketplace,TS-KIT-001,Holiday Bundle Pack,126,172.89,21784.14,USD
+CTR-TS-006,CTR-TS-006-TXN-050,2024-06-25,Elite Sound Gallery,North America,Retail,TS-P-006,EssentialSound Wireless - Black,46,180.66,8310.36,USD

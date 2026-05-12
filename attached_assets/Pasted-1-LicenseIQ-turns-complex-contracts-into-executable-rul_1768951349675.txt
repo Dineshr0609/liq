@@ -1,0 +1,81 @@
+1.LicenseIQ turns complex contracts into executable rules. It reads agreements, extracts terms, calculates payments, and generates audit-ready reports — automating license fees, rebates, commissions, and service fees with finance-grade accuracy.
+
+to 
+
+2. LicenseIQ turns complex contracts into executable rules. It reads agreements, extracts terms, calculates payments, and generates audit-ready reports — automating incentive contracts, license fees and royalties, rebates, commissions, and service fees with finance-grade accuracy.
+
+
+liQ Contract to Cash Execution Flows 
+
+These flows should be added.
+
+Supported Flows:
+Licensing & royalty execution
+Channel rebates, MDF, and incentives
+Distributor chargebacks & price protection
+Commissions & referral revenue
+Marketplace & usage-based revenue splits
+Audit-ready settlement and financial intelligence
+
+
+Hilights 
+
+LicenseIQ operates after pricing, quoting, and order execution. We don’t decide what prices should be — we ensure the money tied to signed contracts is calculated, accrued, settled, and defensible.
+
+
+Complete contract management suite
+
+to
+
+liQ Contract Orchestration suite
+
+1. AI Contract Ingestion
+2. AI Contract Analysis and Risk Assesment
+3. Rules Management
+4. AI Sales Matching
+5. Calculations
+6. Settlement
+7. Audit and Reporting
+8. Insight 
+9. liQ AI
+
+
+
+PDF Invoices
+
+to
+
+Settlement: 
+settlements directly from contract logic and validated data — not from manual claims or assumptions.
+AR / AP transactions
+Accrual journals
+Credit memos
+Full calculation lineage
+
+In Enterprise-grade automation
+
+all the erp systems logos should be scroll right
+
+liQ agent should be auto populate when you browse the landing page
+
+
+Find the right fit.
+
+International for IPO content should be changed and Green color showing diffrent
+
+
+Limited Beta Program - Q4 2025
+to
+
+Early Adapter Program - Q1 2026
+
+Join our exclusive beta program and help shape the future of contract intelligence
+
+to 
+
+Join our exclusive Early Adapter program and help shape the future of contract intelligence
+
+
+
+
+

@@ -1,0 +1,68 @@
+Login to the application.
+
+Navigate to Upload Document under the Contracts module.
+
+Upload a contract PDF . 
+
+navigate to  manage license fee rules and see rule 1.
+
+actual logic :
+if (quantity >= 0 && quantity <= 1,000,000) {
+  royalty = quantity × $0.02
+} else if (quantity >= 1,000,001 && quantity <= 5,000,000) {
+  royalty = quantity × $0.04
+} else if (quantity >= 5,000,001 && quantity <= 1,000,000,000,000) {
+  royalty = quantity × $0.06
+}
+
+Expected Logic:
+
+if (quantity <= 1_000_000) {
+  rebate = quantity × 0.02;
+} else if (quantity <= 5_000_000) {
+  rebate = quantity × 0.04;
+} else {
+  rebate = quantity × 0.06;
+}
+
+---------------------
+Login to the application.
+
+Navigate to Upload Document under the Contracts module.
+
+Upload a contract PDF . 
+
+navigate to  manage license fee rules and see rule 2
+
+actual logic :
+
+royalty = quantity × $0.01
+
+Expected Logic:
+
+if (product == "Vontair Analytics Module" && quarter <= 2) {
+  rebate += netPurchases × 0.01;
+}
+--------------------------------------
+Login to the application.
+
+Navigate to Upload Document under the Contracts module.
+
+Upload a contract PDF . 
+
+navigate to  manage license fee rules and see rule 3
+actual logic :
+
+royalty = quantity × $0.02
+
+Expected Logic:
+
+if (annualNetPurchases > 12_000_000) {
+  bonus = (annualNetPurchases - 10_000_000) × 0.02;
+}
+
+
+
+
+
+

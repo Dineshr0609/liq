@@ -1,0 +1,4 @@
+date,txnId,productCode,productName,category,territory,channel,qty,unitPrice,grossAmount,netAmount,oemPartnerCode
+2026-01-13,OEM-S-6001,OEM-MOD-X1,Module X1,Component,United States,OEM,1200,18.50,22200.00,20424.00,OEM-601
+2026-02-20,OEM-S-6002,OEM-MOD-X2,Module X2,Component,Asia Pacific,OEM,800,24.75,19800.00,18216.00,OEM-602
+2026-03-27,OEM-S-6003,OEM-MOD-X1,Module X1,Component,Europe,OEM,1500,18.50,27750.00,25530.00,OEM-603

@@ -1,0 +1,4 @@
+date,txnId,productCode,productName,category,territory,channel,qty,unitPrice,grossAmount,netAmount,customerCode
+2026-01-10,CRP-S-2001,SKU-A100,Aurora Tea Blend,Beverages,United States,Direct,520,9.50,4940.00,4544.80,CUST-201
+2026-02-14,CRP-S-2002,SKU-A200,Sunset Coffee,Beverages,Canada,Distributor,380,12.25,4655.00,4282.60,CUST-202
+2026-03-25,CRP-S-2003,SKU-A100,Aurora Tea Blend,Beverages,United Kingdom,Online,610,9.50,5795.00,5331.40,CUST-203

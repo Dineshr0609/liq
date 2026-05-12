@@ -1,0 +1,110 @@
+ generate a legally structured Distributor Reseller Agreement between:
+
+Manufacturer:
+Super Lenses Company
+
+Distributor:
+North West Distribution
+
+Products Covered:
+- Headphones
+- Soundbars
+
+----------------------------------------------------
+BUSINESS LOGIC REQUIREMENTS
+----------------------------------------------------
+
+1) Volume-Based Quarterly Rebate (Retrospective)
+
+The contract must include:
+
+- Quarterly rebate calculation
+- Based on cumulative quarterly net sales volume
+- Retrospective adjustment logic
+- Rebate tiers:
+
+Example Default Tiers (Editable in UI):
+Tier 1: 0 – 1,000 units → 2%
+Tier 2: 1,001 – 5,000 units → 5%
+Tier 3: 5,001+ units → 8%
+
+Language must specify:
+"Rebates shall be calculated retrospectively based on total cumulative quarterly purchases and applied to all eligible units within that quarter."
+
+Rebates are paid within 45 days after quarter end.
+
+----------------------------------------------------
+
+2) Minimum Resale Price (Price Floor Enforcement)
+
+Contract must include:
+
+- Distributor shall not sell below agreed Minimum Advertised Price (MAP)
+- MAP defined per product and per territory
+- Breach consequences:
+  - First violation: Written warning
+  - Second violation: Suspension of rebates
+  - Third violation: Termination rights
+
+Example Base Floor Pricing (Editable):
+Headphones:
+  - US: $80
+  - Canada: $85
+Soundbars:
+  - US: $150
+  - Canada: $160
+
+----------------------------------------------------
+
+3) Territory-Based Differences
+
+The contract must allow:
+
+- Different rebate percentages by territory
+- Different price floors by territory
+
+Territories:
+- United States
+- Canada
+
+UI must allow adding:
+- Territory
+- Rebate override %
+- Price override
+
+----------------------------------------------------
+
+4) Core Contract Sections Required
+
+Generate structured legal agreement with:
+
+1. Definitions
+2. Appointment of Distributor
+3. Territory
+4. Products Covered
+5. Pricing & Minimum Resale Price
+6. Orders & Payment Terms
+7. Volume Rebate Program
+8. Rebate Calculation Methodology
+9. Quarterly Reporting & Audit Rights
+10. Retrospective Adjustments
+11. Compliance & Pricing Violations
+12. Term & Termination
+13. Confidentiality
+14. Governing Law
+15. Signatures
+
+----------------------------------------------------
+
+5) PDF Formatting Requirements
+
+- Professional formatting
+- Page numbers
+- Header with:
+  Distributor Reseller Agreement
+  Super Lenses Company & North West Distribution
+- Table formatting for:
+  - Rebate Tiers
+  - Territory Pricing
+- Signature blocks at end
+- Date auto-filled

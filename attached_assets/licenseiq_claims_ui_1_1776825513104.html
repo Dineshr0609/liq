@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LicenseIQ — Claims</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700;800&family=Barlow:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --o:#e8520a;--ol:#ff6b2b;--od:rgba(232,82,10,0.1);--og:rgba(232,82,10,0.04);
+  --bk:#0a0a0a;--bm:#111;--bc:#181818;--bh:#202020;--bcard:#161616;
+  --br:rgba(255,255,255,0.065);--brh:rgba(255,255,255,0.12);--bra:rgba(255,255,255,0.18);
+  --tx:#e4e2dd;--dm:#777;--mt:#3e3e3e;--sub:#999;
+  --gn:#22c55e;--am:#f59e0b;--bl:#3b82f6;--rd:#ef4444;--pu:#a855f7;--tl:#14b8a6;--pk:#ec4899;
+  --agent-glow: rgba(168,85,247,0.15);
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{height:100%;}
+body{background:var(--bk);color:var(--tx);font-family:'Barlow',sans-serif;font-size:13px;height:100%;overflow:hidden;}
+
+/* ── LAYOUT ── */
+.app{display:flex;height:100vh;overflow:hidden;}
+.sidebar{width:48px;background:var(--bm);border-right:1px solid var(--br);display:flex;flex-direction:column;align-items:center;padding:10px 0;gap:2px;flex-shrink:0;}
+.sb-logo{width:28px;height:28px;background:var(--o);border-radius:5px;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:14px;color:#fff;margin-bottom:10px;}
+.si{width:32px;height:32px;border-radius:5px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--mt);transition:all .15s;font-size:15px;}
+.si:hover{background:var(--bh);color:var(--dm);}
+.si.on{background:var(--od);color:var(--o);}
+.sdiv{width:20px;height:1px;background:var(--br);margin:4px 0;}
+.body{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+
+/* ── TOPBAR ── */
+.topbar{height:48px;border-bottom:1px solid var(--br);display:flex;align-items:center;padding:0 18px;gap:10px;flex-shrink:0;background:var(--bm);}
+.tb-title{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;}
+.tsp{flex:1;}
+
+/* ── AGENT STATUS BAR ── */
+.agent-bar{height:34px;background:rgba(168,85,247,0.07);border-bottom:1px solid rgba(168,85,247,0.15);display:flex;align-items:center;padding:0 18px;gap:12px;flex-shrink:0;}
+.agent-pulse{width:7px;height:7px;border-radius:50%;background:var(--pu);animation:pulse 2s ease-in-out infinite;flex-shrink:0;}
+@keyframes pulse{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(168,85,247,.4);}50%{opacity:.8;box-shadow:0 0 0 4px rgba(168,85,247,0);}}
+.agent-status{font-size:10px;color:rgba(168,85,247,.9);font-weight:600;letter-spacing:.04em;}
+.agent-activity{font-size:10px;color:var(--sub);flex:1;}
+.agent-metrics{display:flex;gap:14px;}
+.am-item{font-size:10px;color:var(--dm);}
+.am-item strong{color:var(--tx);font-weight:600;}
+
+/* ── VIEW SWITCHER ── */
+.view-row{display:flex;align-items:center;padding:10px 18px;border-bottom:1px solid var(--br);gap:8px;flex-shrink:0;background:var(--bm);}
+.view-tabs{display:flex;background:var(--bc);border:1px solid var(--br);border-radius:4px;padding:2px;gap:1px;}
+.vt{padding:4px 12px;border-radius:3px;font-size:10px;font-weight:600;cursor:pointer;color:var(--dm);transition:all .15s;letter-spacing:.03em;text-transform:uppercase;}
+.vt.on{background:var(--o);color:#fff;}
+.filter-chips{display:flex;gap:5px;flex:1;}
+.chip{padding:3px 9px;border-radius:10px;font-size:10px;font-weight:500;cursor:pointer;border:1px solid var(--br);color:var(--dm);transition:all .15s;white-space:nowrap;}
+.chip:hover{border-color:var(--brh);color:var(--tx);}
+.chip.on{border-color:var(--o);color:var(--o);background:var(--od);}
+.chip.gn{border-color:rgba(34,197,94,.3);color:var(--gn);background:rgba(34,197,94,.07);}
+.chip.am{border-color:rgba(245,158,11,.3);color:var(--am);background:rgba(245,158,11,.07);}
+.chip.rd{border-color:rgba(239,68,68,.3);color:var(--rd);background:rgba(239,68,68,.07);}
+
+/* ── MAIN CONTENT ── */
+.content-area{flex:1;display:flex;overflow:hidden;}
+.queue-panel{flex:1;overflow-y:auto;padding:0;}
+.detail-panel{width:380px;flex-shrink:0;border-left:1px solid var(--br);display:flex;flex-direction:column;overflow:hidden;background:var(--bm);}
+
+/* ── QUEUE SECTION HEADERS ── */
+.q-section{padding:10px 18px 6px;position:sticky;top:0;z-index:10;background:var(--bk);}
+.q-section-label{font-size:8px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--dm);display:flex;align-items:center;gap:8px;}
+.q-section-label::after{content:'';flex:1;height:1px;background:var(--br);}
+
+/* ── CLAIM ROWS ── */
+.claim-row{display:flex;align-items:stretch;border-bottom:1px solid var(--br);cursor:pointer;transition:background .1s;position:relative;}
+.claim-row:hover{background:rgba(255,255,255,.025);}
+.claim-row.selected{background:rgba(232,82,10,.05);border-left:2px solid var(--o);}
+.claim-row.agent-handling{border-left:2px solid var(--pu);}
+
+/* Priority stripe */
+.priority-stripe{width:3px;flex-shrink:0;}
+.ps-urgent{background:var(--rd);}
+.ps-high{background:var(--am);}
+.ps-normal{background:var(--bl);}
+.ps-agent{background:var(--pu);}
+.ps-done{background:var(--gn);}
+
+.claim-main{flex:1;padding:10px 14px;}
+.claim-top{display:flex;align-items:center;gap:7px;margin-bottom:4px;}
+.claim-id{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dm);letter-spacing:.05em;}
+.claim-title{font-size:12px;font-weight:600;flex:1;}
+.claim-meta{display:flex;gap:10px;align-items:center;}
+.claim-partner{font-size:10px;color:var(--sub);}
+.claim-amount{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:.02em;}
+.claim-amount.positive{color:var(--am);}
+.claim-amount.negative{color:var(--rd);}
+.claim-amount.neutral{color:var(--tx);}
+
+.claim-right{padding:10px 14px;display:flex;flex-direction:column;align-items:flex-end;justify-content:center;gap:5px;min-width:160px;}
+.claim-age{font-size:9px;color:var(--mt);}
+
+/* Agent indicator on row */
+.agent-tag{display:inline-flex;align-items:center;gap:3px;padding:1px 5px;border-radius:8px;font-size:8px;font-weight:700;letter-spacing:.05em;background:rgba(168,85,247,.12);color:var(--pu);border:1px solid rgba(168,85,247,.2);}
+.agent-tag .ap{width:4px;height:4px;border-radius:50%;background:var(--pu);animation:pulse 1.5s infinite;}
+
+/* ── BADGES ── */
+.b{display:inline-flex;align-items:center;gap:2px;padding:1px 5px;border-radius:2px;font-size:8px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;}
+.bg_{background:rgba(34,197,94,.1);color:var(--gn);border:1px solid rgba(34,197,94,.18);}
+.ba_{background:rgba(245,158,11,.1);color:var(--am);border:1px solid rgba(245,158,11,.18);}
+.bb_{background:rgba(59,130,246,.1);color:var(--bl);border:1px solid rgba(59,130,246,.18);}
+.br_{background:rgba(239,68,68,.1);color:var(--rd);border:1px solid rgba(239,68,68,.18);}
+.bp_{background:rgba(168,85,247,.1);color:var(--pu);border:1px solid rgba(168,85,247,.18);}
+.bo_{background:var(--od);color:var(--o);border:1px solid rgba(232,82,10,.2);}
+.bk_{background:rgba(255,255,255,.05);color:var(--sub);border:1px solid var(--br);}
+
+/* ── DETAIL PANEL ── */
+.dp-header{padding:14px;border-bottom:1px solid var(--br);}
+.dp-title{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;text-transform:uppercase;letter-spacing:.02em;margin-bottom:4px;}
+.dp-body{flex:1;overflow-y:auto;padding:14px;}
+.dp-section{margin-bottom:16px;}
+.dp-section-title{font-size:8px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--o);margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+.dp-section-title::after{content:'';flex:1;height:1px;background:var(--br);}
+.dp-footer{padding:12px 14px;border-top:1px solid var(--br);display:flex;flex-direction:column;gap:6px;}
+
+/* ── AGENT REASONING BLOCK ── */
+.agent-reasoning{background:rgba(168,85,247,.06);border:1px solid rgba(168,85,247,.18);border-radius:5px;padding:10px 12px;margin-bottom:10px;}
+.ar-header{display:flex;align-items:center;gap:6px;margin-bottom:6px;font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--pu);}
+.ar-step{display:flex;gap:8px;margin-bottom:5px;font-size:10px;line-height:1.6;}
+.ar-step-num{width:16px;height:16px;border-radius:50%;background:rgba(168,85,247,.2);border:1px solid rgba(168,85,247,.3);display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:var(--pu);flex-shrink:0;margin-top:1px;}
+.ar-step-text{color:var(--sub);}
+.ar-step-text strong{color:var(--tx);}
+.ar-recommendation{margin-top:8px;padding:7px 9px;background:rgba(168,85,247,.08);border-radius:3px;font-size:10px;line-height:1.6;color:var(--dm);}
+.ar-recommendation strong{color:var(--pu);}
+
+/* ── TIMELINE ── */
+.timeline{position:relative;padding-left:20px;}
+.timeline::before{content:'';position:absolute;left:6px;top:4px;bottom:4px;width:1px;background:var(--br);}
+.tl-item{position:relative;margin-bottom:10px;}
+.tl-dot{position:absolute;left:-17px;top:3px;width:8px;height:8px;border-radius:50%;border:1.5px solid;}
+.tl-done{background:var(--gn);border-color:var(--gn);}
+.tl-agent{background:var(--pu);border-color:var(--pu);}
+.tl-pending{background:transparent;border-color:var(--mt);}
+.tl-label{font-size:10px;font-weight:600;margin-bottom:1px;}
+.tl-sub{font-size:9px;color:var(--sub);}
+
+/* ── BUTTONS ── */
+.btn{display:inline-flex;align-items:center;gap:4px;padding:6px 12px;border-radius:3px;font-size:11px;font-weight:600;cursor:pointer;border:none;font-family:'Barlow',sans-serif;transition:all .2s;letter-spacing:.01em;}
+.btn-p{background:var(--o);color:#fff;}.btn-p:hover{background:var(--ol);}
+.btn-o{background:transparent;color:var(--tx);border:1px solid var(--brh);}.btn-o:hover{border-color:var(--o);color:var(--o);}
+.btn-gn{background:rgba(34,197,94,.12);color:var(--gn);border:1px solid rgba(34,197,94,.25);}
+.btn-am{background:rgba(245,158,11,.1);color:var(--am);border:1px solid rgba(245,158,11,.25);}
+.btn-rd{background:rgba(239,68,68,.1);color:var(--rd);border:1px solid rgba(239,68,68,.25);}
+.btn-pu{background:rgba(168,85,247,.1);color:var(--pu);border:1px solid rgba(168,85,247,.25);}
+.btn-sm{padding:4px 9px;font-size:10px;}
+.btn-xs{padding:2px 7px;font-size:9px;}
+.btn-full{width:100%;justify-content:center;}
+
+/* ── KPI ROW ── */
+.kpi-row{display:grid;grid-template-columns:repeat(5,1fr);border-bottom:1px solid var(--br);flex-shrink:0;}
+.kpi{padding:10px 16px;border-right:1px solid var(--br);position:relative;}
+.kpi:last-child{border-right:none;}
+.kpi-val{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:700;line-height:1;}
+.kpi-label{font-size:9px;color:var(--sub);margin-top:2px;text-transform:uppercase;letter-spacing:.06em;}
+.kpi-delta{font-size:9px;margin-top:3px;}
+
+/* ── FORMS ── */
+.fg{margin-bottom:10px;}
+.fl{display:block;margin-bottom:3px;font-size:8px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--dm);}
+.fi,.fs,.fta{width:100%;background:var(--bc);border:1px solid var(--brh);border-radius:3px;padding:5px 8px;font-size:11px;color:var(--tx);font-family:'Barlow',sans-serif;outline:none;transition:border .15s;}
+.fi:focus,.fs:focus{border-color:var(--o);}
+.fi::placeholder{color:var(--mt);}
+
+/* ── PERIOD VIEW ── */
+.period-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--br);margin:0;}
+.period-cell{background:var(--bk);padding:12px 14px;cursor:pointer;transition:background .15s;}
+.period-cell:hover{background:var(--bh);}
+.pc-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--dm);margin-bottom:6px;}
+.pc-val{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;margin-bottom:3px;}
+.pc-bar{height:3px;border-radius:2px;background:var(--br);overflow:hidden;margin-top:6px;}
+.pc-fill{height:100%;border-radius:2px;}
+
+/* ── CONTRACT VIEW ── */
+.contract-block{border-bottom:1px solid var(--br);overflow:hidden;}
+.cb-header{display:flex;align-items:center;gap:10px;padding:10px 18px;cursor:pointer;transition:background .15s;}
+.cb-header:hover{background:rgba(255,255,255,.02);}
+.cb-claims{padding:0 18px 10px;}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:3px;height:3px;}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.08);border-radius:2px;}
+
+/* ── AGENT CHAT STRIP ── */
+.agent-chat-strip{border-top:1px solid rgba(168,85,247,.2);padding:10px 14px;background:rgba(168,85,247,.04);}
+.acs-msgs{display:flex;flex-direction:column;gap:5px;margin-bottom:8px;max-height:100px;overflow-y:auto;}
+.acs-msg{font-size:10px;line-height:1.6;color:var(--sub);}
+.acs-msg strong{color:var(--pu);}
+.acs-input-row{display:flex;gap:5px;}
+.acs-input{flex:1;background:var(--bc);border:1px solid rgba(168,85,247,.2);border-radius:3px;padding:4px 8px;font-size:10px;color:var(--tx);font-family:'Barlow',sans-serif;outline:none;}
+.acs-input:focus{border-color:rgba(168,85,247,.5);}
+.acs-send{width:26px;height:26px;border-radius:3px;background:rgba(168,85,247,.2);border:1px solid rgba(168,85,247,.3);color:var(--pu);cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;}
+
+/* ── PERIOD/CONTRACT VIEWS ── */
+.view-content{display:none;}
+.view-content.on{display:block;}
+</style>
+</head>
+<body>
+
+<div class="app">
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="sb-logo">L</div>
+  <div class="si">📄</div>
+  <div class="si">▷</div>
+  <div class="si on">📋</div>
+  <div class="sdiv"></div>
+  <div class="si">◉</div>
+  <div class="si">📊</div>
+  <div class="sdiv"></div>
+  <div class="si">⚙</div>
+</div>
+
+<div class="body">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:8px;">
+      <div class="tb-title">Claims</div>
+      <span class="b bk_">Finance Workspace</span>
+    </div>
+    <div class="tsp"></div>
+    <input class="fi" style="width:180px;height:28px;padding:3px 9px;font-size:11px;" placeholder="Search claims…">
+    <button class="btn btn-o btn-sm">Export</button>
+    <button class="btn btn-p btn-sm">+ New Claim</button>
+  </div>
+
+  <!-- AGENT STATUS BAR -->
+  <div class="agent-bar">
+    <div class="agent-pulse"></div>
+    <span class="agent-status">✦ DataIQ Agent Active</span>
+    <span class="agent-activity">Processing 3 EDI 844 transactions from National Distributor · validating against CNT-2026-040 · auto-resolving 2 of 3</span>
+    <div class="agent-metrics">
+      <span class="am-item">Auto-resolved today: <strong>18</strong></span>
+      <span class="am-item">Escalated to Finance: <strong>5</strong></span>
+      <span class="am-item">Avg resolution: <strong>4.2 min</strong></span>
+      <span class="am-item">Success rate: <strong>78%</strong></span>
+    </div>
+  </div>
+
+  <!-- KPI ROW -->
+  <div class="kpi-row">
+    <div class="kpi">
+      <div class="kpi-val" style="color:var(--am);">23</div>
+      <div class="kpi-label">Open — needs Finance</div>
+      <div class="kpi-delta" style="color:var(--rd);">↑ 5 since yesterday</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-val" style="color:var(--pu);">47</div>
+      <div class="kpi-label">Agent handling</div>
+      <div class="kpi-delta" style="color:var(--gn);">↓ resolving now</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-val" style="color:var(--rd);">6</div>
+      <div class="kpi-label">Disputed</div>
+      <div class="kpi-delta" style="color:var(--am);">2 awaiting partner response</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-val">$2.4M</div>
+      <div class="kpi-label">Open exposure Q2</div>
+      <div class="kpi-delta" style="color:var(--dm);">$840K inbound · $1.56M outbound</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-val" style="color:var(--gn);">142</div>
+      <div class="kpi-label">Settled this period</div>
+      <div class="kpi-delta" style="color:var(--gn);">$1.1M paid · $620K received</div>
+    </div>
+  </div>
+
+  <!-- VIEW ROW -->
+  <div class="view-row">
+    <div class="view-tabs">
+      <div class="vt on" onclick="switchView('queue',this)">Queue</div>
+      <div class="vt" onclick="switchView('period',this)">Period</div>
+      <div class="vt" onclick="switchView('contract',this)">Contract</div>
+    </div>
+    <div class="filter-chips">
+      <div class="chip rd on" onclick="toggleChip(this)">Urgent (4)</div>
+      <div class="chip am on" onclick="toggleChip(this)">Needs Finance (23)</div>
+      <div class="chip on" onclick="toggleChip(this)">Inbound Claims</div>
+      <div class="chip" onclick="toggleChip(this)">Outbound</div>
+      <div class="chip" onclick="toggleChip(this)">Agent Handling</div>
+      <div class="chip" onclick="toggleChip(this)">Disputed</div>
+      <div class="chip gn" onclick="toggleChip(this)">Settled</div>
+    </div>
+    <div style="font-size:10px;color:var(--dm);">Q2 2026 · Apr–Jun</div>
+  </div>
+
+  <!-- MAIN CONTENT AREA -->
+  <div class="content-area">
+
+    <!-- ═══════════════════════════════
+         QUEUE VIEW (default)
+    ═══════════════════════════════ -->
+    <div id="view-queue" class="view-content on" style="flex:1;display:flex;overflow:hidden;">
+
+      <!-- Claim List -->
+      <div class="queue-panel" id="claim-list">
+
+        <!-- URGENT section -->
+        <div class="q-section">
+          <div class="q-section-label">Urgent — Finance action required <span style="color:var(--rd);margin-left:6px;">4 claims</span></div>
+        </div>
+
+        <!-- Claim 1: Price protection dispute -->
+        <div class="claim-row selected" onclick="showDetail('clm-001')">
+          <div class="priority-stripe ps-urgent"></div>
+          <div class="claim-main">
+            <div class="claim-top">
+              <span class="claim-id">CLM-2026-0441</span>
+              <span class="b br_">Price Protection</span>
+              <span class="b bk_">Inbound · Partner→LIQ</span>
+              <span class="b ba_">Dispute Required</span>
+            </div>
+            <div class="claim-title">Q1 Price Protection — SoundPro Wireless SKU-2201 inventory devaluation</div>
+            <div class="claim-meta">
+              <span class="claim-partner">National Distributor Inc. · CNT-2026-040</span>
+              <span class="claim-amount positive">$84,200</span>
+            </div>
+          </div>
+          <div class="claim-right">
+            <span class="b br_">Urgent</span>
+            <span class="claim-age">Due Apr 22 · 1 day</span>
+            <span class="b ba_">Agent escalated</span>
+          </div>
+        </div>
+
+        <!-- Claim 2: Chargeback over contract max -->
+        <div class="claim-row" onclick="showDetail('clm-002')">
+          <div class="priority-stripe ps-urgent"></div>
+          <div class="claim-main">
+            <div class="claim-top">
+              <span class="claim-id">CLM-2026-0438</span>
+              <span class="b br_">Chargeback</span>
+              <span class="b bk_">Inbound · EDI 844</span>
+              <span class="b br_">Exceeds Contract</span>
+            </div>
+            <div class="claim-title">Q1 Chargeback — claimed amount exceeds eligible by $12,400</div>
+            <div class="claim-meta">
+              <span class="claim-partner">Pacific Rim Electronics · CNT-2025-019</span>
+              <span class="claim-amount positive">$67,500 <span style="font-size:10px;color:var(--rd);">($12,400 ineligible)</span></span>
+            </div>
+          </div>
+          <div class="claim-right">
+            <span class="b br_">Urgent</span>
+            <span class="claim-age">Received Apr 19</span>
+            <span class="b ba_">Partial approval</span>
+          </div>
+        </div>
+
+        <!-- Claim 3: Royalty statement dispute -->
+        <div class="claim-row" onclick="showDetail('clm-003')">
+          <div class="priority-stripe ps-urgent"></div>
+          <div class="claim-main">
+            <div class="claim-top">
+              <span class="claim-id">CLM-2026-0431</span>
+              <span class="b bo_">Royalty Statement</span>
+              <span class="b bk_">Outbound · LIQ→Partner</span>
+              <span class="b br_">Partner Disputed</span>
+            </div>
+            <div class="claim-title">Q1 Royalty Statement — AudioTech disputes unit count in APAC territory</div>
+            <div class="claim-meta">
+              <span class="claim-partner">AudioTech Solutions Ltd. · CNT-2025-028</span>
+              <span class="claim-amount negative">-$38,100</span>
+            </div>
+          </div>
+          <div class="claim-right">
+            <span class="b br_">Urgent</span>
+            <span class="claim-age">Disputed Apr 17</span>
+            <span class="b br_">Needs evidence</span>
+          </div>
+        </div>
+
+        <!-- Claim 4: Approval needed -->
+        <div class="claim-row" onclick="showDetail('clm-004')">
+          <div class="priority-stripe ps-urgent"></div>
+          <div class="claim-main">
+            <div class="claim-top">
+              <span class="claim-id">CLM-2026-0429</span>
+              <span class="b bg_">Rebate Settlement</span>
+              <span class="b bk_">Outbound · LIQ→Partner</span>
+              <span class="b ba_">Awaiting Approval</span>
+            </div>
+            <div class="claim-title">Q1 Rebate Settlement — agent validated, ready for Controller sign-off</div>
+            <div class="claim-meta">
+              <span class="claim-partner">National Distributor Inc. · CNT-2026-040</span>
+              <span class="claim-amount positive">$112,800</span>
+            </div>
+          </div>
+          <div class="claim-right">
+            <span class="b br_">Urgent · Q1 close</span>
+            <span class="claim-age">Ready Apr 18</span>
+            <span class="agent-tag"><div class="ap"></div>Agent verified</span>
+          </div>
+        </div>
+
+        <!-- AGENT HANDLING section -->
+        <div class="q-section" style="margin-top:4px;">
+          <div class="q-section-label" style="color:var(--pu);">✦ Agent handling — no Finance action needed <span style="color:var(--pu);margin-left:6px;">47 claims</span></div>
+        </div>
+
+        <!-- Agent claim 1 -->
+        <div class="claim-row agent-handling" onclick="showDetail('clm-a01')">
+          <div class="priority-stripe ps-agent"></div>
+          <div class="claim-main">
+            <div class="claim-top">
+              <span class="claim-id">CLM-2026-0443</span>
+              <span class="b bb_">POS Data Claim</span>
+              <span class="b bk_">Inbound · EDI 844</span>
+              <span class="agent-tag"><div class="ap"></div>Processing</span>
+            </div>
+            <div class="claim-title">Q1 sell-through POS data — validating 1,847 transactions against contract rules</div>
+            <div class="claim-meta">
+              <span class="claim-partner">National Distributor Inc. · CNT-2026-040</span>
+              <span class="claim-amount neutral" style="font-size:12px;">$298,400 gross</span>
+            </div>
+          </div>
+          <div class="claim-right">
+            <span class="agent-tag" style="font-size:9px;"><div class="ap"></div>74% complete</span>
+            <span class="claim-age">Started 3 min ago</span>
+          </div>
+        </div>
+
+        <!-- Agent claim 2 -->
+        <div class="claim-row agent-handling" style="opacity:.7;">
+          <div class="priority-stripe ps-agent"></div>
+          <div class="claim-main">
+            <div class="claim-top">
+              <span class="claim-id">CLM-2026-0440</span>
+              <span class="b bg_">Supplier Rebate</span>
+              <span class="b bk_">Inbound · Portal</span>
+              <span class="agent-tag"><div class="ap"></div>Validating</span>
+            </div>
+            <div class="claim-title">Q1 supplier rebate claim — cross-referencing purchase orders with contract tiers</div>
+            <div class="claim-meta">
+              <span class="claim-partner">Sonics Pro Manufacturing · CNT-2025-011</span>
+              <span class="claim-amount neutral" style="font-size:12px;">$44,600</span>
+            </div>
+          </div>
+          <div class="claim-right">
+            <span class="agent-tag" style="font-size:9px;"><div class="ap"></div>Queued</span>
+            <span class="claim-age">Received 12 min ago</span>
+          </div>
+        </div>
+
+        <!-- STANDARD section -->
+        <div class="q-section" style="margin-top:4px;">
+          <div class="q-section-label">Standard — review when available <span style="color:var(--bl);margin-left:6px;">19 claims</span></div>
+        </div>
+
+        <div class="claim-row" onclick="showDetail('clm-005')">
+          <div class="priority-stripe ps-normal"></div>
+          <div class="claim-main">
+            <div class="claim-top">
+              <span class="claim-id">CLM-2026-0425</span>
+              <span class="b bo_">MDF Claim</span>
+              <span class="b bk_">Inbound · Portal</span>
+              <span class="b bb_">Needs Review</span>
+            </div>
+            <div class="claim-title">Q1 MDF claim — trade show sponsorship reimbursement with receipts</div>
+            <div class="claim-meta">
+              <span class="claim-partner">Euro Audio GmbH · CNT-2024-047</span>
+              <span class="claim-amount positive">$18,500</span>
+            </div>
+          </div>
+          <div class="claim-right">
+            <span class="b bb_">Standard</span>
+            <span class="claim-age">Apr 15 · 6 days</span>
+          </div>
+        </div>
+
+        <div class="claim-row" style="opacity:.6;">
+          <div class="priority-stripe ps-normal"></div>
+          <div class="claim-main">
+            <div class="claim-top">
+              <span class="claim-id">CLM-2026-0421</span>
+              <span class="b bg_">Rebate Statement</span>
+              <span class="b bk_">Outbound</span>
+              <span class="b bb_">Draft</span>
+            </div>
+            <div class="claim-title">Q1 Pacific Rim quarterly rebate statement — agent draft ready for review</div>
+            <div class="claim-meta">
+              <span class="claim-partner">Pacific Rim Electronics · CNT-2025-019</span>
+              <span class="claim-amount positive">$89,300</span>
+            </div>
+          </div>
+          <div class="claim-right">
+            <span class="agent-tag"><div class="ap"></div>Draft ready</span>
+            <span class="claim-age">Apr 14</span>
+          </div>
+        </div>
+
+      </div><!-- end queue-panel -->
+
+      <!-- DETAIL PANEL -->
+      <div class="detail-panel">
+        <div class="dp-header">
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+            <span class="b br_">Price Protection · Inbound</span>
+            <span class="b ba_">Dispute Required</span>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dm);margin-left:auto;">CLM-2026-0441</span>
+          </div>
+          <div class="dp-title">Q1 Price Protection — SoundPro Wireless</div>
+          <div style="font-size:10px;color:var(--sub);margin-top:2px;">National Distributor Inc. · CNT-2026-040 · Received Apr 19 via EDI 844</div>
+        </div>
+
+        <div class="dp-body">
+
+          <!-- Agent reasoning block -->
+          <div class="agent-reasoning">
+            <div class="ar-header">
+              <div class="agent-pulse" style="width:5px;height:5px;"></div>
+              ✦ DataIQ Agent — Escalation Reasoning
+            </div>
+            <div class="ar-step">
+              <div class="ar-step-num">1</div>
+              <div class="ar-step-text">Received EDI 844 transaction from National Distributor · <strong>$84,200 price protection claim</strong> on SKU-2201 (SoundPro Wireless)</div>
+            </div>
+            <div class="ar-step">
+              <div class="ar-step-num">2</div>
+              <div class="ar-step-text">Validated partner ID and contract — <strong>CNT-2026-040 active</strong> · price protection clause CL-04 present</div>
+            </div>
+            <div class="ar-step">
+              <div class="ar-step-num">3</div>
+              <div class="ar-step-text">Calculated eligible protection: list price drop from <strong>$149 → $129</strong> on Mar 14 · distributor had <strong>3,200 units on hand</strong> per 852 inventory report</div>
+            </div>
+            <div class="ar-step">
+              <div class="ar-step-num">4</div>
+              <div class="ar-step-text"><strong style="color:var(--rd);">Discrepancy found</strong> — claim says 4,210 units · 852 on-hand report shows 3,200 · <strong>difference: 1,010 units · $20,200 overclaim</strong></div>
+            </div>
+            <div class="ar-step">
+              <div class="ar-step-num">5</div>
+              <div class="ar-step-text">Escalating to Finance — <strong>cannot auto-resolve</strong> without partner data reconciliation or authorisation to issue partial approval</div>
+            </div>
+            <div class="ar-recommendation">
+              <strong>Agent recommendation:</strong> Issue partial approval for 3,200 units ($64,000) and request partner to provide inventory evidence for the additional 1,010 units. If evidence received within 10 days, process remainder. If not, close at $64,000.
+            </div>
+          </div>
+
+          <!-- Claim amounts -->
+          <div class="dp-section">
+            <div class="dp-section-title">Claim vs Contract Calculation</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+              <div style="background:var(--bc);border:1px solid rgba(239,68,68,.2);border-radius:4px;padding:10px;">
+                <div style="font-size:8px;text-transform:uppercase;letter-spacing:.08em;color:var(--rd);margin-bottom:4px;">Partner Claims</div>
+                <div style="font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:700;color:var(--am);">$84,200</div>
+                <div style="font-size:9px;color:var(--sub);">4,210 units × $20 price diff</div>
+              </div>
+              <div style="background:var(--bc);border:1px solid rgba(34,197,94,.2);border-radius:4px;padding:10px;">
+                <div style="font-size:8px;text-transform:uppercase;letter-spacing:.08em;color:var(--gn);margin-bottom:4px;">Agent Calculates</div>
+                <div style="font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:700;color:var(--gn);">$64,000</div>
+                <div style="font-size:9px;color:var(--sub);">3,200 verified units × $20</div>
+              </div>
+            </div>
+            <div style="margin-top:6px;padding:6px 8px;background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.15);border-radius:3px;font-size:10px;color:var(--sub);">
+              <span style="color:var(--rd);font-weight:600;">$20,200 gap</span> — 1,010 units unverified · partner inventory evidence required
+            </div>
+          </div>
+
+          <!-- Contract reference -->
+          <div class="dp-section">
+            <div class="dp-section-title">Contract Reference</div>
+            <div style="background:rgba(59,130,246,.06);border:1px solid rgba(59,130,246,.15);border-radius:4px;padding:8px 10px;font-size:10px;line-height:1.65;color:var(--sub);">
+              <span style="color:var(--bl);font-weight:600;">CL-04 · Price Protection</span> — Distributor is entitled to price protection on inventory on hand at time of price reduction. Eligible units must be evidenced by most recent EDI 852 inventory report filed within 30 days of price change.
+            </div>
+          </div>
+
+          <!-- Timeline -->
+          <div class="dp-section">
+            <div class="dp-section-title">Claim Timeline</div>
+            <div class="timeline">
+              <div class="tl-item"><div class="tl-dot tl-done"></div><div class="tl-label">EDI 844 received from partner</div><div class="tl-sub">Apr 19, 2026 · 09:14 · DataIQ ingested and parsed</div></div>
+              <div class="tl-item"><div class="tl-dot tl-agent"></div><div class="tl-label">Agent validation run</div><div class="tl-sub">Apr 19, 2026 · 09:17 · Contract lookup · inventory check · calc complete</div></div>
+              <div class="tl-item"><div class="tl-dot tl-agent"></div><div class="tl-label">Discrepancy detected — escalated to Finance</div><div class="tl-sub">Apr 19, 2026 · 09:17 · 1,010 unit gap flagged</div></div>
+              <div class="tl-item"><div class="tl-dot tl-pending"></div><div class="tl-label">Finance decision</div><div class="tl-sub">Pending · due Apr 22</div></div>
+              <div class="tl-item"><div class="tl-dot tl-pending"></div><div class="tl-label">Partner notification</div><div class="tl-sub">Will be sent on decision</div></div>
+            </div>
+          </div>
+
+          <!-- Data sources used by agent -->
+          <div class="dp-section">
+            <div class="dp-section-title">Data Sources Used by Agent</div>
+            <div style="display:flex;flex-direction:column;gap:4px;">
+              <div style="display:flex;align-items:center;gap:7px;padding:5px 8px;background:var(--bc);border:1px solid var(--br);border-radius:3px;">
+                <span style="font-size:10px;">📄</span><div style="flex:1;font-size:10px;">EDI 844 · CLM-2026-0441 · National Distributor</div><span class="b bg_">Valid</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:7px;padding:5px 8px;background:var(--bc);border:1px solid var(--br);border-radius:3px;">
+                <span style="font-size:10px;">📦</span><div style="flex:1;font-size:10px;">EDI 852 · Inventory report · Mar 31 filing · 3,200 units on-hand SKU-2201</div><span class="b bg_">Matched</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:7px;padding:5px 8px;background:var(--bc);border:1px solid var(--br);border-radius:3px;">
+                <span style="font-size:10px;">📋</span><div style="flex:1;font-size:10px;">Contract CL-04 · Price Protection clause · LicenseIQ</div><span class="b bg_">Valid</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:7px;padding:5px 8px;background:rgba(239,68,68,.04);border:1px solid rgba(239,68,68,.15);border-radius:3px;">
+                <span style="font-size:10px;">💰</span><div style="flex:1;font-size:10px;">Price change log · SKU-2201 · Oracle pricing system · Mar 14</div><span class="b bg_">Confirmed $20 drop</span>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- dp-body -->
+
+        <!-- Finance Actions -->
+        <div class="dp-footer">
+          <div style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--dm);margin-bottom:2px;">Finance Decision</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;">
+            <button class="btn btn-gn btn-sm btn-full">✓ Approve Agent Rec. · $64,000</button>
+            <button class="btn btn-am btn-sm btn-full">Request Partner Evidence</button>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;">
+            <button class="btn btn-p btn-sm btn-full">Approve Full · $84,200</button>
+            <button class="btn btn-rd btn-sm btn-full">✕ Reject Claim</button>
+          </div>
+          <button class="btn btn-o btn-sm btn-full" style="margin-top:2px;">Escalate to Manager</button>
+        </div>
+
+        <!-- Agent chat strip -->
+        <div class="agent-chat-strip">
+          <div class="acs-msgs">
+            <div class="acs-msg"><strong>Agent:</strong> The 1,010 unit gap is the key issue. If the partner can provide a warehouse scan or PO confirmation, I can process the remainder automatically.</div>
+            <div class="acs-msg"><strong>Agent:</strong> The EDI 852 they filed on Mar 31 is the binding inventory reference per CL-04. Any units not on that report are ineligible.</div>
+          </div>
+          <div class="acs-input-row">
+            <input class="acs-input" placeholder="Ask agent about this claim…">
+            <button class="acs-send">→</button>
+          </div>
+        </div>
+
+      </div><!-- detail-panel -->
+
+    </div><!-- view-queue -->
+
+    <!-- ═══════════════════════════════
+         PERIOD VIEW
+    ═══════════════════════════════ -->
+    <div id="view-period" class="view-content" style="flex:1;overflow-y:auto;">
+      <div style="padding:16px 18px;border-bottom:1px solid var(--br);display:flex;align-items:center;gap:10px;">
+        <div style="font-size:11px;font-weight:600;">Q2 2026</div>
+        <span class="b ba_">In Progress</span>
+        <div class="tsp"></div>
+        <select class="fs" style="width:140px;padding:4px 8px;font-size:11px;">
+          <option>Q2 2026 (Current)</option>
+          <option>Q1 2026 (Closed)</option>
+          <option>Q4 2025 (Closed)</option>
+        </select>
+      </div>
+
+      <!-- Period KPIs -->
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--br);border-bottom:1px solid var(--br);">
+        <div style="background:var(--bk);padding:14px 18px;">
+          <div style="font-size:9px;color:var(--sub);text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px;">Total Claims Volume</div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:700;">76</div>
+          <div style="font-size:9px;color:var(--dm);">47 agent-handled · 23 Finance · 6 disputed</div>
+        </div>
+        <div style="background:var(--bk);padding:14px 18px;">
+          <div style="font-size:9px;color:var(--sub);text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px;">Inbound Exposure</div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:700;color:var(--am);">$840K</div>
+          <div style="font-size:9px;color:var(--dm);">Partner claims against us</div>
+        </div>
+        <div style="background:var(--bk);padding:14px 18px;">
+          <div style="font-size:9px;color:var(--sub);text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px;">Outbound Claims</div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:700;color:var(--gn);">$1.56M</div>
+          <div style="font-size:9px;color:var(--dm);">Rebates & royalties we owe</div>
+        </div>
+        <div style="background:var(--bk);padding:14px 18px;">
+          <div style="font-size:9px;color:var(--sub);text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px;">Period Close Status</div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:700;color:var(--am);">At Risk</div>
+          <div style="font-size:9px;color:var(--rd);">4 urgent items block Q1 accrual posting</div>
+        </div>
+      </div>
+
+      <!-- Month breakdown -->
+      <div style="padding:16px 18px;">
+        <div style="font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--dm);margin-bottom:12px;">Claim Activity by Month</div>
+        <div class="period-grid">
+          <div class="period-cell" style="border-right:1px solid var(--br);">
+            <div class="pc-label">April 2026</div>
+            <div class="pc-val" style="color:var(--am);">31 claims</div>
+            <div style="font-size:10px;color:var(--sub);">$1.1M exposure · 8 open</div>
+            <div class="pc-bar"><div class="pc-fill" style="width:75%;background:var(--am);"></div></div>
+          </div>
+          <div class="period-cell" style="border-right:1px solid var(--br);opacity:.5;">
+            <div class="pc-label">May 2026</div>
+            <div class="pc-val" style="color:var(--mt);">— forecast</div>
+            <div style="font-size:10px;color:var(--mt);">~28 expected</div>
+            <div class="pc-bar"><div class="pc-fill" style="width:30%;background:var(--mt);"></div></div>
+          </div>
+          <div class="period-cell" style="border-right:1px solid var(--br);opacity:.5;">
+            <div class="pc-label">June 2026</div>
+            <div class="pc-val" style="color:var(--mt);">— forecast</div>
+            <div style="font-size:10px;color:var(--mt);">~35 expected (Q-end)</div>
+            <div class="pc-bar"><div class="pc-fill" style="width:20%;background:var(--mt);"></div></div>
+          </div>
+          <div class="period-cell">
+            <div class="pc-label">Q1 2026 (Closed)</div>
+            <div class="pc-val" style="color:var(--gn);">142 settled</div>
+            <div style="font-size:10px;color:var(--sub);">$2.1M settled · 100%</div>
+            <div class="pc-bar"><div class="pc-fill" style="width:100%;background:var(--gn);"></div></div>
+          </div>
+        </div>
+
+        <!-- Claim type breakdown -->
+        <div style="margin-top:18px;">
+          <div style="font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--dm);margin-bottom:10px;">By Claim Type — Q2 2026</div>
+          <div style="display:flex;flex-direction:column;gap:5px;">
+            <div style="display:flex;align-items:center;gap:10px;">
+              <div style="width:120px;font-size:10px;color:var(--sub);">Price Protection</div>
+              <div style="flex:1;height:4px;background:var(--br);border-radius:2px;overflow:hidden;"><div style="width:65%;height:100%;background:var(--rd);border-radius:2px;"></div></div>
+              <div style="width:60px;text-align:right;font-size:10px;font-weight:600;">18 · $420K</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;">
+              <div style="width:120px;font-size:10px;color:var(--sub);">Chargebacks</div>
+              <div style="flex:1;height:4px;background:var(--br);border-radius:2px;overflow:hidden;"><div style="width:45%;height:100%;background:var(--am);border-radius:2px;"></div></div>
+              <div style="width:60px;text-align:right;font-size:10px;font-weight:600;">12 · $290K</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;">
+              <div style="width:120px;font-size:10px;color:var(--sub);">Rebate Settlements</div>
+              <div style="flex:1;height:4px;background:var(--br);border-radius:2px;overflow:hidden;"><div style="width:80%;height:100%;background:var(--gn);border-radius:2px;"></div></div>
+              <div style="width:60px;text-align:right;font-size:10px;font-weight:600;">28 · $1.2M</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;">
+              <div style="width:120px;font-size:10px;color:var(--sub);">Royalty Statements</div>
+              <div style="flex:1;height:4px;background:var(--br);border-radius:2px;overflow:hidden;"><div style="width:30%;height:100%;background:var(--bl);border-radius:2px;"></div></div>
+              <div style="width:60px;text-align:right;font-size:10px;font-weight:600;">8 · $380K</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;">
+              <div style="width:120px;font-size:10px;color:var(--sub);">MDF / Co-op</div>
+              <div style="flex:1;height:4px;background:var(--br);border-radius:2px;overflow:hidden;"><div style="width:20%;height:100%;background:var(--pu);border-radius:2px;"></div></div>
+              <div style="width:60px;text-align:right;font-size:10px;font-weight:600;">10 · $110K</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div><!-- view-period -->
+
+    <!-- ═══════════════════════════════
+         CONTRACT VIEW
+    ═══════════════════════════════ -->
+    <div id="view-contract" class="view-content" style="flex:1;overflow-y:auto;">
+
+      <!-- National Distributor -->
+      <div class="contract-block">
+        <div class="cb-header" onclick="toggleContract(this)">
+          <div style="width:28px;height:28px;background:rgba(232,82,10,.12);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;">📊</div>
+          <div style="flex:1;">
+            <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;">
+              <span style="font-size:12px;font-weight:600;">National Distributor Inc.</span>
+              <span class="b bo_">CNT-2026-040</span>
+              <span class="b br_">2 urgent</span>
+            </div>
+            <div style="font-size:10px;color:var(--sub);">Distributor Rebate · US CA MX · 5 open claims · $197,000 exposure</div>
+          </div>
+          <div style="display:flex;gap:5px;">
+            <span class="b ba_">$197K open</span>
+            <span style="font-size:14px;color:var(--dm);">▾</span>
+          </div>
+        </div>
+        <div class="cb-claims">
+          <div style="display:flex;flex-direction:column;gap:3px;padding-bottom:8px;">
+            <div class="claim-row" style="border-radius:3px;border:1px solid var(--br);margin:0;" onclick="showDetail('clm-001')">
+              <div class="priority-stripe ps-urgent" style="border-radius:3px 0 0 3px;"></div>
+              <div class="claim-main" style="padding:7px 10px;">
+                <div class="claim-top" style="margin-bottom:2px;">
+                  <span class="claim-id">CLM-2026-0441</span><span class="b br_">Price Protection</span><span class="b ba_">Dispute</span>
+                </div>
+                <div style="font-size:11px;color:var(--tx);">Q1 Price Protection — SoundPro Wireless · 1,010 unit gap</div>
+              </div>
+              <div class="claim-right" style="padding:7px 10px;">
+                <span class="claim-amount positive" style="font-size:13px;">$84,200</span>
+                <span style="font-size:9px;color:var(--rd);">$20,200 disputed</span>
+              </div>
+            </div>
+            <div class="claim-row" style="border-radius:3px;border:1px solid var(--br);margin:0;" onclick="showDetail('clm-004')">
+              <div class="priority-stripe ps-urgent" style="border-radius:3px 0 0 3px;"></div>
+              <div class="claim-main" style="padding:7px 10px;">
+                <div class="claim-top" style="margin-bottom:2px;">
+                  <span class="claim-id">CLM-2026-0429</span><span class="b bg_">Rebate Settlement</span><span class="b ba_">Awaiting Approval</span>
+                </div>
+                <div style="font-size:11px;color:var(--tx);">Q1 Rebate Settlement · agent verified · ready for sign-off</div>
+              </div>
+              <div class="claim-right" style="padding:7px 10px;">
+                <span class="claim-amount positive" style="font-size:13px;">$112,800</span>
+                <span class="agent-tag"><div class="ap"></div>Agent verified</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pacific Rim -->
+      <div class="contract-block">
+        <div class="cb-header" onclick="toggleContract(this)">
+          <div style="width:28px;height:28px;background:rgba(59,130,246,.1);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;">🌐</div>
+          <div style="flex:1;">
+            <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;">
+              <span style="font-size:12px;font-weight:600;">Pacific Rim Electronics Corp.</span>
+              <span class="b bb_">CNT-2025-019</span>
+              <span class="b ba_">1 urgent</span>
+            </div>
+            <div style="font-size:10px;color:var(--sub);">Distributor Rebate · APAC · 2 open claims · $156,800 exposure</div>
+          </div>
+          <div style="display:flex;gap:5px;">
+            <span class="b ba_">$156.8K open</span>
+            <span style="font-size:14px;color:var(--dm);">▸</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- AudioTech -->
+      <div class="contract-block">
+        <div class="cb-header" onclick="toggleContract(this)">
+          <div style="width:28px;height:28px;background:rgba(168,85,247,.1);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;">💿</div>
+          <div style="flex:1;">
+            <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;">
+              <span style="font-size:12px;font-weight:600;">AudioTech Solutions Ltd.</span>
+              <span class="b bp_">CNT-2025-028</span>
+              <span class="b br_">1 disputed</span>
+            </div>
+            <div style="font-size:10px;color:var(--sub);">Royalty License · US EU · 1 open claim · $38,100 disputed</div>
+          </div>
+          <div style="display:flex;gap:5px;">
+            <span class="b br_">Disputed</span>
+            <span style="font-size:14px;color:var(--dm);">▸</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Euro Audio -->
+      <div class="contract-block">
+        <div class="cb-header" onclick="toggleContract(this)">
+          <div style="width:28px;height:28px;background:rgba(20,184,166,.1);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;">🌍</div>
+          <div style="flex:1;">
+            <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;">
+              <span style="font-size:12px;font-weight:600;">Euro Audio Distribution GmbH</span>
+              <span style="font-size:9px;font-family:'JetBrains Mono',monospace;color:var(--dm);">CNT-2024-047</span>
+            </div>
+            <div style="font-size:10px;color:var(--sub);">Channel Incentive · EU · 1 MDF claim · $18,500 open</div>
+          </div>
+          <div>
+            <span class="b bb_">Standard</span>
+            <span style="font-size:14px;color:var(--dm);margin-left:8px;">▸</span>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- view-contract -->
+
+  </div><!-- content-area -->
+
+</div><!-- body -->
+</div><!-- app -->
+
+<script>
+// View switching
+function switchView(id, el) {
+  document.querySelectorAll('.vt').forEach(v => v.classList.remove('on'));
+  el.classList.add('on');
+  document.querySelectorAll('.view-content').forEach(v => {
+    v.classList.remove('on');
+    v.style.display = 'none';
+  });
+  const target = document.getElementById('view-' + id);
+  if (target) { target.classList.add('on'); target.style.display = 'flex'; }
+  if (id === 'period' || id === 'contract') {
+    target.style.display = 'block';
+  }
+}
+
+// Chip toggling
+function toggleChip(el) { el.classList.toggle('on'); }
+
+// Show claim detail (stub — in real app would load data)
+function showDetail(id) {
+  document.querySelectorAll('.claim-row').forEach(r => r.classList.remove('selected'));
+  event.currentTarget.classList.add('selected');
+}
+
+// Contract block expand/collapse
+function toggleContract(el) {
+  const claims = el.nextElementSibling;
+  const arrow = el.querySelector('span:last-child');
+  if (!claims) return;
+  if (claims.style.display === 'none') {
+    claims.style.display = 'block';
+    if (arrow) arrow.textContent = '▾';
+  } else {
+    claims.style.display = 'none';
+    if (arrow) arrow.textContent = '▸';
+  }
+}
+
+// Agent status ticker
+const activities = [
+  'Processing 3 EDI 844 transactions from National Distributor · validating against CNT-2026-040',
+  'Auto-resolving CLM-2026-0440 · Sonics Pro supplier rebate · contract match confirmed',
+  'Ingesting 1,847 POS transactions · checking product eligibility · 74% complete',
+  'Generating Q1 rebate statement for Pacific Rim · tier calculation running',
+  'Monitoring for new EDI 844/852 transactions · 0 pending in queue',
+];
+let ai = 0;
+setInterval(() => {
+  ai = (ai + 1) % activities.length;
+  const el = document.querySelector('.agent-activity');
+  if (el) el.textContent = activities[ai];
+}, 4000);
+</script>
+</body>
+</html>

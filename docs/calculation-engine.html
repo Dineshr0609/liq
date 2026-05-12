@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>LicenseIQ Calculation Engine — Reference</title>
+<style>
+  :root {
+    --orange: #ea580c;
+    --orange-soft: #fff7ed;
+    --orange-border: #fed7aa;
+    --ink: #18181b;
+    --muted: #52525b;
+    --line: #e4e4e7;
+    --green: #16a34a;
+    --amber: #d97706;
+    --red: #dc2626;
+    --gray: #71717a;
+    --code-bg: #0f172a;
+    --code-fg: #e2e8f0;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font: 14.5px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    color: var(--ink);
+    margin: 0;
+    background: #fafafa;
+  }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 32px 28px 96px; }
+  header {
+    border-bottom: 3px solid var(--orange);
+    padding-bottom: 20px;
+    margin-bottom: 28px;
+  }
+  header .brand {
+    display: flex; align-items: center; gap: 10px;
+    color: var(--orange); font-weight: 700; letter-spacing: .02em;
+    font-size: 12px; text-transform: uppercase;
+  }
+  header .brand::before {
+    content: ""; width: 10px; height: 10px; background: var(--orange); border-radius: 2px;
+  }
+  h1 { font-size: 30px; margin: 8px 0 4px; letter-spacing: -.01em; }
+  header .sub { color: var(--muted); font-size: 14px; }
+  h2 {
+    font-size: 22px; margin: 44px 0 12px;
+    padding-bottom: 8px; border-bottom: 1px solid var(--line);
+    letter-spacing: -.005em;
+  }
+  h3 { font-size: 16px; margin: 24px 0 6px; }
+  h4 { font-size: 14px; margin: 16px 0 4px; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+  p { margin: 8px 0; }
+  code, pre { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+  code { background: #f4f4f5; padding: 1px 5px; border-radius: 3px; font-size: 13px; color: #b91c1c; }
+  pre {
+    background: var(--code-bg); color: var(--code-fg);
+    padding: 14px 16px; border-radius: 6px; overflow-x: auto;
+    font-size: 12.5px; line-height: 1.55; margin: 10px 0;
+  }
+  pre code { background: transparent; color: inherit; padding: 0; font-size: inherit; }
+  table {
+    width: 100%; border-collapse: collapse; margin: 12px 0;
+    font-size: 13.5px; background: #fff;
+    border: 1px solid var(--line); border-radius: 6px; overflow: hidden;
+  }
+  th, td { padding: 9px 12px; text-align: left; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { background: var(--orange-soft); font-weight: 600; color: var(--ink); font-size: 12.5px; text-transform: uppercase; letter-spacing: .03em; }
+  tr:last-child td { border-bottom: none; }
+  .pill {
+    display: inline-block; font-size: 11px; font-weight: 600;
+    padding: 2px 8px; border-radius: 999px; letter-spacing: .03em;
+    text-transform: uppercase;
+  }
+  .pill-ok { background: #dcfce7; color: #14532d; }
+  .pill-partial { background: #fef3c7; color: #78350f; }
+  .pill-stub { background: #fee2e2; color: #7f1d1d; }
+  .pill-passthrough { background: #e5e7eb; color: #374151; }
+  .callout {
+    background: var(--orange-soft); border-left: 3px solid var(--orange);
+    padding: 12px 16px; margin: 14px 0; border-radius: 0 6px 6px 0;
+  }
+  .callout.warn { background: #fffbeb; border-left-color: var(--amber); }
+  .callout.info { background: #eff6ff; border-left-color: #2563eb; }
+  .toc { background: #fff; border: 1px solid var(--line); border-radius: 6px; padding: 14px 18px; margin-bottom: 24px; }
+  .toc h4 { margin: 0 0 8px; color: var(--ink); }
+  .toc ol { margin: 4px 0 0 20px; padding: 0; columns: 2; }
+  .toc li { margin: 2px 0; }
+  .toc a { color: var(--orange); text-decoration: none; }
+  .toc a:hover { text-decoration: underline; }
+  .small { font-size: 12.5px; color: var(--muted); }
+  .phase-card {
+    background: #fff; border: 1px solid var(--line); border-radius: 6px;
+    padding: 14px 18px; margin: 10px 0;
+  }
+  .phase-card h3 { margin-top: 0; color: var(--orange); }
+  .rule-card {
+    background: #fff; border: 1px solid var(--line); border-radius: 6px;
+    padding: 14px 18px; margin: 12px 0;
+  }
+  .rule-card .header-row {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 12px; margin-bottom: 6px;
+  }
+  .rule-card h3 { margin: 0; font-size: 15.5px; }
+  .rule-card .meta { font-size: 12px; color: var(--muted); margin: 4px 0 8px; }
+  .ascii {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 12px; line-height: 1.4;
+    background: #fafafa; border: 1px solid var(--line);
+    padding: 14px; border-radius: 6px; white-space: pre; overflow-x: auto;
+  }
+  footer {
+    margin-top: 60px; padding-top: 18px; border-top: 1px solid var(--line);
+    font-size: 12px; color: var(--muted); text-align: center;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="brand">LicenseIQ · CimpleIT</div>
+  <h1>Calculation Engine — Reference</h1>
+  <div class="sub">How rule types are interpreted, ordered, and turned into payable amounts. Source-of-truth for every option in the rule editor.</div>
+</header>
+
+<div class="toc">
+  <h4>Contents</h4>
+  <ol>
+    <li><a href="#overview">Overview</a></li>
+    <li><a href="#flow">End-to-end flow</a></li>
+    <li><a href="#phases">Phase ordering</a></li>
+    <li><a href="#status">Implementation status (audit)</a></li>
+    <li><a href="#gross">Gross calc rules</a></li>
+    <li><a href="#returns">Returns offset rules</a></li>
+    <li><a href="#net">Net adjustment rules</a></li>
+    <li><a href="#floor">Floor / minimum rules</a></li>
+    <li><a href="#cap">Cap / maximum rules</a></li>
+    <li><a href="#oblig">Obligation accrual rules</a></li>
+    <li><a href="#penalty">Penalty rules</a></li>
+    <li><a href="#aggregation">Aggregation: tier basis · tier mode · period</a></li>
+    <li><a href="#scope">Sale → rule matching (scope)</a></li>
+    <li><a href="#worked">Worked example: TechSound rebate</a></li>
+    <li><a href="#files">Source files</a></li>
+  </ol>
+</div>
+
+<h2 id="overview">1. Overview</h2>
+<p>
+  The engine turns three things — a <strong>contract</strong>, its <strong>rules</strong>, and a set of <strong>sales</strong> — into one signed number per period: the <em>payable</em>. Two execution paths exist:
+</p>
+<ul>
+  <li><code>dynamicRulesEngine.ts</code> — legacy per-sale loop. Still drives the bulk of contract types (royalty, distribution, rebate).</li>
+  <li><code>universalCalculationEngine.ts</code> — newer phase-ordered engine with full traceability per (rule × bucket × line). Both engines share <code>ruleMatchingUtils.ts</code> for sale-to-rule matching.</li>
+</ul>
+<p>
+  Period-close evaluators (<code>periodCloseEvaluators.ts</code>) layer on top of either path to run the netting, flooring, capping, and penalty math. Obligation accruals run independently in <code>obligationsService.ts</code>.
+</p>
+
+<h2 id="flow">2. End-to-end flow</h2>
+<div class="ascii">
+ ┌──────────────────────────────────────────────────────────────────────┐
+ │  1. Sales matched to contract via sale_contract_matches              │
+ │     (one sale → many contracts is supported)                          │
+ └─────────────────────────────────┬─────────────────────────────────────┘
+                                   ▼
+ ┌──────────────────────────────────────────────────────────────────────┐
+ │  2. For each rule with approvalStatus = 'approved':                  │
+ │     - resolve calc phase from ruleType                               │
+ │     - filter sales by rule scope (qualifiers, territory, channel)    │
+ └─────────────────────────────────┬─────────────────────────────────────┘
+                                   ▼
+ ┌──────────────────────────────────────────────────────────────────────┐
+ │  3. Phase-ordered execution (verify-then-pay)                        │
+ │                                                                      │
+ │   gross_calc → returns_offset → net_adjustment                       │
+ │            ↓                                                          │
+ │   floor_minimum → cap_maximum → penalty                              │
+ │                                                                      │
+ │   obligation_accrual runs in parallel (does not affect payable)      │
+ └─────────────────────────────────┬─────────────────────────────────────┘
+                                   ▼
+ ┌──────────────────────────────────────────────────────────────────────┐
+ │  4. Persistence:                                                     │
+ │     - contract_calculations (header)                                 │
+ │     - calculation_rule_results (per-rule frozen snapshot)            │
+ │     - obligations (any accruals)                                     │
+ │     - draft journal entries (optional auto-accrual pipeline)         │
+ └──────────────────────────────────────────────────────────────────────┘
+</div>
+
+<h2 id="phases">3. Phase ordering</h2>
+<p>Rules carry a <code>calcPhase</code> (auto-derived from <code>ruleType</code> in <code>shared/calcPhases.ts</code>). The dispatcher executes phases in this fixed order, secondary-sorted by rule <code>priority</code>:</p>
+
+<table>
+  <thead><tr><th>Order</th><th>Phase</th><th>What it does</th></tr></thead>
+  <tbody>
+    <tr><td>1</td><td><code>gross_calc</code></td><td>Compute the raw fee from sales lines.</td></tr>
+    <tr><td>2</td><td><code>returns_offset</code></td><td>Subtract returns, chargebacks. Mutates running total.</td></tr>
+    <tr><td>3</td><td><code>net_adjustment</code></td><td>Apply deductions, recoupments, overpayment offsets.</td></tr>
+    <tr><td>4</td><td><code>floor_minimum</code></td><td>If running total &lt; minimum guarantee, bump to MG.</td></tr>
+    <tr><td>5</td><td><code>cap_maximum</code></td><td>If running total &gt; cap, clamp to cap.</td></tr>
+    <tr><td>6</td><td><code>penalty</code></td><td>Add late-payment / missed-milestone / compliance penalties.</td></tr>
+    <tr><td>—</td><td><code>obligation_accrual</code></td><td>Side-channel: book balance-sheet liabilities. Does not move the payable.</td></tr>
+  </tbody>
+</table>
+
+<div class="callout">
+  <strong>Verify-then-pay.</strong> A rule must have <code>approvalStatus = 'approved'</code> before the dispatcher will let it run. A rule under "AI extracted" or "under review" is silently skipped. This is the gate behind the traffic-light icons on the rule list.
+</div>
+
+<h2 id="status">4. Implementation status (audit)</h2>
+<p>This is an honest audit. Some entries in the rule-type dropdown are placeholders that fall through to default behavior — they're listed below as <span class="pill pill-stub">stub</span> or <span class="pill pill-passthrough">passthrough</span>.</p>
+<p class="small">Legend: <span class="pill pill-ok">implemented</span> dedicated evaluator with documented math · <span class="pill pill-partial">partial</span> works for typical case but missing edge handling · <span class="pill pill-passthrough">passthrough</span> routes through a sibling evaluator · <span class="pill pill-stub">stub</span> dropdown entry only, no engine handler.</p>
+
+<table>
+  <thead><tr><th>Phase</th><th>Rule type</th><th>Status</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td rowspan="11">gross_calc</td><td><code>percentage</code></td><td><span class="pill pill-ok">implemented</span></td><td>Per-sale rate × base metric.</td></tr>
+    <tr><td><code>tiered</code></td><td><span class="pill pill-ok">implemented</span></td><td>Per-sale ladder lookup.</td></tr>
+    <tr><td><code>rebate_tiered</code></td><td><span class="pill pill-ok">implemented</span></td><td>Aggregate (per period) → tier → allocate. Period now configurable.</td></tr>
+    <tr><td><code>milestone_tiered</code></td><td><span class="pill pill-ok">implemented</span></td><td>Cumulative-to-date threshold ratchet.</td></tr>
+    <tr><td><code>net_sales_tiered</code></td><td><span class="pill pill-partial">partial</span></td><td>Same code path as <code>tiered</code>; assumes $-banded ladder.</td></tr>
+    <tr><td><code>promotional_rebate</code></td><td><span class="pill pill-ok">implemented</span></td><td>Window-gated rebate_tiered variant.</td></tr>
+    <tr><td><code>bonus_rebate</code></td><td><span class="pill pill-ok">implemented</span></td><td>Single-step kicker on threshold.</td></tr>
+    <tr><td><code>fixed_fee</code></td><td><span class="pill pill-ok">implemented</span></td><td>Flat amount, scope-dependent (per period or per contract).</td></tr>
+    <tr><td><code>per_unit</code></td><td><span class="pill pill-ok">implemented</span></td><td>quantity × ratePerUnit.</td></tr>
+    <tr><td><code>annual_fee</code></td><td><span class="pill pill-ok">implemented</span></td><td>Once per contract year.</td></tr>
+    <tr><td><code>milestone_payment</code></td><td><span class="pill pill-ok">implemented</span></td><td>One-shot, date- or event-triggered.</td></tr>
+  </tbody>
+</table>
+
+<table>
+  <thead><tr><th>Phase</th><th>Rule type</th><th>Status</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td rowspan="3">gross_calc (advanced)</td><td><code>rate_structure</code></td><td><span class="pill pill-partial">partial</span></td><td>Reads <code>formulaDefinition.rates[]</code>; basic dispatch only.</td></tr>
+    <tr><td><code>formula_based</code></td><td><span class="pill pill-partial">partial</span></td><td>Routes to <code>universalFormulaEvaluator.ts</code>; handles arithmetic only.</td></tr>
+    <tr><td><code>rebate_rate</code></td><td><span class="pill pill-stub">stub</span></td><td>Dropdown only — no dedicated handler. Use <code>percentage</code> or <code>rebate_tiered</code>.</td></tr>
+    <tr><td>—</td><td><code>bonus</code></td><td><span class="pill pill-passthrough">passthrough</span></td><td>Treated as <code>fixed_fee</code> when threshold met.</td></tr>
+  </tbody>
+</table>
+
+<table>
+  <thead><tr><th>Phase</th><th>Rule type</th><th>Status</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td rowspan="2">returns_offset</td><td><code>returns_offset</code></td><td><span class="pill pill-ok">implemented</span></td><td>Subtracts return-marked sales from running total.</td></tr>
+    <tr><td><code>chargeback</code></td><td><span class="pill pill-ok">implemented</span></td><td>Same shape as returns_offset, distinct ledger reason code.</td></tr>
+    <tr><td rowspan="4">net_adjustment</td><td><code>deduction</code></td><td><span class="pill pill-ok">implemented</span></td><td>Fixed amount or % of running total.</td></tr>
+    <tr><td><code>discount</code></td><td><span class="pill pill-passthrough">passthrough</span></td><td>Same evaluator as deduction; surfaces as a discount line.</td></tr>
+    <tr><td><code>overpayment_offset</code></td><td><span class="pill pill-ok">implemented</span></td><td>Drains prior overpayment balance.</td></tr>
+    <tr><td><code>advance_recoupment</code></td><td><span class="pill pill-ok">implemented</span></td><td>Drains recoupable_advance obligation.</td></tr>
+    <tr><td rowspan="4">floor_minimum</td><td><code>minimum_guarantee</code></td><td><span class="pill pill-ok">implemented</span></td><td>Period-scoped floor.</td></tr>
+    <tr><td><code>annual_minimum</code></td><td><span class="pill pill-ok">implemented</span></td><td>Year-bucketed floor.</td></tr>
+    <tr><td><code>quarterly_minimum</code></td><td><span class="pill pill-ok">implemented</span></td><td>Quarter-bucketed floor.</td></tr>
+    <tr><td><code>mgr</code></td><td><span class="pill pill-ok">implemented</span></td><td>Minimum Guaranteed Royalty (annual scope).</td></tr>
+    <tr><td rowspan="3">cap_maximum</td><td><code>cap</code></td><td><span class="pill pill-ok">implemented</span></td><td>Generic per-period cap.</td></tr>
+    <tr><td><code>period_cap</code></td><td><span class="pill pill-ok">implemented</span></td><td>Caller specifies period; reuses cap evaluator.</td></tr>
+    <tr><td><code>contract_cap</code></td><td><span class="pill pill-ok">implemented</span></td><td>Lifetime cap across all periods.</td></tr>
+  </tbody>
+</table>
+
+<table>
+  <thead><tr><th>Phase</th><th>Rule type</th><th>Status</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td rowspan="11">obligation_accrual</td><td><code>mdf_accrual</code></td><td><span class="pill pill-ok">implemented</span></td><td>Periodic MDF reserve, default 90-day expiry.</td></tr>
+    <tr><td><code>recoupable_advance</code></td><td><span class="pill pill-ok">implemented</span></td><td>Drained by <code>advance_recoupment</code>.</td></tr>
+    <tr><td><code>advance_payment</code></td><td><span class="pill pill-ok">implemented</span></td><td>Legacy alias for recoupable_advance.</td></tr>
+    <tr><td><code>returns_reserve</code></td><td><span class="pill pill-ok">implemented</span></td><td>% of period sales; rollover by default.</td></tr>
+    <tr><td><code>reserve_accrual</code></td><td><span class="pill pill-ok">implemented</span></td><td>Generic balance-sheet reserve.</td></tr>
+    <tr><td><code>performance_bonus</code></td><td><span class="pill pill-ok">implemented</span></td><td>Accrues toward a future payout.</td></tr>
+    <tr><td><code>signing_bonus</code></td><td><span class="pill pill-ok">implemented</span></td><td>One-shot accrual at contract activation.</td></tr>
+    <tr><td><code>milestone_payment</code></td><td><span class="pill pill-ok">implemented</span></td><td>Stateful obligation variant for scheduled payouts.</td></tr>
+    <tr><td><code>milestone_payment_obligation</code></td><td><span class="pill pill-passthrough">passthrough</span></td><td>Alias of <code>milestone_payment</code> in obligation phase.</td></tr>
+    <tr><td><code>minimum_trueup</code></td><td><span class="pill pill-ok">implemented</span></td><td>Books the floor-vs-earned delta as an obligation.</td></tr>
+    <tr><td><code>payment_schedule</code></td><td><span class="pill pill-ok">implemented</span></td><td>No per-sale calc — purely scheduling metadata for AP.</td></tr>
+    <tr><td rowspan="3">penalty</td><td><code>late_payment_penalty</code></td><td><span class="pill pill-ok">implemented</span></td><td>% per day overdue × outstanding payable.</td></tr>
+    <tr><td><code>missed_milestone_fee</code></td><td><span class="pill pill-ok">implemented</span></td><td>Fixed fee booked on missed obligation.</td></tr>
+    <tr><td><code>compliance_penalty</code></td><td><span class="pill pill-stub">stub</span></td><td>Dropdown only — no engine handler. Use <code>missed_milestone_fee</code> with a custom obligation.</td></tr>
+  </tbody>
+</table>
+
+<div class="callout warn">
+  <strong>Three honest gaps to close:</strong> <code>rebate_rate</code>, <code>compliance_penalty</code>, and the alias <code>milestone_payment_obligation</code> have no dedicated handler. They appear in the dropdown for completeness but currently produce no calculation rows. They are tracked for a future engine slice.
+</div>
+
+<h2 id="gross">5. Gross calc rules — math</h2>
+
+<div class="rule-card">
+  <div class="header-row"><h3>percentage</h3><span class="pill pill-ok">implemented</span></div>
+  <div class="meta">Per-sale · Inputs: <code>baseRate</code>, <code>baseMetric</code></div>
+  <pre><code>fee = saleAmount(baseMetric) × baseRate</code></pre>
+  <p class="small">Simplest path. <code>baseMetric</code> picks which sale field is multiplied (net_sales, gross_sales, units, invoice_amount, custom).</p>
+</div>
+
+<div class="rule-card">
+  <div class="header-row"><h3>tiered (per-sale ladder)</h3><span class="pill pill-ok">implemented</span></div>
+  <div class="meta">Per-sale · Inputs: <code>volumeTiers</code>, <code>tierBasis</code> (units|amount), <code>tierMode</code> (whole|marginal)</div>
+  <pre><code>for each sale:
+  bracket = highest tier whose min ≤ sale.value
+  fee     = sale.value × bracket.rate</code></pre>
+  <div class="callout warn">No aggregation. Each line is independently bracketed — a single $20K sale may land in tier 1 even if the period total is $1M. For period-aggregated tiering use <code>rebate_tiered</code>.</div>
+</div>
+
+<div class="rule-card">
+  <div class="header-row"><h3>rebate_tiered (retroactive — aggregate, then tier)</h3><span class="pill pill-ok">implemented</span></div>
+  <div class="meta">Aggregate · Inputs: <code>volumeTiers</code>, <code>tierBasis</code>, <code>tierMode</code>, <code>formulaDefinition.aggregationPeriod</code> (annual|quarter|month)</div>
+  <pre><code>1. bucket sales by aggregationPeriod (quarter is default)
+2. periodTotal = sum(sale.value) per bucket
+3. matchedTier = lookup(periodTotal, tiers, tierMode)
+4. periodFee   = periodTotal × matchedTier.rate    // whole mode
+              OR Σ band-by-band marginal math       // marginal mode
+5. allocate periodFee back to each sale proportionally
+   so the audit trail shows "this line contributed $X.YZ"</code></pre>
+  <p class="small">The <code>aggregationPeriod</code> knob (added April 2026) lets annual-measurement contracts accumulate the full year before tier lookup, instead of always using quarters.</p>
+</div>
+
+<div class="rule-card">
+  <div class="header-row"><h3>milestone_tiered (cumulative threshold)</h3><span class="pill pill-ok">implemented</span></div>
+  <div class="meta">Aggregate, cumulative-to-date · Inputs: <code>volumeTiers</code>, <code>tierBasis</code></div>
+  <pre><code>cumulative = sum(sale.value) for all periods up to and including current
+matchedTier = lookup(cumulative, tiers)
+ratchet: once a tier is reached, the rate stays at that level
+         (or applies retroactively if formulaDefinition.retroactive=true)</code></pre>
+</div>
+
+<div class="rule-card">
+  <div class="header-row"><h3>net_sales_tiered ($-banded ladder)</h3><span class="pill pill-partial">partial</span></div>
+  <div class="meta">Per-sale · Currently shares the <code>tiered</code> evaluator</div>
+  <p class="small">Treated as <code>tiered</code> with <code>tierBasis = amount</code> implied. AI extraction template for "Annual Net Sales" tables targets this type.</p>
+</div>
+
+<div class="rule-card">
+  <div class="header-row"><h3>promotional_rebate (campaign-windowed)</h3><span class="pill pill-ok">implemented</span></div>
+  <div class="meta">Aggregate · Inputs: <code>formulaDefinition.activeFrom</code>, <code>activeTo</code>, plus standard tiered fields</div>
+  <pre><code>filteredSales = sales where activeFrom ≤ sale.date ≤ activeTo
+then: same flow as rebate_tiered against filteredSales</code></pre>
+</div>
+
+<div class="rule-card">
+  <div class="header-row"><h3>bonus_rebate (single-step kicker)</h3><span class="pill pill-ok">implemented</span></div>
+  <div class="meta">Aggregate · Inputs: <code>formulaDefinition.threshold</code>, <code>bonusAmount</code> or <code>bonusRate</code></div>
+  <pre><code>periodTotal = sum(sale.value) per period
+fee = periodTotal ≥ threshold ? bonusAmount (or periodTotal × bonusRate) : 0</code></pre>
+</div>
+
+<div class="rule-card">
+  <div class="header-row"><h3>fixed_fee · per_unit · annual_fee · milestone_payment</h3><span class="pill pill-ok">implemented</span></div>
+  <div class="meta">Event / one-shot rules</div>
+  <pre><code>fixed_fee:        fee = formulaDefinition.amount  (per period or per contract)
+per_unit:         fee = quantity × ratePerUnit
+annual_fee:       fee = formulaDefinition.amount  (booked once per contract year)
+milestone_payment: fee = formulaDefinition.amount on milestone trigger</code></pre>
+</div>
+
+<div class="rule-card">
+  <div class="header-row"><h3>rate_structure / formula_based</h3><span class="pill pill-partial">partial</span></div>
+  <div class="meta">Custom math · Inputs: <code>formulaDefinition.rates[]</code> or <code>formulaDefinition.expression</code></div>
+  <pre><code>rate_structure:   pick first matching {when, rate} pair, then percentage math
+formula_based:    universalFormulaEvaluator runs an arithmetic AST
+                  (limited to + - * / parens, sale field refs, constants)</code></pre>
+</div>
+
+<h2 id="returns">6. Returns offset rules</h2>
+
+<div class="rule-card">
+  <div class="header-row"><h3>returns_offset</h3><span class="pill pill-ok">implemented</span></div>
+  <pre><code>returnedAmount = Σ sale.amount where transactionType = 'return'
+runningTotal -= returnedAmount × (formulaDefinition.rate ?? grossRuleRate)</code></pre>
+</div>
+
+<div class="rule-card">
+  <div class="header-row"><h3>chargeback</h3><span class="pill pill-ok">implemented</span></div>
+  <p>Same evaluator as <code>returns_offset</code>, but the resulting line carries reason <code>chargeback</code> for ledger reporting.</p>
+</div>
+
+<h2 id="net">7. Net adjustment rules</h2>
+
+<div class="rule-card">
+  <div class="header-row"><h3>deduction · discount</h3><span class="pill pill-ok">implemented</span></div>
+  <pre><code>fixed amount:   runningTotal -= formulaDefinition.amount
+percentage:     runningTotal -= runningTotal × formulaDefinition.rate</code></pre>
+</div>
+
+<div class="rule-card">
+  <div class="header-row"><h3>overpayment_offset · advance_recoupment</h3><span class="pill pill-ok">implemented</span></div>
+  <pre><code>availableBalance = open obligation balance for kind
+drained          = min(runningTotal, availableBalance)
+runningTotal     -= drained
+obligation.balance -= drained   // mutate obligation row</code></pre>
+</div>
+
+<h2 id="floor">8. Floor / minimum rules</h2>
+
+<div class="rule-card">
+  <div class="header-row"><h3>minimum_guarantee · annual_minimum · quarterly_minimum · mgr</h3><span class="pill pill-ok">implemented</span></div>
+  <div class="meta">Inputs: <code>minimumGuarantee</code>, plus implicit scope from rule type</div>
+  <pre><code>scope        = annual | quarter | contract  (derived from ruleType)
+periodTotal  = sum runningTotal in scope
+if periodTotal &lt; minimumGuarantee:
+   shortfall = minimumGuarantee - periodTotal
+   runningTotal += shortfall
+   audit:     "MG top-up"</code></pre>
+</div>
+
+<h2 id="cap">9. Cap / maximum rules</h2>
+
+<div class="rule-card">
+  <div class="header-row"><h3>cap · period_cap · contract_cap</h3><span class="pill pill-ok">implemented</span></div>
+  <pre><code>scope    = period | contract  (derived from ruleType)
+ceiling  = formulaDefinition.cap (or rule.maximumCap)
+if runningTotal &gt; ceiling:
+   excess        = runningTotal - ceiling
+   runningTotal -= excess
+   audit:         "Cap clamp"</code></pre>
+</div>
+
+<h2 id="oblig">10. Obligation accrual rules</h2>
+<p>Obligation rules don't move the payable. They create rows in the <code>obligations</code> table that flow to the Accrual Management dashboard, the journal-entry hub, and the Period Close workspace.</p>
+
+<table>
+  <thead><tr><th>Rule type</th><th>amountMode</th><th>default rollover</th><th>typical use</th></tr></thead>
+  <tbody>
+    <tr><td><code>mdf_accrual</code></td><td>fixed or rate</td><td>forfeit</td><td>Market development funds</td></tr>
+    <tr><td><code>recoupable_advance</code></td><td>fixed</td><td>—</td><td>Royalty advance recouped against earnings</td></tr>
+    <tr><td><code>returns_reserve</code></td><td>rate</td><td>rollover</td><td>% of period sales held back for returns</td></tr>
+    <tr><td><code>reserve_accrual</code></td><td>rate</td><td>rollover</td><td>Generic reserve</td></tr>
+    <tr><td><code>performance_bonus</code></td><td>fixed</td><td>—</td><td>Future payout target</td></tr>
+    <tr><td><code>signing_bonus</code></td><td>fixed</td><td>—</td><td>One-shot at activation</td></tr>
+    <tr><td><code>milestone_payment</code></td><td>fixed</td><td>—</td><td>Scheduled date-or-event payout</td></tr>
+    <tr><td><code>minimum_trueup</code></td><td>derived</td><td>—</td><td>Booked when MG &gt; earned</td></tr>
+    <tr><td><code>payment_schedule</code></td><td>—</td><td>—</td><td>Pure schedule metadata, no math</td></tr>
+  </tbody>
+</table>
+
+<pre><code>// deriveAccrual (obligationsService.ts) — all obligation rules share this shape:
+amount = amountMode === 'fixed'
+       ? formulaDefinition.amount
+       : periodSales × formulaDefinition.rate (÷100 if percent, ÷10000 if bps)
+plannedRelease = formulaDefinition.plannedReleaseDate
+              || periodEnd + releaseAfterDays
+expiry         = formulaDefinition.expiryDate
+              || plannedRelease + expiresAfterDays
+              || kindDefault (mdf=90d, bonus=1y)
+rolloverPolicy = formulaDefinition.rolloverPolicy || kindDefault</code></pre>
+
+<h2 id="penalty">11. Penalty rules</h2>
+
+<div class="rule-card">
+  <div class="header-row"><h3>late_payment_penalty</h3><span class="pill pill-ok">implemented</span></div>
+  <pre><code>daysOverdue = today - dueDate
+penalty     = outstandingPayable × dailyRate × daysOverdue</code></pre>
+</div>
+
+<div class="rule-card">
+  <div class="header-row"><h3>missed_milestone_fee</h3><span class="pill pill-ok">implemented</span></div>
+  <pre><code>for each obligation o where o.kind = 'milestone_payment'
+                            AND o.status NOT IN ('completed','cancelled')
+                            AND o.plannedReleaseDate &lt; today:
+  penalty += formulaDefinition.amount</code></pre>
+</div>
+
+<h2 id="aggregation">12. Aggregation: tier basis · tier mode · period</h2>
+
+<h3>Tier basis</h3>
+<p>Controls which sale field the tier ladder is matched against:</p>
+<ul>
+  <li><code>units</code> — match the <strong>quantity</strong> total against tier minimums.</li>
+  <li><code>amount</code> — match the <strong>net_amount</strong> total.</li>
+  <li><code>auto</code> (legacy default) — heuristic: if <code>max(tier.min) &lt; 500,000</code> assume units, else amount.</li>
+</ul>
+<p>Set explicitly via the rule's <code>tier_basis</code> column or <code>formulaDefinition.tierBasis</code>.</p>
+
+<h3>Tier mode</h3>
+<ul>
+  <li><code>whole</code> (default) — once a tier is matched, the entire periodTotal is multiplied by that tier's rate.</li>
+  <li><code>marginal</code> — walk the tiers low→high; each band's eligible amount is multiplied by its own rate. The displayed "rate" becomes a blended weighted average.</li>
+</ul>
+<pre><code>// whole mode example: $749,832 vs tiers [$0=0, $175K=2%, $450K=2.5%, $600K=3%]
+matchedTier = $600K bracket (3%)
+fee         = 749,832 × 3% = $22,494.97
+
+// marginal mode example, same data:
+band [0       - 174,999]: 175,000 × 0%  = 0
+band [175,000 - 449,999]: 275,000 × 2%  = 5,500
+band [450,000 - 599,999]: 150,000 × 2.5%= 3,750
+band [600,000 - ∞      ]: 149,832 × 3%  = 4,494.96
+fee = 13,744.96   (blended ~1.83%)</code></pre>
+
+<h3>Aggregation period <span class="pill pill-ok">new</span></h3>
+<p>Controls the bucketing for aggregate-tiered rules (<code>rebate_tiered</code>, <code>milestone_tiered</code>, <code>promotional_rebate</code>, <code>bonus_rebate</code>):</p>
+<ul>
+  <li><code>annual</code> — one bucket per year. Use for "annual measurement period" contracts.</li>
+  <li><code>quarter</code> (default) — one bucket per fiscal quarter.</li>
+  <li><code>month</code> — one bucket per calendar month.</li>
+</ul>
+<p>Set via <code>formulaDefinition.aggregationPeriod</code>. Without this knob the engine always bucketed quarterly, which would cause an annual rebate contract to under-pay (each quarter independently below the floor).</p>
+
+<h2 id="scope">13. Sale → rule matching (scope)</h2>
+<p>Before a rule sees a sale, <code>ruleMatchingUtils.ts</code> filters the sale set down to what this rule should "see":</p>
+<ol>
+  <li><strong>Contract match</strong> — sale's <code>matched_contract_id</code> must equal this rule's contract.</li>
+  <li><strong>Qualifier match</strong> — the rule's qualifiers (Object · Field · Operator · Value) are evaluated. <code>in</code> = inclusive; <code>not_in</code> = exclusive (catch-all rules).</li>
+  <li><strong>Territory match</strong> — wildcards (<code>*</code>, <code>all</code>, empty, "primary territory") match anything; otherwise substring or exact match.</li>
+  <li><strong>Channel / SKU match</strong> — same wildcard semantics.</li>
+  <li><strong>Best match</strong> — when multiple rules qualify a sale, the one with the most specific qualifiers wins (specificity = number of non-wildcard qualifiers).</li>
+</ol>
+
+<h2 id="worked">14. Worked example: TechSound annual rebate</h2>
+<p>Real production data from contract <code>227856f4-1ab7…</code>:</p>
+
+<table>
+  <thead><tr><th>Quarter</th><th>Net Sales</th></tr></thead>
+  <tbody>
+    <tr><td>2025 Q1</td><td>$163,530.50</td></tr>
+    <tr><td>2025 Q2</td><td>$185,082.40</td></tr>
+    <tr><td>2025 Q3</td><td>$183,735.20</td></tr>
+    <tr><td>2025 Q4</td><td>$217,484.10</td></tr>
+    <tr><td><strong>2025 total</strong></td><td><strong>$749,832.20</strong></td></tr>
+  </tbody>
+</table>
+
+<p>Rule: <code>rebate_tiered</code>, <code>tier_basis = amount</code>, tiers: [$0→0%, $175K→2%, $450K→2.5%, $600K→3%].</p>
+
+<table>
+  <thead><tr><th>Engine setting</th><th>Bucket totals</th><th>Tier matched per bucket</th><th>Fee</th></tr></thead>
+  <tbody>
+    <tr><td><code>aggregationPeriod = quarter</code> (legacy default)</td><td>4 buckets, each $163K–$217K</td><td>Below T1 + Tier 1 × 3</td><td>$11,726.03</td></tr>
+    <tr><td><code>aggregationPeriod = annual</code> (correct for this contract)</td><td>1 bucket, $749,832.20</td><td>Tier 3 (3%)</td><td><strong>$22,494.97</strong></td></tr>
+  </tbody>
+</table>
+
+<p>Allocation back to lines: each of the 49 sales gets <code>(line.netAmount ÷ 749,832.20) × 22,494.97</code>, so the audit trail shows exactly which lines contributed how much.</p>
+
+<h2 id="files">15. Source files</h2>
+<ul>
+  <li><code>shared/calcPhases.ts</code> — phase taxonomy, dropdown registry, ruleType→phase resolver.</li>
+  <li><code>shared/schema.ts</code> — <code>contract_rules</code>, <code>contract_calculations</code>, <code>calculation_rule_results</code>, <code>obligations</code>.</li>
+  <li><code>server/services/dynamicRulesEngine.ts</code> — legacy per-sale execution path.</li>
+  <li><code>server/services/universalCalculationEngine.ts</code> — newer phase-ordered path with full traceability.</li>
+  <li><code>server/services/periodCloseEvaluators.ts</code> — returns/net/floor/cap/penalty dispatcher.</li>
+  <li><code>server/services/obligationsService.ts</code> — obligation accrual / release / expiry math.</li>
+  <li><code>server/services/ruleMatchingUtils.ts</code> — sale → rule scope matching.</li>
+  <li><code>server/services/calculationService.ts</code> — orchestrator that calls the engines and persists results.</li>
+  <li><code>client/src/components/RuleEditorPanel.tsx</code> — the rule editor UI; reads dropdowns from <code>RULE_TYPES_BY_PHASE</code>.</li>
+</ul>
+
+<footer>
+  LicenseIQ Calculation Engine reference · generated April 2026 · synced to source as of <code>aggregationPeriod</code> slice.
+</footer>
+
+</div>
+</body>
+</html>

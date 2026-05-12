@@ -1,0 +1,24 @@
+vite v5.4.21 building for production...
+✓ 3687 modules transformed.
+x Build failed in 16.32s
+error during build:
+client/src/components/public-footer.tsx (3:39): "SiLinkedin" is not exported by "node_modules/react-icons/si/index.mjs", imported by "client/src/components/public-footer.tsx".
+file: /home/liqstage/htdocs/liqstage.cimpleit.com/client/src/components/public-footer.tsx:3:39
+
+1: import { Link } from "wouter";
+2: import licenseIQLogoDark from "@assets/licenseiq-logo-dark-bg_1772668276821.png";
+3: import { SiX, SiFacebook, SiInstagram, SiLinkedin } from "react-icons/si";
+                                          ^
+4: 
+5: export function PublicFooter() {
+
+    at getRollupError (file:///home/liqstage/htdocs/liqstage.cimpleit.com/node_modules/rollup/dist/es/shared/parseAst.js:406:41)
+    at error (file:///home/liqstage/htdocs/liqstage.cimpleit.com/node_modules/rollup/dist/es/shared/parseAst.js:402:42)
+    at Module.error (file:///home/liqstage/htdocs/liqstage.cimpleit.com/node_modules/rollup/dist/es/shared/node-entry.js:17380:16)
+    at Module.traceVariable (file:///home/liqstage/htdocs/liqstage.cimpleit.com/node_modules/rollup/dist/es/shared/node-entry.js:17813:29)
+    at ModuleScope.findVariable (file:///home/liqstage/htdocs/liqstage.cimpleit.com/node_modules/rollup/dist/es/shared/node-entry.js:15403:39)
+    at FunctionScope.findVariable (file:///home/liqstage/htdocs/liqstage.cimpleit.com/node_modules/rollup/dist/es/shared/node-entry.js:5676:38)
+    at FunctionBodyScope.findVariable (file:///home/liqstage/htdocs/liqstage.cimpleit.com/node_modules/rollup/dist/es/shared/node-entry.js:5676:38)
+    at Identifier.bind (file:///home/liqstage/htdocs/liqstage.cimpleit.com/node_modules/rollup/dist/es/shared/node-entry.js:5450:40)
+    at CallExpression.bind (file:///home/liqstage/htdocs/liqstage.cimpleit.com/node_modules/rollup/dist/es/shared/node-entry.js:2828:28)
+    at CallExpression.bind (file:///home/liqstage/htdocs/liqstage.cimpleit.com/node_modules/rollup/dist/es/shared/node-entry.js:12512:15)

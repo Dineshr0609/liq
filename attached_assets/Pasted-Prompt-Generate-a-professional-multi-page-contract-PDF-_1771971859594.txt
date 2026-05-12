@@ -1,0 +1,52 @@
+Prompt:
+
+Generate a professional multi-page contract PDF using Node.js and PDFKit with the following strict requirements:
+
+PDF Setup:
+
+Use new PDFDocument({ size: 'LETTER', margins: { top: 50, bottom: 50, left: 60, right: 60 }, autoFirstPage: true }) — do NOT enable bufferPages: true as it creates ghost empty pages when content doesn't fill them.
+Define content constants: CONTENT_LEFT = 60, CONTENT_WIDTH = PAGE_WIDTH - 120, BOTTOM_MARGIN = 60.
+Pipe directly to a fs.createWriteStream.
+Critical Rules to Avoid Empty Pages and Formatting Issues:
+
+Never use bufferPages: true — it allocates pages in advance and causes trailing empty pages.
+Never use doc.switchToPage() — it requires buffered pages and causes "out of bounds" errors. Skip dynamic page numbering if needed.
+Every ensureSpace(n) check should only call doc.addPage() if doc.y > doc.page.height - BOTTOM_MARGIN - n. Use small threshold values (30–50px) to avoid premature page breaks.
+Always explicitly set x-position using CONTENT_LEFT and width: CONTENT_WIDTH on every .text() call — without this, PDFKit defaults to right-aligning or using the last cursor position.
+After drawing tables/shapes with doc.save()/doc.restore(), manually reset doc.y to the correct position — PDFKit does not track y-position inside save/restore blocks.
+For side-by-side signature blocks, save the starting Y, draw the left column, save its ending Y, reset doc.y to starting Y, draw the right column at CONTENT_LEFT + CONTENT_WIDTH/2 + 10, then set doc.y = Math.max(leftEndY, rightEndY).
+Use doc.moveDown(0.2–0.6) for spacing — never doc.moveDown() without a value as the default is too large.
+Table Drawing Pattern:
+
+function table(headers, rows, colWidths) {
+  // Check space before starting
+  // Draw header row: rect with fill, white bold text
+  // Draw data rows: alternating background, border stroke
+  // After each row: check if doc.y exceeds page, if so addPage and redraw header
+  // After all rows: doc.y += 6 (small gap)
+  // Always use doc.save()/doc.restore() around fills and strokes
+  // Row height = 18, padding = 4, font size = 8
+}
+Section Pattern:
+
+function heading(text) {
+  ensureSpace(40);
+  doc.moveDown(0.6);
+  // 11pt Helvetica-Bold, navy color, UPPERCASE
+  // Draw accent line below: moveTo/lineTo with stroke
+  // Reset doc.y to line position + 4
+  // Reset font to 9pt Helvetica regular
+}
+Content Structure (6 pages, continuous flow):
+
+Page 1: Cover block (centered title, parties, dates) + Section 1 Agreement Details table
+Pages 2-4: Sections 2-18 flowing continuously (definitions, parties, distributors table, territory, channels table, volume rebate tier table, premium bonus, eligible/excluded products table, payment terms, claims, reporting, term/renewal, termination, confidentiality, liability, disputes, general provisions)
+Final content: Signature block (side-by-side manufacturer + distributor columns) — flows inline after Section 18, only breaks to new page if truly insufficient space
+Confidential footer as last line of content — NOT on every page
+Key Don'ts:
+
+Don't add explicit doc.addPage() between sections — let content flow naturally
+Don't use continued: true in text calls — it causes alignment drift
+Don't write page numbers via switchToPage loop
+Don't use large ensureSpace() values for signatures — measure actual needed height (~150px, not 220+)
+Don't leave any page with less than 30% content — condense sections to fill pages

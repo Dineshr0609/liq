@@ -1,0 +1,97 @@
+Task: Implement and deploy the full LicenseIQ Schema Data-form dropdown + company-context behavior now validated in dev.
+
+Scope:
+Apply to LicenseIQ Schema -> Data tab -> Add New Record/Edit Record forms (generic renderer for all entities).
+
+Primary requirement:
+1) Company context behavior
+For any table with company_id, on Add Record:
+  - auto-set company_id from user context:
+    - first dataContextCompanyId
+    - fallback loginContext.companyId
+  - auto-set company_name display helper when available
+In create mode, company_id must be non-editable:
+  - show read-only company name (fallback to company id)
+  - remove dropdown/user interference for company in create mode
+Keep payload unchanged/compatible: still submit underlying company_id
+Apply to all entities, not only products/partner tables
+
+2) Products hierarchy ID migration behavior
+Products save/update APIs must store hierarchy selections in:
+  - product_category_id
+  - product_family_id
+  - product_line_id
+Do NOT write legacy text columns (product_category, product_family, product_line) from save/update path
+Keep legacy compatibility:
+  - if old payload sends text keys, map internally to *_id
+Validate incoming hierarchy IDs exist in product_hierarchy.hierarchy_id
+
+3) Products dropdown behavior
+For products form, use dropdowns and save IDs:
+  - product_category_id, product_family_id, product_line_id
+  - display label = hierarchy_value
+  - stored value = hierarchy_id
+Hide legacy product text hierarchy fields from Products Add/Edit form:
+  - product_category
+  - product_family
+  - product_line
+Company-dependent loading:
+  - hierarchy fields from product_hierarchy filtered by selected company + level
+  - product_family/product_line should load by company+level, and if parent is selected apply parent filter additionally
+Product classification dropdowns:
+  - product_classification, asset_type, durability_class, revenue_type, tax_category, regulatory_class
+  - load from product_classifications
+  - available only when selected company has product master support (based on product hierarchy presence)
+
+4) Product dependency resets
+On company_id change, clear:
+  - product_category_id, product_family_id, product_line_id
+  - product_classification, asset_type, durability_class, revenue_type, tax_category, regulatory_class
+On category change, clear family+line ids
+On family change, clear line id
+
+5) Additional dropdowns already standardized
+Products:
+  - product_status dropdown
+  - record_status dropdown
+Partner Master:
+  - partner_type, partner_classification, status, payment_terms, payment_method, currency, headquarters_country, record_status
+  - primary_sales_channel, authorized_channels from sales_channels
+  - primary_territory, authorized_territories from territory_master
+Sales Channels:
+  - channel_type, channel_category, payment_terms_default, plus existing status/record_status/booleans
+Territory Master:
+  - parent_territory_id, territory_type, region_level, currency_code, language, plus status/record_status
+Product Attributes:
+  - product_id, attribute_category, attribute_name, record_status
+Product BOM:
+  - product_id, parent_product_id, component_product_id, substitute_product_id, bom_type, component_uom, plus existing boolean/status
+
+6) DB/data requirements
+Ensure products has:
+  - product_category_id, product_family_id, product_line_id
+Ensure product hierarchy rows exist for all target companies in production
+Backfill old product text hierarchy values to ID columns where needed
+Keep old text columns for backward compatibility during transition
+
+7) Implementation files/pattern
+Frontend generic form/dropdown config:
+  - client/src/pages/licenseiq-schema.tsx
+Backend generic entity save/update + dropdown routes:
+  - server/routes.ts
+Keep changes minimal and isolated to generic form/save pathways
+
+8) Acceptance criteria
+Add Record auto-selects company from user context and locks it (read-only) in create mode
+All configured dropdown fields render as dropdowns (not plain text)
+Product hierarchy fields save IDs, not text
+Dropdown label/value behavior is correct (show label, save value/id)
+Product dropdown dependencies and reset logic work
+Unsupported companies return empty product-specific dropdowns
+Existing entities/tables not listed above are unaffected
+
+9) Deliverables
+Exact files changed
+Summary of route changes and frontend lookup config changes
+SQL/migration/backfill scripts used
+Manual test checklist + API endpoints tested

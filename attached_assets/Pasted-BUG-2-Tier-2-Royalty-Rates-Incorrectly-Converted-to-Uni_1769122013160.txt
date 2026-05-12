@@ -1,0 +1,74 @@
+BUG 2: Tier 2 Royalty Rates Incorrectly Converted to $/Unit
+
+Actual:
+AI converted Tier 2 royalty percentages into per-unit dollar rates:
+
+$7.20/unit
+$8.50/unit
+$9.80/unit
+
+Expected:
+Tier 2 royalties must be calculated as percentages of Net Sales, not per-unit fees:
+
+Category	                 Expected Royalty
+All Industrial Applications	7.2% of Net Sales
+Aerospace / High-Performance	8.5% of Net Sales
+Custom Engineering Projects	9.8% of Net Sales
+
+BUG 3: Incorrect Quantity-Based Tier Logic for Tier 2
+
+Actual:
+AI created quantity-based conditional logic such as:
+
+quantity <= All Industrial Applications
+
+These values are labels, not numeric quantities.
+
+Expected:
+Tier 2 royalty application must be category-based, determined by product classification, not quantity ranges.
+
+BUG 4: Missing $15,000 Engineering Fee for Custom Engineering Projects
+
+Actual:
+AI generated Tier 2 royalties without applying the mandatory $15,000 engineering fee for Custom Engineering Projects.
+
+Expected:
+When product category is Custom Engineering Projects, royalty calculation must include:
+9.8% of Net Sales plus a fixed $15,000 engineering fee
+
+BUG 5: Milestone Payments Generated as $0.00
+
+Actual:
+AI generated milestone rules using:
+
+quantity × $0.00/unit
+
+All milestone payments were effectively set to $0.
+
+Expected:
+Milestones must trigger fixed, one-time payments as defined in the contract:
+
+Milestone	Payment
+First Commercial Production	$150,000
+$10M Cumulative Net Sales	$200,000
+$50M Cumulative Net Sales	$350,000
+Market Leadership Achievement	$500,000
+
+
+BUG 6: Duplicate Tier 1 Royalty Rules Created
+
+Actual:
+AI generated multiple Tier 1 rules with identical royalty logic, creating risk of double charging.
+
+Expected:
+There must be one canonical Tier 1 royalty rule, referenced consistently without duplication.
+
+BUG 7: Fabricated Base Rate ($0.07) Not Present in Contract
+
+Actual:
+AI introduced a $0.07 base rate for automotive components.
+
+Expected:
+No base rate exists in the contract.
+All royalties must be calculated strictly using percentage-based Net Sales tiers.
+

@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About LicenseIQ</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Barlow+Condensed:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black:      #0c0c0c;
+    --black-mid:  #141414;
+    --black-card: #1a1a1a;
+    --black-hover:#222222;
+    --orange:     #e8520a;
+    --orange-lt:  #ff7a3d;
+    --orange-dim: rgba(232,82,10,0.10);
+    --grey:       #666666;
+    --grey-lt:    #999999;
+    --white:      #f2f0ec;
+    --text:       #aaaaaa;
+  }
+
+  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'Barlow', sans-serif;
+    font-weight: 400;
+    overflow-x: hidden;
+  }
+
+  /* NAV */
+  nav {
+    position: sticky; top:0; z-index:200;
+    background: rgba(12,12,12,0.95);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 60px; height: 64px;
+  }
+  .nav-logo { display:flex; align-items:center; gap:10px; text-decoration:none; }
+  .nav-mark {
+    width:32px; height:32px; background:var(--orange);
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:17px; color:#fff;
+  }
+  .nav-name {
+    font-family:'Barlow Condensed',sans-serif; font-weight:700;
+    font-size:20px; letter-spacing:0.04em; color:var(--white);
+  }
+  .nav-name span { color:var(--orange); }
+  nav ul { list-style:none; display:flex; align-items:center; gap:36px; }
+  nav a { color:var(--grey-lt); text-decoration:none; font-size:14px; font-weight:500; letter-spacing:0.03em; transition:color .2s; }
+  nav a:hover { color:var(--white); }
+  .nav-cta {
+    background:var(--orange) !important; color:#fff !important;
+    padding:8px 22px; font-weight:600 !important; letter-spacing:0.05em !important;
+  }
+  .nav-cta:hover { background:var(--orange-lt) !important; }
+
+  /* HERO */
+  .hero {
+    padding: 110px 60px 96px;
+    max-width:1140px; margin:0 auto; position:relative;
+  }
+  .hero::after {
+    content:''; position:absolute; top:30px; right:-80px;
+    width:560px; height:560px;
+    background: radial-gradient(circle, rgba(232,82,10,0.07) 0%, transparent 65%);
+    pointer-events:none;
+  }
+  .eyebrow {
+    display:flex; align-items:center; gap:12px;
+    font-family:'Barlow Condensed',sans-serif; font-size:12px; font-weight:600;
+    letter-spacing:0.22em; text-transform:uppercase; color:var(--orange);
+    margin-bottom:28px;
+    opacity:0; animation: fadeUp .65s ease .05s forwards;
+  }
+  .eyebrow::before { content:''; width:28px; height:2px; background:var(--orange); flex-shrink:0; }
+
+  .hero h1 {
+    font-family:'Barlow Condensed',sans-serif;
+    font-size: clamp(44px, 6vw, 76px);
+    font-weight:800; line-height:1.05;
+    letter-spacing:-0.01em; text-transform:uppercase;
+    max-width:860px; margin-bottom:28px;
+    opacity:0; animation: fadeUp .65s ease .15s forwards;
+  }
+  .hero h1 .accent { color:var(--orange); }
+
+  .hero-body {
+    font-size:18px; font-weight:300; line-height:1.8;
+    color:var(--text); max-width:600px; margin-bottom:48px;
+    opacity:0; animation: fadeUp .65s ease .27s forwards;
+  }
+  .hero-rule {
+    width:64px; height:3px; background:var(--orange);
+    opacity:0; animation: fadeUp .65s ease .4s forwards;
+  }
+
+  /* DIVIDER */
+  .divider { border:none; border-top:1px solid rgba(255,255,255,0.06); }
+
+  /* PROBLEM BAND */
+  .problem { background:var(--black-mid); padding:88px 60px; }
+  .problem-inner {
+    max-width:1140px; margin:0 auto;
+    display:grid; grid-template-columns:1fr 1fr; gap:80px; align-items:center;
+  }
+  .section-label {
+    font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:600;
+    letter-spacing:0.22em; text-transform:uppercase; color:var(--orange); margin-bottom:20px;
+  }
+  .problem h2 {
+    font-family:'Barlow Condensed',sans-serif;
+    font-size:clamp(30px,3.5vw,44px); font-weight:700; text-transform:uppercase;
+    line-height:1.08; margin-bottom:22px;
+  }
+  .problem p { font-size:15px; line-height:1.8; color:var(--text); margin-bottom:14px; }
+  .problem-list { list-style:none; margin-top:26px; display:flex; flex-direction:column; gap:12px; }
+  .problem-list li {
+    display:flex; align-items:flex-start; gap:12px;
+    font-size:14px; color:var(--grey-lt); line-height:1.55;
+  }
+  .problem-list li::before { content:'→'; color:var(--orange); flex-shrink:0; font-size:13px; margin-top:1px; }
+
+  .pull-quote {
+    border-left:3px solid var(--orange);
+    padding:32px 36px; background:var(--orange-dim);
+  }
+  .pull-quote blockquote {
+    font-size:19px; font-weight:300; font-style:italic;
+    line-height:1.65; color:var(--white); margin-bottom:22px;
+  }
+  .pull-quote cite {
+    font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:600;
+    letter-spacing:0.18em; text-transform:uppercase; color:var(--orange); font-style:normal;
+  }
+
+  /* MISSION + PRINCIPLES */
+  .mission { padding:96px 60px; max-width:1140px; margin:0 auto; }
+  .mission-grid { display:grid; grid-template-columns:1fr 1fr; gap:80px; align-items:start; }
+  .mission h2 {
+    font-family:'Barlow Condensed',sans-serif;
+    font-size:clamp(28px,3vw,42px); font-weight:700; text-transform:uppercase;
+    line-height:1.08; margin-bottom:24px;
+  }
+  .mission p { font-size:15px; line-height:1.85; color:var(--text); margin-bottom:16px; }
+
+  .principles { display:flex; flex-direction:column; }
+  .principle-item {
+    padding:24px 0; border-bottom:1px solid rgba(255,255,255,0.06);
+    display:grid; grid-template-columns:40px 1fr; gap:18px; align-items:start;
+    opacity:0; transform:translateY(14px);
+    transition: opacity .45s ease, transform .45s ease;
+  }
+  .principle-item:first-child { border-top:1px solid rgba(255,255,255,0.06); }
+  .principle-item.visible { opacity:1; transform:translateY(0); }
+  .p-num {
+    font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700;
+    letter-spacing:0.1em; color:var(--orange); margin-top:2px;
+  }
+  .p-title { font-size:15px; font-weight:600; margin-bottom:5px; }
+  .p-desc { font-size:13px; color:var(--grey-lt); line-height:1.65; }
+
+  /* WHO WE SERVE */
+  .who { background:var(--black-mid); padding:96px 60px; }
+  .who-inner { max-width:1140px; margin:0 auto; }
+  .who-header { display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:52px; }
+  .who h2 {
+    font-family:'Barlow Condensed',sans-serif;
+    font-size:clamp(28px,3.5vw,44px); font-weight:700; text-transform:uppercase;
+    line-height:1.08; max-width:480px;
+  }
+  .who-sub { font-size:14px; color:var(--grey-lt); max-width:300px; line-height:1.7; text-align:right; }
+  .who-cards { display:grid; grid-template-columns:repeat(2,1fr); gap:2px; }
+  .who-card {
+    background:var(--black-card); padding:40px 44px;
+    position:relative; overflow:hidden; transition:background .25s; cursor:default;
+  }
+  .who-card::before {
+    content:''; position:absolute; top:0; left:0;
+    width:100%; height:3px; background:var(--orange);
+    transform:scaleX(0); transform-origin:left; transition:transform .3s ease;
+  }
+  .who-card:hover { background:var(--black-hover); }
+  .who-card:hover::before { transform:scaleX(1); }
+  .card-label {
+    font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:600;
+    letter-spacing:0.2em; text-transform:uppercase; color:var(--orange); margin-bottom:12px;
+  }
+  .who-card h3 {
+    font-family:'Barlow Condensed',sans-serif; font-size:21px; font-weight:700;
+    text-transform:uppercase; line-height:1.15; margin-bottom:12px;
+  }
+  .who-card p { font-size:14px; color:var(--grey-lt); line-height:1.7; }
+
+  /* TRACE / CTA */
+  .trace { padding:100px 60px; text-align:center; position:relative; overflow:hidden; }
+  .trace::before {
+    content:''; position:absolute; top:50%; left:50%;
+    transform:translate(-50%,-50%);
+    width:700px; height:700px;
+    background:radial-gradient(circle, rgba(232,82,10,0.06) 0%, transparent 65%);
+    pointer-events:none;
+  }
+  .trace-eyebrow {
+    font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:600;
+    letter-spacing:0.22em; text-transform:uppercase; color:var(--orange); margin-bottom:22px;
+  }
+  .trace h2 {
+    font-family:'Barlow Condensed',sans-serif;
+    font-size:clamp(30px,4.5vw,56px); font-weight:800; text-transform:uppercase;
+    line-height:1.05; max-width:740px; margin:0 auto 20px;
+  }
+  .trace p {
+    font-size:16px; font-weight:300; color:var(--text);
+    max-width:520px; margin:0 auto 52px; line-height:1.8;
+  }
+  .trace-flow {
+    display:flex; align-items:center; justify-content:center;
+    flex-wrap:wrap; gap:0; margin-bottom:60px;
+  }
+  .trace-step {
+    border:1px solid rgba(255,255,255,0.1); background:var(--black-card);
+    padding:14px 24px;
+    font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:600;
+    letter-spacing:0.08em; text-transform:uppercase;
+    transition:all .35s ease; white-space:nowrap;
+  }
+  .trace-step.active { background:var(--orange); border-color:var(--orange); color:#fff; }
+  .trace-arrow { color:var(--orange); font-size:16px; padding:0 6px; opacity:.4; }
+  .cta-btn {
+    display:inline-block; background:var(--orange); color:#fff;
+    font-family:'Barlow Condensed',sans-serif; font-size:15px; font-weight:700;
+    letter-spacing:0.12em; text-transform:uppercase; padding:16px 52px;
+    text-decoration:none; transition:background .2s, transform .2s;
+  }
+  .cta-btn:hover { background:var(--orange-lt); transform:translateY(-2px); }
+
+  /* FOOTER */
+  footer {
+    border-top:1px solid rgba(255,255,255,0.06);
+    padding:36px 60px; display:flex; justify-content:space-between; align-items:center;
+  }
+  footer p { font-size:13px; color:var(--grey); }
+
+  /* ANIMATION */
+  @keyframes fadeUp {
+    from { opacity:0; transform:translateY(20px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
+
+  /* RESPONSIVE */
+  @media (max-width:860px) {
+    nav { padding:0 24px; }
+    nav ul { display:none; }
+    .hero { padding:70px 24px 56px; }
+    .problem { padding:60px 24px; }
+    .problem-inner { grid-template-columns:1fr; gap:40px; }
+    .mission { padding:64px 24px; }
+    .mission-grid { grid-template-columns:1fr; gap:48px; }
+    .who { padding:64px 24px; }
+    .who-header { flex-direction:column; align-items:flex-start; gap:16px; }
+    .who-sub { text-align:left; }
+    .who-cards { grid-template-columns:1fr; }
+    .trace { padding:64px 24px; }
+    footer { padding:28px 24px; flex-direction:column; gap:14px; text-align:center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="#">
+    <div class="nav-mark">C</div>
+    <span class="nav-name">License<span>IQ</span></span>
+  </a>
+  <ul>
+    <li><a href="#">Product</a></li>
+    <li><a href="#">Solutions</a></li>
+    <li><a href="#">About</a></li>
+    <li><a href="#" class="nav-cta">Request Demo</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="eyebrow">About LicenseIQ</div>
+  <h1>Channel revenue is complex.<br><span class="accent">The gap between contract<br>and journal entry</span> shouldn't be.</h1>
+  <p class="hero-body">LicenseIQ was built for finance teams who know their biggest source of revenue risk isn't their ERP — it's the spreadsheets sitting between their signed contracts and their books.</p>
+  <div class="hero-rule"></div>
+</section>
+
+<hr class="divider">
+
+<!-- PROBLEM -->
+<section class="problem">
+  <div class="problem-inner">
+    <div>
+      <div class="section-label">The Problem We Solve</div>
+      <h2>Contracts decide revenue.<br>Systems don't<br>execute them.</h2>
+      <p>Distributor agreements, channel rebates, royalties, price protection — these contracts determine real money. But they were never designed to be executed by finance systems.</p>
+      <p>So finance teams fill the gap the only way they can: manually, in spreadsheets, one period at a time.</p>
+      <ul class="problem-list">
+        <li>Contract logic interpreted by analysts every close cycle</li>
+        <li>Accruals built outside ERP with no audit linkage</li>
+        <li>Disputes resolved through emails and tribal knowledge</li>
+        <li>Audit questions answered with spreadsheets and explanations</li>
+      </ul>
+    </div>
+    <div class="pull-quote">
+      <blockquote>"If I asked today which clause drove this accrual, which transactions were included, and how to prove it to an auditor — you probably need a spreadsheet, a person, and a meeting."</blockquote>
+      <cite>The conversation LicenseIQ ends</cite>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- MISSION + PRINCIPLES -->
+<section class="mission">
+  <div class="mission-grid">
+    <div>
+      <div class="section-label">Our Mission</div>
+      <h2>Make contract-driven revenue fully traceable — from signature to journal entry.</h2>
+      <p>We built LicenseIQ because the gap between a signed contract and a defensible journal entry is where finance teams lose time, confidence, and sleep.</p>
+      <p>Our platform converts complex commercial agreements into executable financial logic — so revenue, accruals, and settlements are accurate, explainable, and audit-ready without rebuilding the systems you already run on.</p>
+      <p>Finance shouldn't have to interpret contracts. It should own the execution.</p>
+    </div>
+    <div>
+      <div class="section-label">Our Design Principles</div>
+      <div class="principles" id="principles">
+        <div class="principle-item">
+          <span class="p-num">01</span>
+          <div>
+            <div class="p-title">Contract is the source of truth</div>
+            <div class="p-desc">Not programs, not claims, not spreadsheets. Every calculation traces back to a specific contract clause.</div>
+          </div>
+        </div>
+        <div class="principle-item">
+          <span class="p-num">02</span>
+          <div>
+            <div class="p-title">Traceability over optimization</div>
+            <div class="p-desc">Every number must be explainable, reproducible, and defensible — not just fast or approximate.</div>
+          </div>
+        </div>
+        <div class="principle-item">
+          <span class="p-num">03</span>
+          <div>
+            <div class="p-title">Finance owns execution</div>
+            <div class="p-desc">We build tools Finance controls — not black boxes that produce numbers nobody can explain.</div>
+          </div>
+        </div>
+        <div class="principle-item">
+          <span class="p-num">04</span>
+          <div>
+            <div class="p-title">ERP remains system of record</div>
+            <div class="p-desc">LicenseIQ computes and proves. ERPs book and pay. We never replace the systems you depend on.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- WHO WE SERVE -->
+<section class="who">
+  <div class="who-inner">
+    <div class="who-header">
+      <div>
+        <div class="section-label">Who We Serve</div>
+        <h2>Built for finance teams<br>managing contract complexity</h2>
+      </div>
+      <p class="who-sub">Especially where analysts are manually interpreting contracts today.</p>
+    </div>
+    <div class="who-cards">
+      <div class="who-card">
+        <div class="card-label">Segment</div>
+        <h3>Mid-Market Electronics & Manufacturing</h3>
+        <p>Complex channel structures with multiple distributor tiers, where contract-driven revenue is material and audit scrutiny is real.</p>
+      </div>
+      <div class="who-card">
+        <div class="card-label">Revenue Model</div>
+        <h3>Distributor-Led Revenue</h3>
+        <p>Companies where the majority of revenue flows through indirect channel partners governed by rebate, chargeback, and incentive contracts.</p>
+      </div>
+      <div class="who-card">
+        <div class="card-label">Use Case</div>
+        <h3>Licensing & Royalty-Heavy Businesses</h3>
+        <p>Organizations with tiered royalty structures, minimum guarantees, and usage-based calculations that demand precise, defensible execution.</p>
+      </div>
+      <div class="who-card">
+        <div class="card-label">Trigger</div>
+        <h3>Organizations Under Audit Pressure</h3>
+        <p>Finance teams where traceability and period-over-period reproducibility are non-negotiable — not nice to have.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TRACE / CTA -->
+<section class="trace">
+  <div class="trace-eyebrow">How LicenseIQ Works</div>
+  <h2>One straight line from<br>contract to journal entry.</h2>
+  <p>No spreadsheet middleware. No manual interpretation. No "trust me" explanations at audit time.</p>
+  <div class="trace-flow">
+    <div class="trace-step active">Signed Contract</div>
+    <div class="trace-arrow">→</div>
+    <div class="trace-step">Executable Rules</div>
+    <div class="trace-arrow">→</div>
+    <div class="trace-step">Validated Transactions</div>
+    <div class="trace-arrow">→</div>
+    <div class="trace-step">Accruals & Settlements</div>
+    <div class="trace-arrow">→</div>
+    <div class="trace-step">ERP Journal Entry</div>
+  </div>
+  <a href="#" class="cta-btn">See It In Action</a>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <a class="nav-logo" href="#" style="text-decoration:none;">
+    <div class="nav-mark">C</div>
+    <span class="nav-name">License<span>IQ</span></span>
+  </a>
+  <p>A Cimpleit product &nbsp;·&nbsp; info@licenseiq.ai &nbsp;·&nbsp; www.licenseiq.ai</p>
+</footer>
+
+<script>
+  const items = document.querySelectorAll('.principle-item');
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const idx = Array.from(items).indexOf(e.target);
+        setTimeout(() => e.target.classList.add('visible'), idx * 110);
+        obs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.2 });
+  items.forEach(el => obs.observe(el));
+
+  const steps = document.querySelectorAll('.trace-step');
+  let cur = 0;
+  setInterval(() => {
+    steps.forEach(s => s.classList.remove('active'));
+    cur = (cur + 1) % steps.length;
+    steps[cur].classList.add('active');
+  }, 1100);
+</script>
+</body>
+</html>

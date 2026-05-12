@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LicenseIQ — Invoices &amp; Memos</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0a0f;--surface:#111118;--surface2:#1a1a24;--surface3:#2d2d3a;
+  --border:#2a2830;--border2:#3a3848;
+  --text:#fafaf8;--text2:#8a8578;--text3:#5a584f;
+  --accent:#c85a2a;--accent-light:#e8734a;--accent-glow:rgba(200,90,42,.12);
+  --ok:#1a9b7a;--ok-glow:rgba(26,155,122,.12);
+  --warn:#c47a1a;--critical:#d94040;--purple:#7a5af8;--blue:#2a6ef8;
+  --ai-from:#c85a2a;--ai-to:#1a9b7a;
+  --radius:8px;--radius-sm:6px;--radius-pill:100px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);height:100vh;display:flex;flex-direction:column;overflow:hidden;font-family:'DM Sans',system-ui,sans-serif;font-size:13px}
+
+/* ── SHARED COMPONENTS (match settlement exactly) ── */
+.topnav{height:50px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 18px;gap:14px;flex-shrink:0}
+.brand{display:flex;align-items:center;gap:9px;text-decoration:none;color:var(--text)}
+.brand-icon{width:28px;height:28px;background:linear-gradient(135deg,var(--ai-from),var(--ai-to));border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px}
+.brand-name{font-size:15px;font-weight:700;letter-spacing:-.3px;font-family:'Playfair Display',serif}
+.brand-name em{font-style:normal;background:linear-gradient(90deg,var(--ai-from),var(--ai-to));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.nav-sep{width:1px;height:22px;background:var(--border)}.nav-breadcrumb{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2)}.nav-breadcrumb span{color:var(--text3)}
+.spacer{flex:1}
+.topnav-search{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:6px 11px;color:var(--text);font-size:12px;width:220px;outline:none;font-family:'DM Sans',sans-serif}
+.topnav-search:focus{border-color:var(--accent)}
+.btn{padding:6px 14px;border-radius:var(--radius-sm);border:none;font-size:12px;font-weight:500;cursor:pointer;transition:all .15s;font-family:'DM Sans',sans-serif;display:inline-flex;align-items:center;gap:5px}
+.btn-primary{background:var(--accent);color:#fff}.btn-primary:hover{background:var(--accent-light)}
+.btn-ok{background:var(--ok);color:#fff}.btn-ok:hover{opacity:.85}
+.btn-ghost{background:transparent;border:1px solid var(--border2);color:var(--text2)}.btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
+.btn-warn{background:rgba(196,122,26,.15);border:1px solid rgba(196,122,26,.3);color:var(--warn)}
+.btn-critical{background:rgba(217,64,64,.15);border:1px solid rgba(217,64,64,.3);color:var(--critical)}
+.btn-sm{padding:4px 10px;font-size:11px}.btn-xs{padding:2px 7px;font-size:10px}
+.avatar{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--ai-from),var(--ai-to));display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700}
+.icon-btn{width:28px;height:28px;border-radius:var(--radius-sm);background:transparent;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;color:var(--text2)}
+.icon-btn:hover{border-color:var(--border2);color:var(--text)}
+.layout{display:flex;flex:1;overflow:hidden}
+.sidebar{width:210px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:10px 8px;gap:1px;overflow-y:auto;flex-shrink:0}
+.sidebar-section{font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.8px;text-transform:uppercase;padding:10px 10px 4px}
+.sidebar-item{display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:var(--radius-sm);color:var(--text2);cursor:pointer;font-size:12px;transition:all .15s;text-decoration:none}
+.sidebar-item:hover{background:var(--surface2);color:var(--text)}
+.sidebar-item.active{background:var(--accent-glow);color:var(--accent);font-weight:500}
+.sidebar-item .icon{font-size:13px;width:15px;text-align:center;flex-shrink:0}
+.sidebar-badge{margin-left:auto;background:var(--warn);color:#000;font-size:9px;font-weight:700;border-radius:var(--radius-pill);padding:1px 5px}
+.sidebar-badge.ok{background:var(--ok);color:#fff}.sidebar-badge.accent{background:var(--accent);color:#fff}.sidebar-badge.critical{background:var(--critical);color:#fff}
+.sidebar-divider{height:1px;background:var(--border);margin:4px 8px}
+.badge{display:inline-flex;align-items:center;padding:2px 7px;border-radius:var(--radius-pill);font-size:10px;font-weight:600;white-space:nowrap;gap:3px}
+.badge-ok{background:rgba(26,155,122,.15);color:var(--ok)}.badge-warn{background:rgba(196,122,26,.15);color:var(--warn)}.badge-critical{background:rgba(217,64,64,.15);color:var(--critical)}.badge-accent{background:rgba(200,90,42,.15);color:var(--accent)}.badge-muted{background:rgba(138,133,120,.1);color:var(--text2)}.badge-purple{background:rgba(122,90,248,.15);color:var(--purple)}.badge-blue{background:rgba(42,110,248,.15);color:var(--blue)}
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.page-header{background:var(--surface);border-bottom:1px solid var(--border);padding:13px 20px 0;flex-shrink:0}
+.page-header-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.page-header-left h1{font-size:19px;font-weight:700;font-family:'Playfair Display',serif}
+.page-header-left p{font-size:12px;color:var(--text2);margin-top:2px}
+.header-actions{display:flex;align-items:center;gap:8px}
+.period-selector{display:flex;align-items:center;gap:6px;background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius-sm);padding:5px 10px;font-size:12px;cursor:pointer;color:var(--text)}
+.kpi-strip{display:flex;gap:0;background:var(--surface);border-bottom:1px solid var(--border);flex-shrink:0}
+.kpi-card{flex:1;padding:11px 16px;border-right:1px solid var(--border)}
+.kpi-card:last-child{border-right:none}
+.kpi-label{font-size:10px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.kpi-value{font-size:17px;font-weight:700;line-height:1;font-family:'Playfair Display',serif}
+.kpi-sub{font-size:10px;color:var(--text2);margin-top:3px}
+.kpi-value.ok{color:var(--ok)}.kpi-value.warn{color:var(--warn)}.kpi-value.critical{color:var(--critical)}.kpi-value.blue{color:var(--blue)}
+.section-label{font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.section-label::after{content:'';flex:1;height:1px;background:var(--border)}
+.work-area{flex:1;display:flex;overflow:hidden}
+.queue-panel{width:300px;border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;background:var(--surface)}
+.queue-toolbar{padding:10px 12px;border-bottom:1px solid var(--border);display:flex;gap:6px;flex-shrink:0}
+.queue-search{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:5px 9px;color:var(--text);font-size:12px;outline:none;font-family:'DM Sans',sans-serif}
+.queue-search:focus{border-color:var(--accent)}
+.queue-filter-row{padding:6px 12px;border-bottom:1px solid var(--border);display:flex;gap:4px;flex-wrap:wrap;flex-shrink:0}
+.filter-chip{padding:3px 9px;border-radius:var(--radius-pill);font-size:10px;font-weight:600;cursor:pointer;border:1px solid var(--border);color:var(--text2);transition:all .12s}
+.filter-chip.active{background:var(--accent-glow);color:var(--accent);border-color:rgba(200,90,42,.3)}
+.queue-list{flex:1;overflow-y:auto}
+.queue-group-label{padding:8px 12px 4px;font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.6px;text-transform:uppercase;display:flex;align-items:center;gap:6px}
+.queue-group-label::after{content:'';flex:1;height:1px;background:var(--border)}
+.queue-item{padding:11px 12px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .12s}
+.queue-item:hover{background:var(--surface2)}
+.queue-item.selected{background:var(--accent-glow);border-left:3px solid var(--accent)}
+.qi-top{display:flex;align-items:flex-start;justify-content:space-between;gap:6px;margin-bottom:3px}
+.qi-title{font-size:12px;font-weight:600;line-height:1.3;flex:1}
+.qi-amount{font-size:12px;font-weight:700;white-space:nowrap;font-family:'JetBrains Mono',monospace}
+.qi-meta{font-size:10.5px;color:var(--text2);margin-bottom:5px}
+.qi-footer{display:flex;align-items:center;gap:5px}
+.qi-age{margin-left:auto;font-size:10px;color:var(--text3)}
+.center-panel{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.center-header{padding:13px 18px;border-bottom:1px solid var(--border);background:var(--surface);flex-shrink:0}
+.center-title{font-size:15px;font-weight:700;font-family:'Playfair Display',serif;margin-bottom:5px}
+.center-sub-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.center-header-actions{display:flex;gap:6px;margin-top:10px}
+.center-tabs{display:flex;border-bottom:1px solid var(--border);padding:0 12px;background:var(--surface);flex-shrink:0}
+.center-tab{padding:8px 12px;font-size:12px;color:var(--text2);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;white-space:nowrap}
+.center-tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.center-tab:hover:not(.active){color:var(--text)}
+.tab-content{display:none}.tab-content.active{display:block}
+.center-body{flex:1;overflow-y:auto;padding:16px 18px}
+.center-footer{padding:12px 18px;border-top:1px solid var(--border);display:flex;align-items:center;gap:8px;flex-shrink:0;background:var(--surface)}
+.footer-status{font-size:11.5px;color:var(--text2)}.footer-status strong{color:var(--text)}
+.ai-panel{width:265px;border-left:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;flex-shrink:0;background:var(--surface)}
+.ai-panel-header{padding:12px 14px;border-bottom:1px solid var(--border);flex-shrink:0}
+.ai-title-row{display:flex;align-items:center;gap:7px;margin-bottom:2px}
+.ai-title{font-size:13px;font-weight:700;background:linear-gradient(90deg,var(--ai-from),var(--ai-to));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.ai-sub{font-size:10px;color:var(--text2)}
+.ai-status-dot{width:6px;height:6px;border-radius:50%;background:var(--ok);animation:pulse-ok 2s infinite;flex-shrink:0}
+@keyframes pulse-ok{0%,100%{opacity:1}50%{opacity:.4}}
+.ai-context{background:var(--surface2);border-bottom:1px solid var(--border);padding:6px 14px;font-size:11px;color:var(--text2);flex-shrink:0}
+.ai-context span{color:var(--accent);font-weight:500}
+.ai-msgs{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px}
+.ai-msg{padding:9px 11px;border-radius:var(--radius);font-size:11.5px;line-height:1.55}
+.ai-msg.ai{background:var(--surface2);border:1px solid var(--border)}
+.ai-msg strong{color:var(--accent-light)}
+.ai-msg .ai-label{font-size:9px;font-weight:700;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:4px}
+.ai-prompts{padding:0 12px 8px;display:flex;flex-direction:column;gap:4px;flex-shrink:0}
+.ai-prompt{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:7px 10px;font-size:11px;color:var(--text2);cursor:pointer;transition:all .15s;line-height:1.4}
+.ai-prompt:hover{border-color:var(--accent);color:var(--text)}
+.ai-input-row{display:flex;gap:6px;padding:10px 12px;border-top:1px solid var(--border);flex-shrink:0}
+.ai-input{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:7px 10px;color:var(--text);font-size:12px;outline:none;font-family:'DM Sans',sans-serif}
+.ai-input:focus{border-color:var(--accent)}
+.ai-send{background:linear-gradient(135deg,var(--ai-from),var(--ai-to));border:none;border-radius:var(--radius-sm);padding:7px 11px;color:#fff;font-size:14px;cursor:pointer;flex-shrink:0}
+
+/* ── INVOICE-SPECIFIC ── */
+.flow-tabs{display:flex;gap:2px;border-top:1px solid var(--border)}
+.flow-tab{display:flex;align-items:center;gap:7px;padding:9px 16px;font-size:12px;font-weight:500;color:var(--text2);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;white-space:nowrap}
+.flow-tab:hover{color:var(--text)}
+.flow-tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.flow-tab .tab-badge{background:var(--surface3);color:var(--text2);font-size:9px;font-weight:700;padding:1px 6px;border-radius:var(--radius-pill)}
+.flow-tab.active .tab-badge{background:var(--accent-glow);color:var(--accent)}
+.doc-type-pill{font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;text-transform:uppercase;letter-spacing:.4px}
+.dt-ap-inv{background:rgba(122,90,248,.15);color:var(--purple)}
+.dt-ar-inv{background:rgba(26,155,122,.15);color:var(--ok)}
+.dt-cm{background:rgba(42,110,248,.15);color:var(--blue)}
+.dt-dm{background:rgba(217,64,64,.15);color:var(--critical)}
+
+/* Document detail card */
+.doc-detail-card{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-bottom:14px}
+.ddc-row{display:flex;justify-content:space-between;align-items:flex-start;padding:6px 0;border-bottom:1px solid rgba(42,40,48,.6);font-size:12px}
+.ddc-row:last-child{border-bottom:none}
+.ddc-key{color:var(--text2);flex-shrink:0;width:160px}
+.ddc-val{color:var(--text);font-family:'JetBrains Mono',monospace;font-size:11px;text-align:right}
+.ddc-val.ok{color:var(--ok)}.ddc-val.critical{color:var(--critical)}.ddc-val.accent{color:var(--accent-light)}.ddc-val.blue{color:var(--blue)}.ddc-val.purple{color:var(--purple)}
+.ddc-val.normal{font-family:'DM Sans',sans-serif;font-size:12px}
+
+/* Line items table */
+.inv-table{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:14px}
+.inv-table thead th{padding:7px 10px;text-align:left;color:var(--text2);font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:.4px;border-bottom:1px solid var(--border);background:var(--surface);position:sticky;top:0;z-index:1}
+.inv-table thead th.right{text-align:right}
+.inv-table tbody tr{border-bottom:1px solid rgba(42,40,48,.5);transition:background .1s;cursor:pointer}
+.inv-table tbody tr:hover{background:var(--surface2)}
+.inv-table td{padding:8px 10px;vertical-align:middle}
+.inv-table td.right{text-align:right;font-family:'JetBrains Mono',monospace;font-size:11.5px}
+.inv-table tfoot td{padding:9px 10px;border-top:2px solid var(--border2);font-weight:700}
+.inv-table tfoot td.right{font-family:'JetBrains Mono',monospace;font-size:12px}
+
+/* Oracle status tracker */
+.oracle-track{display:flex;align-items:center;gap:0;margin-bottom:14px;position:relative}
+.oracle-track::before{content:'';position:absolute;top:16px;left:16px;right:16px;height:1px;background:var(--border);z-index:0}
+.ot-step{display:flex;flex-direction:column;align-items:center;gap:5px;flex:1;position:relative;z-index:1}
+.ot-dot{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;border:2px solid;flex-shrink:0}
+.ot-dot.done{background:rgba(26,155,122,.15);border-color:var(--ok);color:var(--ok)}
+.ot-dot.active{background:var(--accent-glow);border-color:var(--accent);color:var(--accent)}
+.ot-dot.pending{background:var(--surface2);border-color:var(--border2);color:var(--text3)}
+.ot-label{font-size:10px;font-weight:600;text-align:center;line-height:1.3}
+.ot-sub{font-size:9px;color:var(--text3);text-align:center}
+
+/* Amount highlight */
+.amount-hero{font-family:'JetBrains Mono',monospace;font-size:28px;font-weight:700;line-height:1}
+
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:rgba(255,255,255,.08);border-radius:2px}
+</style>
+</head>
+<body>
+
+<!-- TOPNAV -->
+<nav class="topnav">
+  <a class="brand" href="licenseiq-financial-control-center.html">
+    <div class="brand-icon">⚡</div>
+    <span class="brand-name">License<em>IQ</em></span>
+  </a>
+  <div class="nav-sep"></div>
+  <div class="nav-breadcrumb">
+    <span>Finance Hub</span><span>›</span>
+    <span style="color:var(--text)">Invoices &amp; Memos</span>
+  </div>
+  <div class="spacer"></div>
+  <input class="topnav-search" placeholder="🔍  Search invoices, memos, partners…">
+  <button class="icon-btn">🔔</button>
+  <button class="icon-btn">?</button>
+  <div class="avatar">CT</div>
+</nav>
+
+<div class="layout">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-section">Financial Control</div>
+  <a class="sidebar-item" href="licenseiq-financial-control-center.html"><span class="icon">🏠</span> Control Center</a>
+  <div class="sidebar-divider"></div>
+  <div class="sidebar-section">Contract Intelligence</div>
+  <div class="sidebar-item"><span class="icon">🔍</span> Search &amp; Manage</div>
+  <div class="sidebar-item"><span class="icon">🗺️</span> Term Mapping</div>
+  <div class="sidebar-item"><span class="icon">🕐</span> Pending Queue <span class="sidebar-badge">7</span></div>
+  <div class="sidebar-divider"></div>
+  <div class="sidebar-section">Contract Execution</div>
+  <div class="sidebar-item"><span class="icon">📊</span> Sales Data</div>
+  <div class="sidebar-item"><span class="icon">⚙️</span> Calculation Engine</div>
+  <div class="sidebar-divider"></div>
+  <div class="sidebar-section">Finance Hub</div>
+  <a class="sidebar-item" href="licenseiq-accrual-management.html"><span class="icon">📋</span> Accrual Management</a>
+  <div class="sidebar-item"><span class="icon">📋</span> Claims Workspace <span class="sidebar-badge">23</span></div>
+  <div class="sidebar-item"><span class="icon">✂️</span> Deductions <span class="sidebar-badge critical">11</span></div>
+  <a class="sidebar-item" href="licenseiq-settlement.html"><span class="icon">⚖️</span> Settlement <span class="sidebar-badge accent">14</span></a>
+  <div class="sidebar-item active"><span class="icon">🧾</span> Invoices &amp; Memos <span class="sidebar-badge">8</span></div>
+  <a class="sidebar-item" href="licenseiq-journal-entry-hub.html"><span class="icon">📓</span> Journal Entry Hub</a>
+  <a class="sidebar-item" href="licenseiq-period-close.html"><span class="icon">🗂️</span> Period Close <span class="sidebar-badge ok">2</span></a>
+  <div class="sidebar-divider"></div>
+  <div class="sidebar-section">Financial Intelligence</div>
+  <div class="sidebar-item"><span class="icon">📈</span> Revenue Analytics</div>
+  <div class="sidebar-item"><span class="icon">🤖</span> AI Audit Trail</div>
+  <div class="sidebar-item"><span class="icon">📦</span> Audit Packages</div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+
+<!-- PAGE HEADER -->
+<div class="page-header">
+  <div class="page-header-top">
+    <div class="page-header-left">
+      <h1>Invoices &amp; Memos</h1>
+      <p>AP invoices · AR invoices · credit memos · debit memos — generated by LicenseIQ · posted via Oracle</p>
+    </div>
+    <div class="header-actions">
+      <div class="period-selector"><span>Period:</span> Q2 2026 (Apr) <span style="margin-left:4px">▾</span></div>
+      <button class="btn btn-ghost btn-sm">⬇ Export</button>
+      <button class="btn btn-primary btn-sm">+ Manual Document</button>
+    </div>
+  </div>
+
+  <!-- DOCUMENT TYPE TABS -->
+  <div class="flow-tabs">
+    <div class="flow-tab active" onclick="switchDocType(this,'ap')">
+      <span class="doc-type-pill dt-ap-inv">AP</span> AP Invoices <span class="tab-badge">12</span>
+    </div>
+    <div class="flow-tab" onclick="switchDocType(this,'ar')">
+      <span class="doc-type-pill dt-ar-inv">AR</span> AR Invoices <span class="tab-badge">9</span>
+    </div>
+    <div class="flow-tab" onclick="switchDocType(this,'cm')">
+      <span class="doc-type-pill dt-cm">CM</span> Credit Memos <span class="tab-badge">6</span>
+    </div>
+    <div class="flow-tab" onclick="switchDocType(this,'dm')">
+      <span class="doc-type-pill dt-dm">DM</span> Debit Memos <span class="tab-badge">8</span>
+    </div>
+  </div>
+</div>
+
+<!-- KPI STRIP -->
+<div class="kpi-strip">
+  <div class="kpi-card">
+    <div class="kpi-label">AP Invoices Open</div>
+    <div class="kpi-value warn">$842K</div>
+    <div class="kpi-sub">12 invoices · rebates payable</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-label">AR Invoices Open</div>
+    <div class="kpi-value ok">$318K</div>
+    <div class="kpi-sub">9 invoices · royalties receivable</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-label">Credit Memos Issued</div>
+    <div class="kpi-value blue">$124K</div>
+    <div class="kpi-sub">6 memos · price protection</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-label">Debit Memos Issued</div>
+    <div class="kpi-value critical">$43K</div>
+    <div class="kpi-sub">8 memos · deduction disputes</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-label">Overdue</div>
+    <div class="kpi-value critical">3</div>
+    <div class="kpi-sub">Past due date · escalation needed</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-label">Oracle Sync</div>
+    <div class="kpi-value ok">✓ Live</div>
+    <div class="kpi-sub">Last sync 4 min ago</div>
+  </div>
+</div>
+
+<!-- WORK AREA -->
+<div class="work-area">
+
+  <!-- QUEUE PANEL -->
+  <div class="queue-panel">
+    <div class="queue-toolbar">
+      <input class="queue-search" placeholder="🔍 Filter invoices, memos…">
+      <button class="icon-btn btn-sm">⚙</button>
+    </div>
+    <div class="queue-filter-row">
+      <span class="filter-chip active">All (12)</span>
+      <span class="filter-chip">Draft (2)</span>
+      <span class="filter-chip">Sent (6)</span>
+      <span class="filter-chip">Overdue (3)</span>
+    </div>
+    <div class="queue-list">
+
+      <div class="queue-group-label">Needs attention</div>
+
+      <!-- SELECTED: AP invoice for price protection settlement -->
+      <div class="queue-item selected" onclick="selectItem(this)">
+        <div class="qi-top">
+          <div class="qi-title">National Distributor Inc.</div>
+          <div class="qi-amount" style="color:var(--purple);">$64,000</div>
+        </div>
+        <div class="qi-meta">AP-INV-2026-0441 · Price Protection · Due May 19</div>
+        <div class="qi-footer">
+          <span class="doc-type-pill dt-ap-inv">AP</span>
+          <span class="badge badge-warn">Pending Payment</span>
+          <span class="qi-age">Created today</span>
+        </div>
+      </div>
+
+      <!-- Overdue AR -->
+      <div class="queue-item" onclick="selectItem(this)">
+        <div class="qi-top">
+          <div class="qi-title">AudioTech Solutions Ltd.</div>
+          <div class="qi-amount" style="color:var(--critical);">$38,100</div>
+        </div>
+        <div class="qi-meta">AR-INV-2026-0421 · Q1 Royalty · Due Apr 10</div>
+        <div class="qi-footer">
+          <span class="doc-type-pill dt-ar-inv">AR</span>
+          <span class="badge badge-critical">Overdue 11 days</span>
+        </div>
+      </div>
+
+      <!-- Debit memo -->
+      <div class="queue-item" onclick="selectItem(this)">
+        <div class="qi-top">
+          <div class="qi-title">National Distributor Inc.</div>
+          <div class="qi-amount" style="color:var(--critical);">$12,400</div>
+        </div>
+        <div class="qi-meta">DM-2026-0038 · Deduction Dispute · Issued Apr 19</div>
+        <div class="qi-footer">
+          <span class="doc-type-pill dt-dm">DM</span>
+          <span class="badge badge-warn">Awaiting Response</span>
+        </div>
+      </div>
+
+      <div class="queue-group-label" style="margin-top:4px">Sent — awaiting payment</div>
+
+      <!-- AP invoice Q1 rebate -->
+      <div class="queue-item" onclick="selectItem(this)">
+        <div class="qi-top">
+          <div class="qi-title">National Distributor Inc.</div>
+          <div class="qi-amount" style="color:var(--purple);">$112,800</div>
+        </div>
+        <div class="qi-meta">AP-INV-2026-0429 · Q1 Rebate · Due May 18</div>
+        <div class="qi-footer">
+          <span class="doc-type-pill dt-ap-inv">AP</span>
+          <span class="badge badge-ok">Oracle Posted</span>
+        </div>
+      </div>
+
+      <div class="queue-item" onclick="selectItem(this)">
+        <div class="qi-top">
+          <div class="qi-title">Pacific Rim Electronics</div>
+          <div class="qi-amount" style="color:var(--purple);">$89,300</div>
+        </div>
+        <div class="qi-meta">AP-INV-2026-0421 · Q1 Rebate · Due May 14</div>
+        <div class="qi-footer">
+          <span class="doc-type-pill dt-ap-inv">AP</span>
+          <span class="badge badge-ok">Oracle Posted</span>
+        </div>
+      </div>
+
+      <!-- Credit memo -->
+      <div class="queue-item" onclick="selectItem(this)">
+        <div class="qi-top">
+          <div class="qi-title">National Distributor Inc.</div>
+          <div class="qi-amount" style="color:var(--blue);">$20,200</div>
+        </div>
+        <div class="qi-meta">CM-2026-0019 · Price Protection credit · Apr 19</div>
+        <div class="qi-footer">
+          <span class="doc-type-pill dt-cm">CM</span>
+          <span class="badge badge-ok">Issued</span>
+        </div>
+      </div>
+
+      <div class="queue-group-label" style="margin-top:4px">Draft — not yet sent</div>
+
+      <div class="queue-item" onclick="selectItem(this)">
+        <div class="qi-top">
+          <div class="qi-title">Euro Audio GmbH</div>
+          <div class="qi-amount" style="color:var(--purple);">$44,200</div>
+        </div>
+        <div class="qi-meta">AP-INV-2026-0418 · Q1 Incentive · Draft</div>
+        <div class="qi-footer">
+          <span class="doc-type-pill dt-ap-inv">AP</span>
+          <span class="badge badge-muted">Draft</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- CENTER PANEL -->
+  <div class="center-panel">
+    <div class="center-header">
+      <div class="center-title">AP Invoice — Price Protection Settlement · National Distributor Inc.</div>
+      <div class="center-sub-row">
+        <span class="doc-type-pill dt-ap-inv">AP Invoice</span>
+        <span class="badge badge-warn">Pending Payment</span>
+        <span class="badge badge-accent">Origin: CLM-2026-0441</span>
+        <span class="badge badge-accent">Settlement: STL-2026-0441</span>
+        <span style="font-size:11px;color:var(--text2);">Due May 19, 2026 · Net 30</span>
+      </div>
+      <div class="center-header-actions">
+        <button class="btn btn-ghost btn-sm">📋 View Claim</button>
+        <button class="btn btn-ghost btn-sm">⚖ View Settlement</button>
+        <button class="btn btn-ghost btn-sm">📄 View Contract</button>
+        <button class="btn btn-ghost btn-sm">⬇ Download PDF</button>
+      </div>
+    </div>
+
+    <div class="center-tabs">
+      <div class="center-tab active" onclick="switchTab(this,'doc-detail')">Document Detail</div>
+      <div class="center-tab" onclick="switchTab(this,'oracle-status')">Oracle Status</div>
+      <div class="center-tab" onclick="switchTab(this,'doc-links')">Linked Records</div>
+      <div class="center-tab" onclick="switchTab(this,'doc-audit')">Audit Trail</div>
+    </div>
+
+    <!-- DOCUMENT DETAIL TAB -->
+    <div class="center-body tab-content active" id="doc-detail">
+
+      <!-- Amount hero -->
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:18px;">
+        <div>
+          <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;">Invoice Amount</div>
+          <div class="amount-hero" style="color:var(--purple);">$64,000.00</div>
+          <div style="font-size:11px;color:var(--text2);margin-top:4px;">AP-INV-2026-0441 · Generated Apr 19, 2026 · 09:22</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:5px;align-items:flex-end;">
+          <div style="display:flex;gap:5px;">
+            <span class="badge badge-purple">AP Invoice</span>
+            <span class="badge badge-warn">Pending Payment</span>
+          </div>
+          <div style="font-size:11px;color:var(--text2);">Oracle AP: <span style="font-family:'JetBrains Mono',monospace;color:var(--ok);">ORA-AP-2026-019441</span></div>
+          <div style="font-size:11px;color:var(--text2);">Vendor: <span style="color:var(--text);">V-000881 · National Distributor Inc.</span></div>
+        </div>
+      </div>
+
+      <!-- Document fields -->
+      <div class="section-label">Invoice Details</div>
+      <div class="doc-detail-card" style="margin-bottom:14px;">
+        <div class="ddc-row"><span class="ddc-key">Document Type</span><span class="ddc-val accent">AP Invoice · Rebate Payment</span></div>
+        <div class="ddc-row"><span class="ddc-key">Vendor ID</span><span class="ddc-val">V-000881 · National Distributor Inc.</span></div>
+        <div class="ddc-row"><span class="ddc-key">Invoice Number</span><span class="ddc-val">AP-INV-2026-0441</span></div>
+        <div class="ddc-row"><span class="ddc-key">Invoice Date</span><span class="ddc-val normal">April 19, 2026</span></div>
+        <div class="ddc-row"><span class="ddc-key">Due Date</span><span class="ddc-val normal">May 19, 2026 (Net 30)</span></div>
+        <div class="ddc-row"><span class="ddc-key">Invoice Amount</span><span class="ddc-val ok">$64,000.00</span></div>
+        <div class="ddc-row"><span class="ddc-key">Currency</span><span class="ddc-val">USD</span></div>
+        <div class="ddc-row"><span class="ddc-key">Payment Method</span><span class="ddc-val normal">ACH / Wire · Bank on file</span></div>
+        <div class="ddc-row"><span class="ddc-key">Generated By</span><span class="ddc-val purple">LicenseIQ · Agent auto-generated</span></div>
+        <div class="ddc-row"><span class="ddc-key">Oracle AP Number</span><span class="ddc-val ok">ORA-AP-2026-019441</span></div>
+      </div>
+
+      <!-- Line items -->
+      <div class="section-label">Line Items</div>
+      <table class="inv-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Description</th>
+            <th>Contract Ref</th>
+            <th class="right">Units</th>
+            <th class="right">Rate</th>
+            <th class="right">Amount</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="color:var(--text3)">1</td>
+            <td>
+              <div style="font-weight:600;">Price Protection — SoundPro Wireless SKU-2201</div>
+              <div style="font-size:10.5px;color:var(--text2);">Price drop $149 → $129 on Mar 14 · verified inventory 3,200 units</div>
+            </td>
+            <td style="font-size:11px;"><span style="color:var(--accent)">CL-04</span> · CNT-2026-040</td>
+            <td class="right">3,200</td>
+            <td class="right">$20.00</td>
+            <td class="right" style="color:var(--ok);">$64,000.00</td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="5"><strong>Total</strong></td>
+            <td class="right" style="color:var(--ok);"><strong>$64,000.00</strong></td>
+          </tr>
+        </tfoot>
+      </table>
+
+      <!-- GL Coding -->
+      <div class="section-label">GL Coding</div>
+      <div class="doc-detail-card">
+        <div class="ddc-row"><span class="ddc-key">Debit — Expense Account</span><span class="ddc-val">5420 · Price Protection Expense</span></div>
+        <div class="ddc-row"><span class="ddc-key">Credit — Payable Account</span><span class="ddc-val">2310 · Trade Rebates Payable</span></div>
+        <div class="ddc-row"><span class="ddc-key">Oracle Segment</span><span class="ddc-val" style="font-size:10px;">100-5420-NA-450-0000-0000</span></div>
+        <div class="ddc-row"><span class="ddc-key">Cost Center</span><span class="ddc-val">CC-450 · Channel Sales</span></div>
+        <div class="ddc-row"><span class="ddc-key">Journal Reference</span><span class="ddc-val ok">JE-2026-0891 · Posted</span></div>
+      </div>
+
+      <!-- Note: pending $20,200 -->
+      <div style="background:rgba(196,122,26,.07);border:1px solid rgba(196,122,26,.2);border-radius:var(--radius);padding:10px 14px;margin-top:2px;font-size:11.5px;color:var(--text2);">
+        <strong style="color:var(--warn);">⚠ Evidence window open —</strong> additional $20,200 may be payable if partner provides inventory evidence for 1,010 units by May 5. A supplemental invoice will be generated automatically if evidence is approved.
+      </div>
+
+    </div><!-- end doc-detail -->
+
+    <!-- ORACLE STATUS TAB -->
+    <div class="center-body tab-content" id="oracle-status">
+      <div class="section-label">Oracle Cloud Financials — Document Status</div>
+
+      <!-- Status tracker -->
+      <div class="oracle-track">
+        <div class="ot-step">
+          <div class="ot-dot done">✓</div>
+          <div class="ot-label">LicenseIQ Generated</div>
+          <div class="ot-sub">Apr 19 · 09:22</div>
+        </div>
+        <div class="ot-step">
+          <div class="ot-dot done">✓</div>
+          <div class="ot-label">DataIQ Submitted</div>
+          <div class="ot-sub">Apr 19 · 09:23 · REST API</div>
+        </div>
+        <div class="ot-step">
+          <div class="ot-dot done">✓</div>
+          <div class="ot-label">Oracle AP Created</div>
+          <div class="ot-sub">ORA-AP-2026-019441</div>
+        </div>
+        <div class="ot-step">
+          <div class="ot-dot done">✓</div>
+          <div class="ot-label">GL Journal Posted</div>
+          <div class="ot-sub">JE-2026-0891 · Apr 19</div>
+        </div>
+        <div class="ot-step">
+          <div class="ot-dot active">⌛</div>
+          <div class="ot-label">Payment Run</div>
+          <div class="ot-sub">Due May 19 · Scheduled</div>
+        </div>
+        <div class="ot-step">
+          <div class="ot-dot pending">○</div>
+          <div class="ot-label">Payment Confirmed</div>
+          <div class="ot-sub">Pending</div>
+        </div>
+      </div>
+
+      <!-- Oracle detail -->
+      <div class="section-label">Oracle Record Detail</div>
+      <div class="doc-detail-card">
+        <div class="ddc-row"><span class="ddc-key">Oracle Invoice Type</span><span class="ddc-val accent">Standard</span></div>
+        <div class="ddc-row"><span class="ddc-key">Oracle Supplier ID</span><span class="ddc-val">V-000881</span></div>
+        <div class="ddc-row"><span class="ddc-key">Oracle Supplier Site</span><span class="ddc-val">NATL-DIST-US-PRIMARY</span></div>
+        <div class="ddc-row"><span class="ddc-key">Oracle Invoice Number</span><span class="ddc-val ok">ORA-AP-2026-019441</span></div>
+        <div class="ddc-row"><span class="ddc-key">Ledger</span><span class="ddc-val">US Primary Ledger</span></div>
+        <div class="ddc-row"><span class="ddc-key">Legal Entity</span><span class="ddc-val">TechSound Audio Inc.</span></div>
+        <div class="ddc-row"><span class="ddc-key">Business Unit</span><span class="ddc-val">Americas — Consumer Electronics</span></div>
+        <div class="ddc-row"><span class="ddc-key">Accounting Period</span><span class="ddc-val">APR-26</span></div>
+        <div class="ddc-row"><span class="ddc-key">Journal Entry</span><span class="ddc-val ok">JE-2026-0891 · Posted Apr 19</span></div>
+        <div class="ddc-row"><span class="ddc-key">Approval Status</span><span class="ddc-val ok">Approved</span></div>
+        <div class="ddc-row"><span class="ddc-key">Validation Status</span><span class="ddc-val ok">Validated</span></div>
+        <div class="ddc-row"><span class="ddc-key">Payment Status</span><span class="ddc-val normal">Not paid · Due May 19</span></div>
+        <div class="ddc-row"><span class="ddc-key">Payment Batch</span><span class="ddc-val normal">PAY-MAY-19-2026 · Scheduled</span></div>
+      </div>
+    </div>
+
+    <!-- LINKED RECORDS TAB -->
+    <div class="center-body tab-content" id="doc-links">
+      <div class="section-label">Record Chain — Full Traceability</div>
+      <div style="font-size:11.5px;color:var(--text2);margin-bottom:12px;line-height:1.6;">Every financial document generated by LicenseIQ traces back to a specific contract clause. Click any record to navigate.</div>
+
+      <!-- Chain visual -->
+      <div style="display:flex;flex-direction:column;gap:4px;margin-bottom:14px;">
+
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:9px 12px;display:flex;align-items:center;gap:10px;cursor:pointer;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+          <span style="font-size:16px;">📄</span>
+          <div style="flex:1;"><div style="font-size:12px;font-weight:600;">Contract — CNT-2026-040</div><div style="font-size:10.5px;color:var(--text2);">National Distributor Volume Rebate Agreement · Jan 1, 2026</div></div>
+          <span class="badge badge-ok">Source</span>
+        </div>
+
+        <div style="display:flex;justify-content:center;color:var(--text3);font-size:12px;">↓ clause CL-04 (Price Protection)</div>
+
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:9px 12px;display:flex;align-items:center;gap:10px;cursor:pointer;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+          <span style="font-size:16px;">📋</span>
+          <div style="flex:1;"><div style="font-size:12px;font-weight:600;">Claim — CLM-2026-0441</div><div style="font-size:10.5px;color:var(--text2);">Q1 Price Protection · $84,200 claimed · $64,000 approved · Apr 19</div></div>
+          <span class="badge badge-accent">Partially Approved</span>
+        </div>
+
+        <div style="display:flex;justify-content:center;color:var(--text3);font-size:12px;">↓ Finance approved $64,000</div>
+
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:9px 12px;display:flex;align-items:center;gap:10px;cursor:pointer;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+          <span style="font-size:16px;">⚖️</span>
+          <div style="flex:1;"><div style="font-size:12px;font-weight:600;">Settlement — STL-2026-0441</div><div style="font-size:10.5px;color:var(--text2);">Awaiting partner statement · $64,000 · Evidence window open for $20,200</div></div>
+          <span class="badge badge-warn">Awaiting Statement</span>
+        </div>
+
+        <div style="display:flex;justify-content:center;color:var(--text3);font-size:12px;">↓ DataIQ generated AP invoice</div>
+
+        <div style="background:var(--accent-glow);border:1px solid rgba(200,90,42,.3);border-radius:var(--radius-sm);padding:9px 12px;display:flex;align-items:center;gap:10px;">
+          <span style="font-size:16px;">🧾</span>
+          <div style="flex:1;"><div style="font-size:12px;font-weight:600;">AP Invoice — AP-INV-2026-0441 ← You are here</div><div style="font-size:10.5px;color:var(--text2);">$64,000 · Oracle AP posted · Due May 19</div></div>
+          <span class="badge badge-accent">Current</span>
+        </div>
+
+        <div style="display:flex;justify-content:center;color:var(--text3);font-size:12px;">↓ Oracle GL posted</div>
+
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:9px 12px;display:flex;align-items:center;gap:10px;cursor:pointer;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+          <span style="font-size:16px;">📓</span>
+          <div style="flex:1;"><div style="font-size:12px;font-weight:600;">Journal Entry — JE-2026-0891</div><div style="font-size:10.5px;color:var(--text2);">DR Price Protection Expense 5420 · CR Trade Rebates Payable 2310 · $64,000</div></div>
+          <span class="badge badge-ok">Posted</span>
+        </div>
+
+        <div style="display:flex;justify-content:center;color:var(--text3);font-size:12px;">↓ Debit memo for disputed portion</div>
+
+        <div style="background:var(--surface2);border:1px solid rgba(217,64,64,.2);border-radius:var(--radius-sm);padding:9px 12px;display:flex;align-items:center;gap:10px;cursor:pointer;" onmouseover="this.style.borderColor='var(--critical)'" onmouseout="this.style.borderColor='rgba(217,64,64,.2)'">
+          <span style="font-size:16px;">📝</span>
+          <div style="flex:1;"><div style="font-size:12px;font-weight:600;">Debit Memo — DM-2026-0038</div><div style="font-size:10.5px;color:var(--text2);">$12,400 deduction dispute · issued to partner · awaiting response</div></div>
+          <span class="badge badge-critical">Dispute Open</span>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- AUDIT TAB -->
+    <div class="center-body tab-content" id="doc-audit">
+      <div class="section-label">Document Activity</div>
+      <div style="display:flex;flex-direction:column;gap:0;">
+        <div style="display:flex;gap:10px;padding:8px 0;border-bottom:1px solid rgba(42,40,48,.5);">
+          <div style="width:8px;height:8px;border-radius:50%;background:var(--purple);flex-shrink:0;margin-top:3px;"></div>
+          <div style="flex:1;"><div style="font-size:12px;font-weight:500;">DataIQ submitted to Oracle AP via REST API</div><div style="font-size:10.5px;color:var(--text2);">Apr 19, 2026 · 09:23 · ORA-AP-2026-019441 created</div></div>
+        </div>
+        <div style="display:flex;gap:10px;padding:8px 0;border-bottom:1px solid rgba(42,40,48,.5);">
+          <div style="width:8px;height:8px;border-radius:50%;background:var(--purple);flex-shrink:0;margin-top:3px;"></div>
+          <div style="flex:1;"><div style="font-size:12px;font-weight:500;">LicenseIQ Agent generated AP invoice from approved claim</div><div style="font-size:10.5px;color:var(--text2);">Apr 19, 2026 · 09:22 · triggered by Finance approval of CLM-2026-0441</div></div>
+        </div>
+        <div style="display:flex;gap:10px;padding:8px 0;border-bottom:1px solid rgba(42,40,48,.5);">
+          <div style="width:8px;height:8px;border-radius:50%;background:var(--ok);flex-shrink:0;margin-top:3px;"></div>
+          <div style="flex:1;"><div style="font-size:12px;font-weight:500;">Finance approved $64,000 — claim CLM-2026-0441</div><div style="font-size:10.5px;color:var(--text2);">Apr 19, 2026 · 09:18 · C. Tammineedi (Controller)</div></div>
+        </div>
+        <div style="display:flex;gap:10px;padding:8px 0;">
+          <div style="width:8px;height:8px;border-radius:50%;background:var(--text2);flex-shrink:0;margin-top:3px;"></div>
+          <div style="flex:1;"><div style="font-size:12px;font-weight:500;">EDI 820 received — $38K deduction detected · claim escalated to Finance</div><div style="font-size:10.5px;color:var(--text2);">Apr 19, 2026 · 09:14 · DataIQ ingested</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="center-footer">
+      <span class="footer-status">AP-INV-2026-0441 · <strong>$64,000 · Pending Payment May 19</strong> · Oracle AP posted · GL JE-2026-0891</span>
+      <div style="flex:1"></div>
+      <button class="btn btn-ghost btn-sm">📤 Send to Partner</button>
+      <button class="btn btn-ghost btn-sm">⬇ Download PDF</button>
+      <button class="btn btn-ok btn-sm">✓ Confirm Payment Received</button>
+    </div>
+
+  </div><!-- end center-panel -->
+
+  <!-- AI PANEL -->
+  <div class="ai-panel">
+    <div class="ai-panel-header">
+      <div class="ai-title-row">
+        <div class="ai-status-dot"></div>
+        <div class="ai-title">LicenseIQ AI</div>
+      </div>
+      <div class="ai-sub">Active on AP-INV-2026-0441</div>
+    </div>
+    <div class="ai-context">Context: <span>National Dist. · Price Protection · $64K AP Invoice</span></div>
+    <div class="ai-msgs">
+      <div class="ai-msg ai">
+        <div class="ai-label">LicenseIQ AI</div>
+        This invoice was auto-generated when Finance approved <strong>$64,000</strong> from claim CLM-2026-0441. Oracle AP is posted. Payment run is scheduled for <strong>May 19</strong>.<br><br>
+        The remaining <strong>$20,200</strong> (1,010 units pending evidence) will generate a <strong>supplemental invoice automatically</strong> if partner provides inventory evidence before May 5 and Finance approves.
+      </div>
+      <div class="ai-msg ai">
+        <div class="ai-label">LicenseIQ AI</div>
+        I've also raised a <strong>debit memo DM-2026-0038 for $12,400</strong> — the invalid chargeback portion of the deduction. National Distributor typically responds within 8 days. Recovery probability: <strong style="color:var(--ok)">91%</strong>.
+      </div>
+    </div>
+    <div class="ai-prompts">
+      <div class="ai-prompt">When will the $64K payment actually go out?</div>
+      <div class="ai-prompt">Show me the full audit trail for this invoice</div>
+      <div class="ai-prompt">What GL accounts does this post to?</div>
+      <div class="ai-prompt">Draft a payment reminder for the $38.1K overdue AR</div>
+    </div>
+    <div class="ai-input-row">
+      <input class="ai-input" placeholder="Ask about this document…">
+      <button class="ai-send">➤</button>
+    </div>
+  </div>
+
+</div><!-- end work-area -->
+</div><!-- end main -->
+</div><!-- end layout -->
+
+<script>
+function switchDocType(el, type){
+  document.querySelectorAll('.flow-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+}
+function selectItem(el){
+  document.querySelectorAll('.queue-item').forEach(i=>i.classList.remove('selected'));
+  el.classList.add('selected');
+}
+function switchTab(el, id){
+  document.querySelectorAll('.center-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById(id).classList.add('active');
+}
+</script>
+</body>
+</html>

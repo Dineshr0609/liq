@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>LicenseIQ – Period Close Workspace</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0d1117;--surface:#161b22;--surface2:#1c2333;--surface3:#21262d;
+  --border:#30363d;--border2:#3d444d;
+  --accent:#4f8ef7;--accent2:#3875e0;--accent-glow:rgba(79,142,247,.15);
+  --green:#3fb950;--green-bg:rgba(63,185,80,.12);
+  --yellow:#d29922;--yellow-bg:rgba(210,153,34,.12);
+  --red:#f85149;--red-bg:rgba(248,81,73,.12);
+  --purple:#a371f7;--purple-bg:rgba(163,113,247,.12);
+  --orange:#f0883e;--orange-bg:rgba(240,136,62,.12);
+  --teal:#39d353;--teal-bg:rgba(57,211,83,.1);
+  --text:#e6edf3;--text2:#8b949e;--text3:#6e7681;
+  --ai-from:#4f8ef7;--ai-to:#a371f7;
+  --radius:8px;--radius-lg:12px;font-size:13px;
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Inter','Segoe UI',sans-serif;background:var(--bg);color:var(--text);height:100vh;overflow:hidden;display:flex;flex-direction:column}
+
+/* ── TOPNAV ────────────────────────────────────────────────── */
+.topnav{height:48px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:16px;flex-shrink:0;z-index:100}
+.brand{display:flex;align-items:center;gap:8px;font-weight:700;font-size:15px;text-decoration:none;color:inherit}
+.brand-icon{width:28px;height:28px;border-radius:6px;background:linear-gradient(135deg,var(--ai-from),var(--ai-to));display:flex;align-items:center;justify-content:center;font-size:14px}
+.brand em{color:var(--accent);font-style:normal}
+.nav-sep{flex:1}
+.nav-breadcrumb{display:flex;align-items:center;gap:6px;color:var(--text2);font-size:12px}
+.nav-breadcrumb .active{color:var(--text);font-weight:500}
+.nav-switch{display:flex;align-items:center;gap:4px;background:var(--surface2);border:1px solid var(--border2);border-radius:6px;padding:3px}
+.nav-switch a{padding:3px 10px;border-radius:4px;font-size:11px;font-weight:500;color:var(--text2);text-decoration:none;transition:all .15s}
+.nav-switch a.active{background:var(--accent);color:#fff}
+.nav-switch a:hover:not(.active){background:var(--surface3);color:var(--text)}
+.nav-actions{display:flex;align-items:center;gap:10px}
+.avatar{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#4f8ef7,#a371f7);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;cursor:pointer}
+.icon-btn{width:30px;height:30px;border-radius:6px;background:transparent;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text2);font-size:14px}
+
+/* ── LAYOUT ──────────────────────────────────────────────── */
+.layout{display:flex;flex:1;overflow:hidden}
+.sidebar{width:200px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto;padding:12px 8px;gap:2px}
+.sidebar-section{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;padding:8px 8px 4px}
+.sidebar-item{display:flex;align-items:center;gap:9px;padding:7px 10px;border-radius:6px;color:var(--text2);cursor:pointer;font-size:12.5px;transition:all .15s;text-decoration:none}
+.sidebar-item:hover{background:var(--surface2);color:var(--text)}
+.sidebar-item.active{background:var(--accent-glow);color:var(--accent);font-weight:500}
+.sidebar-item .icon{font-size:14px;width:16px;text-align:center}
+.sidebar-badge{margin-left:auto;background:var(--yellow-bg);color:var(--yellow);font-size:10px;font-weight:600;padding:1px 6px;border-radius:10px}
+.main{flex:1;display:flex;overflow:hidden}
+.workarea{flex:1;display:flex;flex-direction:column;overflow:hidden}
+
+/* ── BUTTONS ─────────────────────────────────────────────── */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:6px;font-size:12px;font-weight:500;cursor:pointer;border:1px solid transparent;transition:all .15s;white-space:nowrap}
+.btn-primary{background:var(--accent);color:#fff;border-color:var(--accent2)}
+.btn-primary:hover{background:var(--accent2)}
+.btn-secondary{background:var(--surface2);color:var(--text);border-color:var(--border2)}
+.btn-secondary:hover{background:var(--surface3)}
+.btn-ghost{background:transparent;color:var(--text2);border-color:var(--border)}
+.btn-ghost:hover{background:var(--surface2);color:var(--text)}
+.btn-danger{background:var(--red-bg);color:var(--red);border-color:rgba(248,81,73,.3)}
+.btn-green{background:var(--green-bg);color:var(--green);border-color:rgba(63,185,80,.3)}
+.btn-sm{padding:4px 10px;font-size:11px}
+.select-filter{background:var(--surface2);border:1px solid var(--border2);border-radius:6px;padding:6px 12px;color:var(--text);font-size:12px;cursor:pointer;outline:none}
+.search-box{display:flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border2);border-radius:6px;padding:6px 12px;width:200px}
+.search-box input{background:none;border:none;outline:none;color:var(--text);width:100%;font-size:12px}
+.ai-badge{background:var(--accent-glow);color:var(--accent);font-size:9px;font-weight:600;padding:2px 7px;border-radius:10px;text-transform:uppercase;letter-spacing:.5px}
+
+/* ── PAGE HEADER ─────────────────────────────────────────── */
+.page-header{padding:16px 24px 14px;border-bottom:1px solid var(--border);background:var(--surface);flex-shrink:0}
+.page-title-row{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.page-title{font-size:18px;font-weight:700}
+.page-subtitle{color:var(--text2);font-size:12px}
+.period-badge{background:var(--surface3);border:1px solid var(--border2);border-radius:6px;padding:3px 10px;font-size:12px;color:var(--text2)}
+.header-actions{display:flex;gap:8px;margin-left:auto}
+.filters-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+
+/* ── CLOSE READINESS BAR ─────────────────────────────────── */
+.readiness-bar{display:flex;align-items:stretch;gap:12px;padding:14px 24px;background:var(--surface);border-bottom:1px solid var(--border);flex-shrink:0}
+
+/* Score donut */
+.readiness-score-card{background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:14px 20px;display:flex;align-items:center;gap:16px;flex-shrink:0;min-width:230px}
+.donut-wrap{position:relative;width:72px;height:72px;flex-shrink:0}
+.donut-wrap svg{transform:rotate(-90deg)}
+.donut-track{fill:none;stroke:var(--border2);stroke-width:8}
+.donut-fill{fill:none;stroke-width:8;stroke-linecap:round;transition:stroke-dashoffset .6s ease}
+.donut-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.donut-pct{font-size:17px;font-weight:800;background:linear-gradient(135deg,var(--ai-from),var(--ai-to));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.donut-label{font-size:9px;color:var(--text3);font-weight:500}
+.score-details{flex:1}
+.score-title{font-size:14px;font-weight:700;margin-bottom:3px}
+.score-sub{font-size:11px;color:var(--text2);margin-bottom:8px}
+.score-meta{font-size:11px;color:var(--text3)}
+
+/* Checklist mini */
+.checklist-card{flex:1;background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:12px 16px}
+.checklist-title{font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.checklist-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.check-item{display:flex;align-items:center;gap:7px;padding:5px 8px;border-radius:6px;cursor:pointer;transition:background .1s}
+.check-item:hover{background:var(--surface3)}
+.check-icon{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0}
+.check-icon.done{background:var(--green-bg);color:var(--green)}
+.check-icon.warn{background:var(--yellow-bg);color:var(--yellow)}
+.check-icon.block{background:var(--red-bg);color:var(--red)}
+.check-icon.idle{background:var(--surface3);color:var(--text3)}
+.check-label{font-size:11px;font-weight:500}
+.check-sub{font-size:10px;color:var(--text3)}
+
+/* Period nav */
+.period-nav{display:flex;flex-direction:column;gap:6px;flex-shrink:0}
+.period-btn{background:var(--surface2);border:1px solid var(--border2);border-radius:6px;padding:6px 14px;font-size:11px;color:var(--text2);cursor:pointer;transition:all .15s;text-align:center;white-space:nowrap}
+.period-btn:hover{background:var(--surface3);color:var(--text)}
+.period-btn.active{background:var(--accent-glow);color:var(--accent);border-color:rgba(79,142,247,.35)}
+.period-btn-close{background:linear-gradient(135deg,var(--ai-from),var(--ai-to));color:#fff;border:none;border-radius:6px;padding:8px 16px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap}
+
+/* ── MAIN CONTENT ─────────────────────────────────────────── */
+.content-layout{flex:1;display:flex;overflow:hidden}
+.scroll-col{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:0}
+
+/* Section blocks */
+.section-block{padding:16px 24px;border-bottom:1px solid var(--border)}
+.section-header{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.section-title{font-size:13px;font-weight:700}
+.section-sub{font-size:11px;color:var(--text2)}
+.section-actions{display:flex;gap:6px;margin-left:auto;align-items:center}
+
+/* ── BLOCKER CARDS ────────────────────────────────────────── */
+.blocker-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.blocker-card{background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius);padding:12px 14px;cursor:pointer;transition:all .15s}
+.blocker-card:hover{border-color:var(--red);background:var(--surface3)}
+.blocker-card.warn{border-left:3px solid var(--yellow)}
+.blocker-card.error{border-left:3px solid var(--red)}
+.blocker-card.info{border-left:3px solid var(--accent)}
+.blocker-sev{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:600;padding:2px 7px;border-radius:10px;margin-bottom:6px}
+.blocker-sev.critical{background:var(--red-bg);color:var(--red)}
+.blocker-sev.high{background:var(--orange-bg);color:var(--orange)}
+.blocker-sev.medium{background:var(--yellow-bg);color:var(--yellow)}
+.blocker-sev.low{background:var(--accent-glow);color:var(--accent)}
+.blocker-contract{font-size:12px;font-weight:600;margin-bottom:3px}
+.blocker-issue{font-size:11px;color:var(--text2)}
+.blocker-action{font-size:11px;color:var(--accent);margin-top:6px;display:flex;align-items:center;gap:4px}
+
+/* ── FLOW SUMMARY ─────────────────────────────────────────── */
+.flow-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.flow-card{background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius);padding:12px 14px;cursor:pointer;transition:all .15s}
+.flow-card:hover{border-color:var(--accent);background:var(--surface3)}
+.flow-icon{font-size:18px;margin-bottom:6px}
+.flow-type{font-size:11px;color:var(--text2);margin-bottom:3px;font-weight:500}
+.flow-amount{font-size:18px;font-weight:700}
+.flow-meta{font-size:11px;color:var(--text3);margin-top:3px}
+.flow-bar{height:3px;border-radius:2px;margin-top:8px;background:var(--border2);overflow:hidden}
+.flow-bar-fill{height:100%;border-radius:2px}
+.variance-chip{font-size:10px;font-weight:600;padding:1px 6px;border-radius:10px;margin-left:4px}
+.up{background:var(--green-bg);color:var(--green)}
+.down{background:var(--red-bg);color:var(--red)}
+
+/* ── CONTRACT CLOSE TABLE ─────────────────────────────────── */
+table{width:100%;border-collapse:collapse}
+thead th{padding:8px 14px;text-align:left;font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:5;white-space:nowrap}
+tbody tr{border-bottom:1px solid var(--border);cursor:pointer;transition:background .1s}
+tbody tr:hover{background:var(--surface2)}
+tbody tr.selected{background:rgba(79,142,247,.08);border-left:3px solid var(--accent)}
+tbody td{padding:9px 14px;font-size:12px;vertical-align:middle}
+.status-pill{display:inline-flex;align-items:center;gap:4px;font-size:11px;padding:2px 9px;border-radius:10px;font-weight:500}
+.status-pill.approved{background:var(--green-bg);color:var(--green)}
+.status-pill.pending{background:var(--yellow-bg);color:var(--yellow)}
+.status-pill.blocked{background:var(--red-bg);color:var(--red)}
+.status-pill.posted{background:rgba(79,142,247,.12);color:var(--accent)}
+.status-pill.complete{background:var(--green-bg);color:var(--green)}
+.status-pill.partial{background:var(--orange-bg);color:var(--orange)}
+.tag{display:inline-flex;align-items:center;gap:4px;background:var(--surface3);border:1px solid var(--border2);border-radius:4px;padding:2px 8px;font-size:11px;color:var(--text2)}
+.step-dots{display:flex;gap:3px;align-items:center}
+.step-dot{width:8px;height:8px;border-radius:50%}
+
+/* ── VARIANCE TABLE ───────────────────────────────────────── */
+.variance-row{display:flex;align-items:center;gap:0;padding:9px 0;border-bottom:1px solid var(--border);font-size:12px}
+.variance-row:last-child{border:none}
+.var-label{width:160px;font-weight:500;flex-shrink:0}
+.var-prev{width:120px;text-align:right;color:var(--text2)}
+.var-curr{width:120px;text-align:right;font-weight:600}
+.var-delta{width:90px;text-align:right;font-weight:700;font-size:12px}
+.var-bar{flex:1;padding-left:16px}
+.var-bar-track{height:5px;background:var(--border2);border-radius:3px;overflow:hidden;position:relative}
+.var-bar-fill{height:100%;border-radius:3px;position:absolute;left:50%;transform:translateX(-50%)}
+.up-bar{background:var(--green);transform:none !important;left:0 !important}
+.down-bar{background:var(--red);transform:none !important;left:0 !important}
+.var-ai{font-size:10px;font-weight:600;padding:1px 6px;border-radius:10px;cursor:pointer;margin-left:10px;white-space:nowrap}
+.var-ai.explain{background:var(--accent-glow);color:var(--accent)}
+.var-ai.flag{background:var(--yellow-bg);color:var(--yellow)}
+
+/* ── APPROVAL PANEL ───────────────────────────────────────── */
+.approval-panel{background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:16px;margin:0 24px 16px}
+.approval-header{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.approval-title{font-size:14px;font-weight:700}
+.approval-body{display:flex;gap:14px}
+.approval-checklist{flex:1;display:flex;flex-direction:column;gap:6px}
+.approval-item{display:flex;align-items:center;gap:10px;padding:8px 10px;background:var(--surface);border:1px solid var(--border2);border-radius:6px;font-size:12px}
+.approval-item-icon{font-size:14px;flex-shrink:0}
+.approval-item-text{flex:1}
+.approval-item-val{font-weight:600;font-size:12px;white-space:nowrap}
+.approval-confirm{display:flex;flex-direction:column;gap:8px;min-width:170px}
+
+/* ── AUDIT TRAIL ──────────────────────────────────────────── */
+.audit-timeline{display:flex;flex-direction:column;gap:0;position:relative;padding-left:20px}
+.audit-timeline::before{content:'';position:absolute;left:7px;top:8px;bottom:8px;width:2px;background:var(--border2)}
+.audit-event{position:relative;padding:0 0 14px 16px}
+.audit-event:last-child{padding-bottom:0}
+.audit-dot{position:absolute;left:-20px;top:2px;width:14px;height:14px;border-radius:50%;border:2px solid var(--bg);display:flex;align-items:center;justify-content:center;font-size:8px}
+.audit-dot.green{background:var(--green)}
+.audit-dot.accent{background:var(--accent)}
+.audit-dot.yellow{background:var(--yellow)}
+.audit-dot.purple{background:var(--purple)}
+.audit-dot.text3{background:var(--text3)}
+.audit-date{font-size:10px;color:var(--text3);margin-bottom:2px}
+.audit-action{font-size:12px;font-weight:500}
+.audit-meta{font-size:11px;color:var(--text2)}
+
+/* ── AI PANEL ─────────────────────────────────────────────── */
+.ai-panel{width:340px;flex-shrink:0;display:flex;flex-direction:column;background:var(--surface);border-left:1px solid var(--border);overflow:hidden}
+.ai-panel-header{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;background:linear-gradient(180deg,var(--surface2),var(--surface))}
+.ai-logo{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,var(--ai-from),var(--ai-to));display:flex;align-items:center;justify-content:center;font-size:15px}
+.ai-header-text h3{font-size:13px;font-weight:700}
+.ai-header-text p{font-size:11px;color:var(--text2)}
+.ai-online{margin-left:auto;display:flex;align-items:center;gap:5px;font-size:11px;color:var(--green)}
+.ai-dot{width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.ai-context-bar{padding:8px 14px;background:var(--accent-glow);border-bottom:1px solid rgba(79,142,247,.2);font-size:11px;color:var(--accent);display:flex;align-items:center;gap:6px}
+.ai-messages{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:12px}
+.ai-msg-ai{background:var(--surface2);border:1px solid var(--border2);border-radius:10px;border-top-left-radius:2px;padding:12px 14px;font-size:12px;line-height:1.6}
+.ai-msg-user{background:var(--accent-glow);border:1px solid rgba(79,142,247,.25);border-radius:10px;border-top-right-radius:2px;padding:10px 14px;font-size:12px;align-self:flex-end;max-width:88%;color:var(--text)}
+.ai-msg-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.ai-msg-label.ai-label{color:var(--accent)}
+.ai-msg-label.user-label{color:var(--text3);flex-direction:row-reverse}
+.ai-row{display:flex;align-items:center;gap:10px;margin-bottom:5px;background:var(--surface3);border-radius:6px;padding:6px 10px}
+.ai-row-icon{font-size:14px}
+.ai-row-text{font-size:12px;flex:1}
+.ai-row-val{font-size:12px;font-weight:600;white-space:nowrap}
+.ai-action-box{background:var(--accent-glow);border:1px solid rgba(79,142,247,.25);border-radius:8px;padding:12px 14px;margin-top:8px}
+.ai-action-title{font-size:12px;font-weight:600;color:var(--accent);margin-bottom:6px}
+.ai-action-detail{font-size:11px;color:var(--text2);margin-bottom:8px}
+.ai-action-btns{display:flex;gap:6px}
+.ai-suggestions{padding:10px 14px;border-top:1px solid var(--border);background:var(--surface);flex-shrink:0}
+.ai-suggestions-label{font-size:10px;color:var(--text3);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
+.ai-chips{display:flex;flex-wrap:wrap;gap:5px}
+.ai-chip{background:var(--surface2);border:1px solid var(--border2);border-radius:20px;padding:4px 10px;font-size:11px;color:var(--text2);cursor:pointer;transition:all .15s;white-space:nowrap}
+.ai-chip:hover{background:var(--accent-glow);border-color:rgba(79,142,247,.4);color:var(--accent)}
+.ai-input-area{padding:12px 14px;border-top:1px solid var(--border);display:flex;align-items:flex-end;gap:8px}
+.ai-input{flex:1;background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:8px 12px;color:var(--text);font-size:12px;outline:none;resize:none;min-height:36px;max-height:80px;font-family:inherit;line-height:1.5}
+.ai-input:focus{border-color:var(--accent)}
+.ai-send-btn{width:34px;height:34px;border-radius:8px;flex-shrink:0;background:linear-gradient(135deg,var(--ai-from),var(--ai-to));border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px}
+
+/* ── CLOSE APPROVAL MODAL ─────────────────────────────────── */
+.modal-overlay{display:none;position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.65);backdrop-filter:blur(4px);align-items:center;justify-content:center}
+.modal-overlay.show{display:flex}
+.modal{background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius-lg);width:540px;box-shadow:0 24px 64px rgba(0,0,0,.6);overflow:hidden}
+.modal-header{padding:18px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.modal-header h2{font-size:15px;font-weight:700;flex:1}
+.modal-body{padding:20px}
+.modal-footer{padding:14px 20px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end}
+.close-check-row{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:6px;background:var(--surface2);border:1px solid var(--border2);margin-bottom:7px;font-size:12px}
+.close-check-icon{font-size:15px;flex-shrink:0}
+.close-check-label{flex:1}
+.close-check-status{font-size:11px;font-weight:600}
+
+/* ── SCROLLBARS ───────────────────────────────────────────── */
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+</style>
+</head>
+<body>
+
+<!-- TOP NAV -->
+<nav class="topnav">
+  <a class="brand" href="#"><div class="brand-icon">⚡</div><span>License<em>IQ</em></span></a>
+  <div class="nav-sep"></div>
+  <div class="nav-breadcrumb">
+    <span>Finance Hub</span><span style="color:var(--text3)">›</span><span class="active">Period Close Workspace</span>
+  </div>
+  <div class="nav-sep"></div>
+  <div class="nav-switch">
+    <a href="licenseiq-accrual-management.html">Accrual Mgmt</a>
+    <a href="licenseiq-journal-entry-hub.html">Journal Entry Hub</a>
+    <a href="licenseiq-period-close.html" class="active">Period Close</a>
+  </div>
+  <div class="nav-actions">
+    <div class="icon-btn">🔔</div><div class="icon-btn">⚙️</div>
+    <div class="avatar">CT</div>
+  </div>
+</nav>
+
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-section">Finance Hub</div>
+    <a class="sidebar-item" href="licenseiq-accrual-management.html"><span class="icon">📋</span> Accrual Management</a>
+    <a class="sidebar-item" href="licenseiq-journal-entry-hub.html"><span class="icon">📓</span> Journal Entry Hub</a>
+    <div class="sidebar-item active"><span class="icon">🗂️</span> Period Close</div>
+    <div class="sidebar-item"><span class="icon">⚖️</span> Adjustments &amp; Disputes</div>
+    <div class="sidebar-section" style="margin-top:8px">Contract Intelligence</div>
+    <div class="sidebar-item"><span class="icon">🔍</span> Search Contracts</div>
+    <div class="sidebar-item"><span class="icon">🗺️</span> Term Mapping</div>
+    <div class="sidebar-item"><span class="icon">🕐</span> Pending Queue <span class="sidebar-badge">7</span></div>
+    <div class="sidebar-section" style="margin-top:8px">Financial Intelligence</div>
+    <div class="sidebar-item"><span class="icon">📊</span> Analytics</div>
+    <div class="sidebar-item"><span class="icon">📄</span> Reports</div>
+    <div class="sidebar-section" style="margin-top:8px">System</div>
+    <div class="sidebar-item"><span class="icon">🗄️</span> Master Data</div>
+    <div class="sidebar-item"><span class="icon">🔗</span> ERP Mapping</div>
+    <div class="sidebar-item"><span class="icon">👤</span> User Mgmt</div>
+  </aside>
+
+  <div class="main">
+    <div class="workarea">
+
+      <!-- PAGE HEADER -->
+      <div class="page-header">
+        <div class="page-title-row">
+          <div>
+            <div class="page-title">Period Close Workspace</div>
+            <div class="page-subtitle">Close orchestration — verify, review, approve, and lock the financial period</div>
+          </div>
+          <div class="period-badge">📅 Mar 2026</div>
+          <div class="header-actions">
+            <button class="btn btn-ghost btn-sm" onclick="sendAIMessage('What is blocking the period close for Mar 2026?')">⚡ AI Close Check</button>
+            <button class="btn btn-secondary btn-sm">📄 Generate Statements</button>
+            <button class="btn btn-primary btn-sm" onclick="openCloseModal()">🔒 Approve &amp; Close Period</button>
+          </div>
+        </div>
+        <div class="filters-row">
+          <div class="search-box"><span>🔍</span><input placeholder="Search contracts, flows…"/></div>
+          <select class="select-filter"><option>Mar 2026 (Current)</option><option>Feb 2026</option><option>Jan 2026</option><option>Dec 2025</option></select>
+          <select class="select-filter"><option>All Legal Entities</option><option>US Operations</option><option>EMEA Division</option><option>APAC Region</option></select>
+          <select class="select-filter"><option>All Flow Types</option><option>Rebates</option><option>Royalties</option><option>Commissions</option><option>Subscriptions</option></select>
+        </div>
+      </div>
+
+      <!-- CLOSE READINESS BAR -->
+      <div class="readiness-bar">
+
+        <!-- Score donut -->
+        <div class="readiness-score-card">
+          <div class="donut-wrap">
+            <svg width="72" height="72" viewBox="0 0 72 72">
+              <circle class="donut-track" cx="36" cy="36" r="30"/>
+              <circle class="donut-fill" cx="36" cy="36" r="30"
+                stroke="url(#grad1)"
+                stroke-dasharray="188.5"
+                stroke-dashoffset="41"
+                id="donutFill"/>
+              <defs>
+                <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" style="stop-color:#4f8ef7"/>
+                  <stop offset="100%" style="stop-color:#a371f7"/>
+                </linearGradient>
+              </defs>
+            </svg>
+            <div class="donut-center">
+              <div class="donut-pct" id="scoreNum">78%</div>
+              <div class="donut-label">READY</div>
+            </div>
+          </div>
+          <div class="score-details">
+            <div class="score-title">Close Readiness</div>
+            <div class="score-sub">Mar 2026 · 2 blockers remaining</div>
+            <div style="display:flex;gap:10px;margin-top:4px">
+              <div style="font-size:11px"><span style="color:var(--green);font-weight:700">6</span> <span style="color:var(--text3)">Complete</span></div>
+              <div style="font-size:11px"><span style="color:var(--yellow);font-weight:700">2</span> <span style="color:var(--text3)">Pending</span></div>
+              <div style="font-size:11px"><span style="color:var(--red);font-weight:700">1</span> <span style="color:var(--text3)">Blocked</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Checklist mini -->
+        <div class="checklist-card">
+          <div class="checklist-title">Close Checklist <div class="ai-badge">AI Monitored</div></div>
+          <div class="checklist-grid">
+            <div class="check-item" onclick="sendAIMessage('Tell me about Sales Data Ingestion status')">
+              <div class="check-icon done">✓</div>
+              <div><div class="check-label">Sales Data Ingested</div><div class="check-sub">Mar 14 · 100%</div></div>
+            </div>
+            <div class="check-item" onclick="sendAIMessage('Tell me about POS Data Ingestion status')">
+              <div class="check-icon done">✓</div>
+              <div><div class="check-label">POS Data Ingested</div><div class="check-sub">Mar 14 · 100%</div></div>
+            </div>
+            <div class="check-item" onclick="sendAIMessage('Tell me about Calculation Engine status')">
+              <div class="check-icon done">✓</div>
+              <div><div class="check-label">Calculations Run</div><div class="check-sub">16 accruals · Done</div></div>
+            </div>
+            <div class="check-item" onclick="sendAIMessage('Which accruals are still pending approval?')">
+              <div class="check-icon warn">⚠</div>
+              <div><div class="check-label">Accrual Approvals</div><div class="check-sub">2 of 16 pending</div></div>
+            </div>
+            <div class="check-item" onclick="sendAIMessage('Which journal entries are still pending?')">
+              <div class="check-icon warn">⚠</div>
+              <div><div class="check-label">JE Posting</div><div class="check-sub">3 of 10 unposted</div></div>
+            </div>
+            <div class="check-item" onclick="sendAIMessage('Why is ERP reconciliation blocked?')">
+              <div class="check-icon block">✕</div>
+              <div><div class="check-label">ERP Reconciled</div><div class="check-sub">$8.2k gap · Blocked</div></div>
+            </div>
+            <div class="check-item">
+              <div class="check-icon done">✓</div>
+              <div><div class="check-label">Variance Reviewed</div><div class="check-sub">Signed off Mar 14</div></div>
+            </div>
+            <div class="check-item">
+              <div class="check-icon idle">–</div>
+              <div><div class="check-label">Statements Generated</div><div class="check-sub">Not started</div></div>
+            </div>
+            <div class="check-item">
+              <div class="check-icon done">✓</div>
+              <div><div class="check-label">Audit Trail Complete</div><div class="check-sub">100% traced</div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Period nav + close button -->
+        <div class="period-nav">
+          <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px">Navigate</div>
+          <div class="period-btn active">Mar 2026 (Current)</div>
+          <div class="period-btn">Feb 2026 ✓ Closed</div>
+          <div class="period-btn">Jan 2026 ✓ Closed</div>
+          <div style="flex:1"></div>
+          <button class="period-btn-close" onclick="openCloseModal()">🔒 Close Period</button>
+        </div>
+
+      </div>
+
+      <!-- SCROLLABLE WORKSPACE -->
+      <div class="content-layout">
+        <div class="scroll-col" id="mainScroll">
+
+          <!-- CLOSE BLOCKERS -->
+          <div class="section-block">
+            <div class="section-header">
+              <div>
+                <div class="section-title">🚧 Close Blockers</div>
+                <div class="section-sub">Items preventing period close — must be resolved before approval</div>
+              </div>
+              <div class="section-actions">
+                <div class="ai-badge">AI Detected</div>
+                <button class="btn btn-ghost btn-sm" onclick="sendAIMessage('What is blocking the period close for Mar 2026?')">✦ AI Analyze All</button>
+              </div>
+            </div>
+            <div class="blocker-grid">
+              <div class="blocker-card error" onclick="sendAIMessage('How do I resolve the Solar Royalty Agreement accrual approval blocker?')">
+                <div class="blocker-sev critical">● Critical</div>
+                <div class="blocker-contract">Solar Royalty Agreement</div>
+                <div class="blocker-issue">Accrual ACC2033 not yet approved · Confidence 65% · $75,000 at risk</div>
+                <div class="blocker-action">✦ AI can suggest approval path →</div>
+              </div>
+              <div class="blocker-card error" onclick="sendAIMessage('Diagnose ERP sync failure for NorTech JE2041')">
+                <div class="blocker-sev critical">● Critical</div>
+                <div class="blocker-contract">North Region Rebate – JE2041</div>
+                <div class="blocker-issue">Journal entry failed ERP sync · Account mapping error · $64,200 unposted</div>
+                <div class="blocker-action">✦ AI can fix account mapping →</div>
+              </div>
+              <div class="blocker-card warn" onclick="sendAIMessage('Why are 3 journal entries unposted in the JE Hub?')">
+                <div class="blocker-sev medium">● Medium</div>
+                <div class="blocker-contract">3 Journal Entries Unposted</div>
+                <div class="blocker-issue">JE2038, JE2042, JE2043 approved but not posted to GL · Total $663,000</div>
+                <div class="blocker-action">✦ Batch post with AI verification →</div>
+              </div>
+              <div class="blocker-card warn" onclick="sendAIMessage('Explain the $8,200 ERP reconciliation gap')">
+                <div class="blocker-sev medium">● Medium</div>
+                <div class="blocker-contract">ERP Reconciliation Gap</div>
+                <div class="blocker-issue">$8,200 variance between LicenseIQ accruals and SAP posted amounts</div>
+                <div class="blocker-action">✦ Trace gap origin with AI →</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- FLOW SUMMARY -->
+          <div class="section-block">
+            <div class="section-header">
+              <div>
+                <div class="section-title">📊 Accruals by Flow Type</div>
+                <div class="section-sub">Total financial exposure by contract flow — Mar 2026</div>
+              </div>
+              <div class="section-actions">
+                <button class="btn btn-ghost btn-sm" onclick="sendAIMessage('Explain the variance in rebate accruals vs last period')">✦ Variance AI</button>
+              </div>
+            </div>
+            <div class="flow-grid">
+              <div class="flow-card" onclick="sendAIMessage('Deep dive into Rebates flow for Mar 2026')">
+                <div class="flow-icon">💰</div>
+                <div class="flow-type">Rebates</div>
+                <div class="flow-amount" style="color:var(--accent)">$1,850,000</div>
+                <div class="flow-meta">12 contracts <span class="variance-chip up">+68% vs Feb</span></div>
+                <div class="flow-bar"><div class="flow-bar-fill" style="width:72%;background:linear-gradient(90deg,var(--accent),var(--ai-to))"></div></div>
+              </div>
+              <div class="flow-card" onclick="sendAIMessage('Deep dive into Royalties flow for Mar 2026')">
+                <div class="flow-icon">📜</div>
+                <div class="flow-type">Royalties</div>
+                <div class="flow-amount" style="color:var(--purple)">$2,340,000</div>
+                <div class="flow-meta">8 contracts <span class="variance-chip up">+17% vs Feb</span></div>
+                <div class="flow-bar"><div class="flow-bar-fill" style="width:90%;background:linear-gradient(90deg,var(--purple),var(--ai-to))"></div></div>
+              </div>
+              <div class="flow-card" onclick="sendAIMessage('Deep dive into Commissions flow for Mar 2026')">
+                <div class="flow-icon">🤝</div>
+                <div class="flow-type">Commissions</div>
+                <div class="flow-amount" style="color:var(--green)">$420,000</div>
+                <div class="flow-meta">5 contracts <span class="variance-chip up">+5% vs Feb</span></div>
+                <div class="flow-bar"><div class="flow-bar-fill" style="width:16%;background:linear-gradient(90deg,var(--green),var(--teal))"></div></div>
+              </div>
+              <div class="flow-card" onclick="sendAIMessage('Deep dive into Subscriptions flow for Mar 2026')">
+                <div class="flow-icon">🔄</div>
+                <div class="flow-type">Subscriptions</div>
+                <div class="flow-amount" style="color:var(--orange)">$3,100,000</div>
+                <div class="flow-meta">4 contracts <span class="variance-chip down">-3% vs Feb</span></div>
+                <div class="flow-bar"><div class="flow-bar-fill" style="width:100%;background:linear-gradient(90deg,var(--orange),var(--yellow))"></div></div>
+              </div>
+            </div>
+            <div style="margin-top:12px;padding:12px 14px;background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius);display:flex;align-items:center;gap:16px;font-size:12px">
+              <span style="font-size:13px">💼</span>
+              <span style="color:var(--text2)">Total Period Exposure</span>
+              <span style="font-size:18px;font-weight:700;background:linear-gradient(135deg,var(--ai-from),var(--ai-to));-webkit-background-clip:text;-webkit-text-fill-color:transparent">$7,710,000</span>
+              <span class="variance-chip up" style="font-size:11px">+28% vs Feb 2026</span>
+              <div style="flex:1"></div>
+              <button class="btn btn-ghost btn-sm" onclick="sendAIMessage('Why is total accrual exposure up 28% vs last period?')">✦ Explain variance</button>
+            </div>
+          </div>
+
+          <!-- CONTRACT CLOSE TABLE -->
+          <div class="section-block">
+            <div class="section-header">
+              <div>
+                <div class="section-title">📋 Contract-Level Close Review</div>
+                <div class="section-sub">Close readiness by individual contract — click for AI details</div>
+              </div>
+              <div class="section-actions">
+                <button class="btn btn-ghost btn-sm" onclick="sendAIMessage('Which contracts are blocking close?')">✦ Show Blockers</button>
+              </div>
+            </div>
+            <table>
+              <thead><tr>
+                <th>Contract</th><th>Counterparty</th><th>Flow</th><th>Accrual</th>
+                <th>Accrual Status</th><th>JE Status</th><th>ERP Sync</th><th>Close Status</th><th></th>
+              </tr></thead>
+              <tbody id="contractTable"></tbody>
+            </table>
+          </div>
+
+          <!-- VARIANCE ANALYSIS -->
+          <div class="section-block">
+            <div class="section-header">
+              <div>
+                <div class="section-title">📈 Variance vs Previous Period</div>
+                <div class="section-sub">Mar 2026 vs Feb 2026 — controller sign-off required for large variances</div>
+              </div>
+              <div class="section-actions">
+                <div class="ai-badge" style="cursor:pointer" onclick="sendAIMessage('Explain all large variances vs previous period')">AI Flagged</div>
+                <button class="btn btn-green btn-sm">✓ Sign Off All</button>
+              </div>
+            </div>
+            <div id="varianceTable"></div>
+          </div>
+
+          <!-- CLOSE APPROVAL SECTION -->
+          <div class="section-block">
+            <div class="section-header">
+              <div>
+                <div class="section-title">🔒 Close Approval Workflow</div>
+                <div class="section-sub">Formal close requires sign-off from authorized controller</div>
+              </div>
+            </div>
+            <div class="approval-panel">
+              <div class="approval-header">
+                <div style="width:32px;height:32px;border-radius:8px;background:rgba(63,185,80,.15);display:flex;align-items:center;justify-content:center;font-size:16px">🔒</div>
+                <div class="approval-title">Mar 2026 Period Close Approval</div>
+                <div style="margin-left:auto;font-size:12px;color:var(--yellow);font-weight:500">⚠ 2 blockers pending</div>
+              </div>
+              <div class="approval-body">
+                <div class="approval-checklist">
+                  <div class="approval-item"><div class="approval-item-icon">✅</div><div class="approval-item-text">Sales &amp; POS data fully ingested</div><div class="approval-item-val" style="color:var(--green)">Complete</div></div>
+                  <div class="approval-item"><div class="approval-item-icon">✅</div><div class="approval-item-text">All calculations executed (16 accruals)</div><div class="approval-item-val" style="color:var(--green)">Complete</div></div>
+                  <div class="approval-item"><div class="approval-item-icon">⚠️</div><div class="approval-item-text">Accrual approvals complete (14/16)</div><div class="approval-item-val" style="color:var(--yellow)">2 Pending</div></div>
+                  <div class="approval-item"><div class="approval-item-icon">⚠️</div><div class="approval-item-text">Journal entries posted to GL (7/10)</div><div class="approval-item-val" style="color:var(--yellow)">3 Pending</div></div>
+                  <div class="approval-item"><div class="approval-item-icon">❌</div><div class="approval-item-text">ERP reconciliation cleared</div><div class="approval-item-val" style="color:var(--red)">$8.2k gap</div></div>
+                  <div class="approval-item"><div class="approval-item-icon">✅</div><div class="approval-item-text">Variance review signed off</div><div class="approval-item-val" style="color:var(--green)">Complete</div></div>
+                </div>
+                <div class="approval-confirm">
+                  <div style="background:var(--surface);border:1px solid var(--border2);border-radius:6px;padding:10px;font-size:11px;color:var(--text2);text-align:center;line-height:1.5">Resolve 2 blockers to enable formal period close</div>
+                  <button class="btn btn-ghost btn-sm" style="width:100%" onclick="sendAIMessage('What is the fastest path to close Mar 2026?')">✦ AI Close Path</button>
+                  <button class="btn btn-primary btn-sm" style="width:100%;opacity:.4;cursor:not-allowed">🔒 Close Period</button>
+                  <div style="font-size:10px;color:var(--text3);text-align:center">Available when blockers resolved</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- AUDIT TRAIL -->
+          <div class="section-block" style="border-bottom:none">
+            <div class="section-header">
+              <div>
+                <div class="section-title">📝 Close Audit Trail</div>
+                <div class="section-sub">Full event log for Mar 2026 — immutable record</div>
+              </div>
+              <div class="section-actions">
+                <button class="btn btn-ghost btn-sm">⬇ Export Log</button>
+              </div>
+            </div>
+            <div class="audit-timeline" id="auditTimeline"></div>
+          </div>
+
+        </div><!-- scroll-col -->
+
+        <!-- AI PANEL -->
+        <div class="ai-panel">
+          <div class="ai-panel-header">
+            <div class="ai-logo">🤖</div>
+            <div class="ai-header-text"><h3>LiQ AI Agent</h3><p>Period Close context</p></div>
+            <div class="ai-online"><div class="ai-dot"></div>Active</div>
+          </div>
+          <div class="ai-context-bar">
+            📌 Mar 2026 · Readiness 78% · 2 blockers · $7.71M exposure
+          </div>
+          <div class="ai-messages" id="aiMessages">
+            <div class="ai-msg-ai">
+              <div class="ai-msg-label ai-label">✦ LiQ Agent</div>
+              I'm monitoring the <strong>Mar 2026</strong> period close.<br/><br/>
+              Current readiness is <strong style="color:var(--yellow)">78%</strong>. Two critical blockers are preventing close:
+              <div class="ai-row" style="margin-top:8px"><div class="ai-row-icon">❌</div><div class="ai-row-text">Solar Royalty – accrual unapproved</div></div>
+              <div class="ai-row"><div class="ai-row-icon">❌</div><div class="ai-row-text">JE2041 – ERP sync failed</div></div>
+              <div class="ai-action-box">
+                <div class="ai-action-title">✦ Suggested Close Path</div>
+                <div class="ai-action-detail">Resolving both blockers will bring readiness to 100% in ~15 min.</div>
+                <div class="ai-action-btns">
+                  <button class="btn btn-primary btn-sm" onclick="sendAIMessage('Walk me through the fastest close path for Mar 2026')">Show me →</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="ai-suggestions">
+            <div class="ai-suggestions-label">Quick Actions</div>
+            <div class="ai-chips">
+              <div class="ai-chip" onclick="sendAIMessage('What is blocking the period close for Mar 2026?')">Show blockers</div>
+              <div class="ai-chip" onclick="sendAIMessage('Explain why rebates are 68% higher than last period')">Rebate variance</div>
+              <div class="ai-chip" onclick="sendAIMessage('Walk me through the fastest close path for Mar 2026')">Close path</div>
+              <div class="ai-chip" onclick="sendAIMessage('Which contracts are pending accrual approval?')">Pending approvals</div>
+              <div class="ai-chip" onclick="sendAIMessage('Generate period close summary report')">Close report</div>
+              <div class="ai-chip" onclick="sendAIMessage('Show me Mar 2026 vs Feb 2026 full comparison')">Period comparison</div>
+            </div>
+          </div>
+          <div class="ai-input-area">
+            <textarea class="ai-input" id="aiInput" rows="1" placeholder="Ask anything about period close…" onkeydown="handleKey(event)"></textarea>
+            <button class="ai-send-btn" onclick="sendCurrentInput()">➤</button>
+          </div>
+        </div>
+
+      </div><!-- content-layout -->
+    </div><!-- workarea -->
+  </div><!-- main -->
+</div><!-- layout -->
+
+<!-- CLOSE APPROVAL MODAL -->
+<div class="modal-overlay" id="closeModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div style="width:28px;height:28px;border-radius:6px;background:linear-gradient(135deg,var(--ai-from),var(--ai-to));display:flex;align-items:center;justify-content:center;font-size:14px">🔒</div>
+      <h2>Approve Period Close – Mar 2026</h2>
+      <button class="btn btn-ghost btn-sm" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div style="background:var(--yellow-bg);border:1px solid rgba(210,153,34,.3);border-radius:var(--radius);padding:12px;margin-bottom:16px;font-size:12px;color:var(--yellow)">
+        ⚠ 2 close blockers remain. Proceeding will create a soft-close record. Hard close requires all blockers resolved.
+      </div>
+      <div class="close-check-row"><div class="close-check-icon">✅</div><div class="close-check-label">Sales &amp; POS data fully ingested</div><div class="close-check-status" style="color:var(--green)">✓ Complete</div></div>
+      <div class="close-check-row"><div class="close-check-icon">✅</div><div class="close-check-label">All calculations executed</div><div class="close-check-status" style="color:var(--green)">✓ Complete</div></div>
+      <div class="close-check-row"><div class="close-check-icon">⚠️</div><div class="close-check-label">Accrual approvals (14/16 complete)</div><div class="close-check-status" style="color:var(--yellow)">⚠ 2 pending</div></div>
+      <div class="close-check-row"><div class="close-check-icon">⚠️</div><div class="close-check-label">Journal entries posted (7/10)</div><div class="close-check-status" style="color:var(--yellow)">⚠ 3 pending</div></div>
+      <div class="close-check-row"><div class="close-check-icon">❌</div><div class="close-check-label">ERP reconciliation cleared ($8.2k gap)</div><div class="close-check-status" style="color:var(--red)">✕ Blocked</div></div>
+      <div class="close-check-row"><div class="close-check-icon">✅</div><div class="close-check-label">Variance review signed off</div><div class="close-check-status" style="color:var(--green)">✓ Complete</div></div>
+      <div style="margin-top:14px;padding:12px;background:var(--surface2);border-radius:var(--radius);font-size:12px">
+        <div style="font-weight:600;margin-bottom:4px">Controller Sign-Off</div>
+        <div style="color:var(--text2);margin-bottom:8px">By approving, you confirm all material items have been reviewed and any remaining items will be resolved in the next period.</div>
+        <input class="form-input" style="background:var(--surface3);border:1px solid var(--border2);border-radius:6px;padding:7px 10px;color:var(--text);font-size:12px;outline:none;width:100%;margin-bottom:6px" placeholder="Controller name / approval note…"/>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-secondary">Soft Close (With Exceptions)</button>
+      <button class="btn btn-danger">Hard Close Anyway</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── CONTRACT DATA ───────────────────────────────────────────
+const contracts = [
+  { id:'ACC2032', name:'Distributor Program A', party:'Distributor Corp', flow:'Rebate',      amount:420000, accrual:'approved', je:'posted',  erp:'synced',  close:'complete' },
+  { id:'ACC2033', name:'Solar License Agreement',party:'Solar Corp',      flow:'Royalty',     amount:75000,  accrual:'pending',  je:'draft',   erp:'na',      close:'blocked'  },
+  { id:'ACC2034', name:'Retail Commission Plan', party:'RetailCo',        flow:'Commission',  amount:118500, accrual:'approved', je:'posted',  erp:'synced',  close:'complete' },
+  { id:'ACC2035', name:'North Region Rebate',    party:'NorTech Ltd',     flow:'Rebate',      amount:64200,  accrual:'approved', je:'approved',erp:'failed',  close:'blocked'  },
+  { id:'ACC2036', name:'Premium OEM Royalty',    party:'OEM Partners',    flow:'Royalty',     amount:210000, accrual:'pending',  je:'pending', erp:'pending', close:'partial'  },
+  { id:'ACC2037', name:'Agent Commission Q1',    party:'AgentPlus',       flow:'Commission',  amount:33000,  accrual:'approved', je:'approved',erp:'pending', close:'partial'  },
+  { id:'ACC2038', name:'Euro Distributor Rebate',party:'EuroDist GmbH',   flow:'Rebate',      amount:97500,  accrual:'approved', je:'posted',  erp:'synced',  close:'complete' },
+  { id:'ACC2039', name:'APAC License Royalty',   party:'APAC Corp',       flow:'Royalty',     amount:155000, accrual:'approved', je:'synced',  erp:'synced',  close:'complete' },
+];
+
+const statusLabel = { approved:'Approved', pending:'Pending', posted:'Posted', draft:'Draft', synced:'Synced', failed:'Failed', na:'N/A', complete:'Complete', blocked:'Blocked', partial:'Partial' };
+const flowIcon    = { Rebate:'💰', Royalty:'📜', Commission:'🤝' };
+
+function renderContracts() {
+  document.getElementById('contractTable').innerHTML = contracts.map(c => {
+    const steps = [
+      c.accrual === 'approved' ? 'var(--green)' : 'var(--yellow)',
+      c.je === 'posted' || c.je === 'synced' ? 'var(--green)' : c.je === 'approved' ? 'var(--accent)' : 'var(--yellow)',
+      c.erp === 'synced' ? 'var(--green)' : c.erp === 'failed' ? 'var(--red)' : c.erp === 'pending' ? 'var(--yellow)' : 'var(--text3)',
+    ];
+    const closeColor = c.close === 'complete' ? 'complete' : c.close === 'blocked' ? 'blocked' : 'partial';
+    return `<tr onclick="sendAIMessage('Review close status for ${c.name}')">
+      <td><div style="font-weight:500">${c.name}</div><div style="font-size:11px;color:var(--text2)">${c.id}</div></td>
+      <td style="color:var(--text2);font-size:11px">${c.party}</td>
+      <td><span class="tag">${flowIcon[c.flow]||''} ${c.flow}</span></td>
+      <td style="font-weight:600">$${c.amount.toLocaleString()}</td>
+      <td><span class="status-pill ${c.accrual}">${statusLabel[c.accrual]}</span></td>
+      <td><span class="status-pill ${c.je === 'posted' || c.je === 'synced' ? 'posted' : c.je}">${statusLabel[c.je]}</span></td>
+      <td><span class="status-pill ${c.erp === 'synced' ? 'approved' : c.erp === 'failed' ? 'blocked' : c.erp === 'pending' ? 'pending' : 'pending'}">${statusLabel[c.erp]}</span></td>
+      <td><span class="status-pill ${closeColor}">${statusLabel[c.close]}</span></td>
+      <td><button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();sendAIMessage('AI review for ${c.name}')">✦</button></td>
+    </tr>`;
+  }).join('');
+}
+
+// ─── VARIANCE TABLE ───────────────────────────────────────────
+const variances = [
+  { label:'Rebates',      prev:1100000, curr:1850000, ai:'flag',    note:'Tier 3 threshold crossed' },
+  { label:'Royalties',    prev:2000000, curr:2340000, ai:'explain', note:'Q1 volume ramp' },
+  { label:'Commissions',  prev:400000,  curr:420000,  ai:null,      note:'' },
+  { label:'Subscriptions',prev:3200000, curr:3100000, ai:'flag',    note:'3 renewals delayed' },
+  { label:'True-ups',     prev:0,       curr:20500,   ai:'explain', note:'First period for Program A' },
+];
+
+function renderVariances() {
+  const maxDelta = Math.max(...variances.map(v => Math.abs(v.curr - v.prev)));
+  document.getElementById('varianceTable').innerHTML = variances.map(v => {
+    const delta = v.curr - v.prev;
+    const pct   = v.prev > 0 ? ((delta / v.prev) * 100).toFixed(0) : '∞';
+    const isUp  = delta >= 0;
+    const barW  = Math.round((Math.abs(delta) / maxDelta) * 80);
+    const aiEl  = v.ai ? `<span class="var-ai ${v.ai}" onclick="sendAIMessage('Explain ${v.label} variance: ${v.note}')">${v.ai === 'flag' ? '⚠ AI Flag' : '✦ Explain'}</span>` : '';
+    return `<div class="variance-row">
+      <div class="var-label">${v.label}</div>
+      <div class="var-prev" style="font-size:11px">$${(v.prev/1000).toFixed(0)}k</div>
+      <div class="var-curr">$${(v.curr/1000).toFixed(0)}k</div>
+      <div class="var-delta" style="color:${isUp?'var(--green)':'var(--red)'}">${isUp?'+':''}${pct}%</div>
+      <div class="var-bar">
+        <div class="var-bar-track">
+          <div class="${isUp?'up-bar':'down-bar'}" style="width:${barW}%;height:100%;border-radius:3px;background:${isUp?'var(--green)':'var(--red)'}"></div>
+        </div>
+      </div>
+      ${aiEl}
+      ${v.note ? `<span style="font-size:10px;color:var(--text3);margin-left:4px;max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${v.note}</span>` : ''}
+    </div>`;
+  }).join('');
+}
+
+// ─── AUDIT TRAIL ─────────────────────────────────────────────
+const auditEvents = [
+  { date:'Apr 1, 2026', action:'Period Close Approved (Soft)',    user:'Controller · R. Patel', color:'green' },
+  { date:'Mar 31, 2026',action:'Variance review signed off',       user:'Finance Manager · S. Kim', color:'accent' },
+  { date:'Mar 31, 2026',action:'7 journal entries posted to GL',   user:'System · Auto-batch', color:'purple' },
+  { date:'Mar 30, 2026',action:'ERP sync attempted – JE2041 failed', user:'System · SAP Connector', color:'yellow' },
+  { date:'Mar 30, 2026',action:'14/16 accruals approved',          user:'Finance Manager · S. Kim', color:'accent' },
+  { date:'Mar 28, 2026',action:'Calculation engine run completed', user:'System · Calc Engine v3.2', color:'green' },
+  { date:'Mar 25, 2026',action:'POS data fully ingested',          user:'System · POS Connector', color:'green' },
+  { date:'Mar 20, 2026',action:'Sales data fully ingested',        user:'System · Sales Connector', color:'green' },
+  { date:'Mar 14, 2026',action:'Period Close Workspace opened',    user:'Finance Team · CT', color:'text3' },
+];
+
+function renderAudit() {
+  document.getElementById('auditTimeline').innerHTML = auditEvents.map(e => `
+    <div class="audit-event">
+      <div class="audit-dot ${e.color}"></div>
+      <div class="audit-date">${e.date}</div>
+      <div class="audit-action">${e.action}</div>
+      <div class="audit-meta">${e.user}</div>
+    </div>`).join('');
+}
+
+// ─── AI MESSAGING ─────────────────────────────────────────────
+function addMessage(html) {
+  const msgs = document.getElementById('aiMessages');
+  const div  = document.createElement('div'); div.className = 'ai-msg-ai';
+  div.innerHTML = `<div class="ai-msg-label ai-label">✦ LiQ Agent</div>${html}`;
+  msgs.appendChild(div); msgs.scrollTop = msgs.scrollHeight;
+}
+function addUserMessage(txt) {
+  const msgs = document.getElementById('aiMessages');
+  const div  = document.createElement('div'); div.className = 'ai-msg-user';
+  div.innerHTML = `<div class="ai-msg-label user-label">You</div>${txt}`;
+  msgs.appendChild(div); msgs.scrollTop = msgs.scrollHeight;
+}
+function addTyping() {
+  const msgs = document.getElementById('aiMessages');
+  const div  = document.createElement('div'); div.className = 'ai-msg-ai'; div.id = 'typingIndicator';
+  div.innerHTML = '<div class="ai-msg-label ai-label">✦ LiQ Agent</div><span style="color:var(--text3)">● ● ●</span>';
+  msgs.appendChild(div); msgs.scrollTop = msgs.scrollHeight;
+}
+function removeTyping() { const el = document.getElementById('typingIndicator'); if (el) el.remove(); }
+function sendAIMessage(msg) { addUserMessage(msg); addTyping(); setTimeout(() => { removeTyping(); handleAIResponse(msg); }, 900); }
+function handleKey(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendCurrentInput(); } }
+function sendCurrentInput() { const inp = document.getElementById('aiInput'); const v = inp.value.trim(); if (!v) return; inp.value = ''; sendAIMessage(v); }
+
+function handleAIResponse(msg) {
+  const m = msg.toLowerCase();
+
+  if (m.includes('block') || m.includes('prevent') || m.includes('stop')) {
+    return addMessage(`<strong>Close Blockers – Mar 2026</strong><br/><br/>
+    I found <strong>2 critical blockers</strong> preventing period close:
+    <div class="ai-row" style="margin-top:8px;background:var(--red-bg)"><div class="ai-row-icon">❌</div><div class="ai-row-text" style="color:var(--red)">Solar Royalty – ACC2033 not approved</div><div class="ai-row-val" style="color:var(--red)">$75k</div></div>
+    <div class="ai-row" style="background:var(--red-bg)"><div class="ai-row-icon">❌</div><div class="ai-row-text" style="color:var(--red)">JE2041 ERP sync failure</div><div class="ai-row-val" style="color:var(--red)">$64.2k</div></div>
+    <div class="ai-action-box">
+      <div class="ai-action-title">✦ Fastest Resolution Path</div>
+      <div class="ai-action-detail">1. Approve ACC2033 (low confidence 65% – needs override)<br/>2. Fix JE2041 account mapping in ERP Reference Tables<br/>3. Retry ERP sync → estimated 15 min total</div>
+      <div class="ai-action-btns">
+        <button class="btn btn-primary btn-sm" onclick="sendAIMessage('Walk me through the fastest close path for Mar 2026')">Walk me through →</button>
+      </div>
+    </div>`);
+  }
+
+  if (m.includes('close path') || m.includes('fastest') || m.includes('walk me')) {
+    return addMessage(`<strong>✦ Guided Close Path – Mar 2026</strong>
+    <div class="ai-row" style="margin-top:8px"><div class="ai-row-icon">1️⃣</div><div class="ai-row-text">Override-approve ACC2033 (Solar Royalty)</div><div class="ai-row-val" style="color:var(--yellow)">~2 min</div></div>
+    <div class="ai-row"><div class="ai-row-icon">2️⃣</div><div class="ai-row-text">Fix JE2041 – map 5010-REBATE → SAP 522100</div><div class="ai-row-val" style="color:var(--yellow)">~5 min</div></div>
+    <div class="ai-row"><div class="ai-row-icon">3️⃣</div><div class="ai-row-text">Retry ERP sync for JE2041</div><div class="ai-row-val" style="color:var(--yellow)">~3 min</div></div>
+    <div class="ai-row"><div class="ai-row-icon">4️⃣</div><div class="ai-row-text">Post 3 remaining journal entries</div><div class="ai-row-val" style="color:var(--yellow)">~2 min</div></div>
+    <div class="ai-row" style="background:var(--green-bg)"><div class="ai-row-icon">5️⃣</div><div class="ai-row-text" style="color:var(--green)">Approve period close → readiness 100%</div><div class="ai-row-val" style="color:var(--green)">~1 min</div></div>
+    <div style="margin-top:8px;font-size:11px;color:var(--text2)">Total estimated time to close: <strong style="color:var(--green)">~13 minutes</strong></div>`);
+  }
+
+  if (m.includes('rebate') && (m.includes('68') || m.includes('variance') || m.includes('higher') || m.includes('explai'))) {
+    return addMessage(`<strong>Rebate Variance Explanation – Mar vs Feb</strong>
+    <div class="ai-row" style="margin-top:8px"><div class="ai-row-icon">📈</div><div class="ai-row-text">Distributor Corp sales volume</div><div class="ai-row-val" style="color:var(--green)">+38%</div></div>
+    <div class="ai-row"><div class="ai-row-icon">📊</div><div class="ai-row-text">Tier 3 threshold crossed ($6M+)</div><div class="ai-row-val">3% → 5%</div></div>
+    <div class="ai-row"><div class="ai-row-icon">📦</div><div class="ai-row-text">Euro Distributor Q1 ramp</div><div class="ai-row-val" style="color:var(--green)">+22%</div></div>
+    <div class="ai-row"><div class="ai-row-icon">💰</div><div class="ai-row-text">Net rebate exposure increase</div><div class="ai-row-val" style="color:var(--accent)">+$750k</div></div>
+    <div style="margin-top:8px;font-size:11px;color:var(--text2)">The <strong>+68%</strong> increase is consistent with contract terms and sales data. No anomalies detected. ✓</div>`);
+  }
+
+  if (m.includes('pending approval') || m.includes('pending accrual') || m.includes('which contract')) {
+    return addMessage(`<strong>Pending Accrual Approvals – 2 contracts</strong>
+    <div class="ai-row" style="margin-top:8px"><div class="ai-row-icon">⚠️</div><div class="ai-row-text">ACC2033 – Solar License Agreement</div><div class="ai-row-val" style="color:var(--yellow)">$75,000</div></div>
+    <div style="font-size:11px;color:var(--text2);padding:4px 10px;margin-bottom:4px">Low confidence 65% · Missing POS file · 51h waiting</div>
+    <div class="ai-row"><div class="ai-row-icon">⚠️</div><div class="ai-row-text">ACC2036 – Premium OEM Royalty</div><div class="ai-row-val" style="color:var(--yellow)">$210,000</div></div>
+    <div style="font-size:11px;color:var(--text2);padding:4px 10px">Pending Finance Manager sign-off · 49h waiting</div>
+    <div class="ai-action-box" style="margin-top:8px">
+      <div class="ai-action-title">✦ Action</div>
+      <div class="ai-action-detail">Send approval reminder to Finance Manager – Sarah K.</div>
+      <div class="ai-action-btns">
+        <button class="btn btn-secondary btn-sm">📧 Send Reminder</button>
+        <button class="btn btn-ghost btn-sm">Override Approve</button>
+      </div>
+    </div>`);
+  }
+
+  if (m.includes('comparison') || m.includes('feb') || m.includes('previous period') || m.includes('period comparison')) {
+    return addMessage(`<strong>Mar 2026 vs Feb 2026 – Full Period Comparison</strong>
+    <div class="ai-row" style="margin-top:8px"><div class="ai-row-icon">💰</div><div class="ai-row-text">Rebates</div><div class="ai-row-val" style="color:var(--green)">$1.85M (+68%)</div></div>
+    <div class="ai-row"><div class="ai-row-icon">📜</div><div class="ai-row-text">Royalties</div><div class="ai-row-val" style="color:var(--green)">$2.34M (+17%)</div></div>
+    <div class="ai-row"><div class="ai-row-icon">🤝</div><div class="ai-row-text">Commissions</div><div class="ai-row-val" style="color:var(--green)">$420k (+5%)</div></div>
+    <div class="ai-row"><div class="ai-row-icon">🔄</div><div class="ai-row-text">Subscriptions</div><div class="ai-row-val" style="color:var(--red)">$3.1M (−3%)</div></div>
+    <div class="ai-row" style="background:var(--accent-glow)"><div class="ai-row-icon">📊</div><div class="ai-row-text" style="color:var(--accent)">Total Exposure</div><div class="ai-row-val" style="color:var(--accent)">$7.71M (+28%)</div></div>
+    <div style="margin-top:8px;font-size:11px;color:var(--text2)">Largest driver: Rebate tier escalation for Distributor Corp and Euro Distributor. Subscription dip due to 3 delayed renewals.</div>`);
+  }
+
+  if (m.includes('report') || m.includes('summary') || m.includes('generate')) {
+    return addMessage(`<strong>✦ Period Close Summary Report – Mar 2026</strong>
+    <div class="ai-row" style="margin-top:8px"><div class="ai-row-icon">📊</div><div class="ai-row-text">Total Accruals Processed</div><div class="ai-row-val">16 accruals</div></div>
+    <div class="ai-row"><div class="ai-row-icon">💼</div><div class="ai-row-text">Total Financial Exposure</div><div class="ai-row-val" style="color:var(--accent)">$7,710,000</div></div>
+    <div class="ai-row"><div class="ai-row-icon">📓</div><div class="ai-row-text">Journal Entries Created</div><div class="ai-row-val">10 JEs</div></div>
+    <div class="ai-row"><div class="ai-row-icon">🏢</div><div class="ai-row-text">ERP Posted Total</div><div class="ai-row-val">$1,165,000</div></div>
+    <div class="ai-row"><div class="ai-row-icon">⚠️</div><div class="ai-row-text">Close Readiness</div><div class="ai-row-val" style="color:var(--yellow)">78% (2 blockers)</div></div>
+    <div style="display:flex;gap:6px;margin-top:8px">
+      <button class="btn btn-secondary btn-sm" style="flex:1">📄 Export PDF</button>
+      <button class="btn btn-ghost btn-sm" style="flex:1">📧 Email Report</button>
+    </div>`);
+  }
+
+  if (m.includes('reconcili') || m.includes('$8.2') || m.includes('gap') || m.includes('erp recon')) {
+    return addMessage(`<strong>ERP Reconciliation Gap – $8,200</strong>
+    <div class="ai-row" style="margin-top:8px"><div class="ai-row-icon">📋</div><div class="ai-row-text">LicenseIQ Total Accrued</div><div class="ai-row-val">$1,173,200</div></div>
+    <div class="ai-row"><div class="ai-row-icon">🏢</div><div class="ai-row-text">SAP Posted Amount</div><div class="ai-row-val">$1,165,000</div></div>
+    <div class="ai-row" style="background:var(--yellow-bg)"><div class="ai-row-icon">⚡</div><div class="ai-row-text" style="color:var(--yellow)">Unreconciled Gap</div><div class="ai-row-val" style="color:var(--yellow)">$8,200</div></div>
+    <div style="margin-top:8px;font-size:11px;color:var(--text2)">Gap traced to:<br/>• JE2041 (NorTech, $64.2k) – ERP sync failed, account mapping error<br/>• JE2039 (Solar, $75k) – draft, not submitted<br/><br/>Fix JE2041 account mapping to clear $64.2k. Solar will clear once ACC2033 is approved.</div>`);
+  }
+
+  addMessage(`I'm monitoring the <strong>Mar 2026 close</strong>. I can help you:<br/>
+  <div class="ai-row" style="margin-top:8px"><div class="ai-row-icon">🚧</div><div class="ai-row-text">Identify and resolve close blockers</div></div>
+  <div class="ai-row"><div class="ai-row-icon">📈</div><div class="ai-row-text">Explain period variances by flow</div></div>
+  <div class="ai-row"><div class="ai-row-icon">🔒</div><div class="ai-row-text">Guide you to 100% close readiness</div></div>
+  <div class="ai-row"><div class="ai-row-icon">📄</div><div class="ai-row-text">Generate close summary report</div></div>
+  Ask me anything or use a quick action below.`);
+}
+
+// ─── MODAL ────────────────────────────────────────────────────
+function openCloseModal()  { document.getElementById('closeModal').classList.add('show'); }
+function closeModal()      { document.getElementById('closeModal').classList.remove('show'); }
+document.getElementById('closeModal').addEventListener('click', function(e){ if(e.target===this) closeModal(); });
+
+// ─── DONUT ANIMATION ─────────────────────────────────────────
+function animateDonut(pct) {
+  const circumference = 188.5;
+  const offset = circumference - (pct / 100) * circumference;
+  document.getElementById('donutFill').style.strokeDashoffset = offset;
+  document.getElementById('scoreNum').textContent = pct + '%';
+}
+
+// ─── INIT ─────────────────────────────────────────────────────
+renderContracts();
+renderVariances();
+renderAudit();
+setTimeout(() => animateDonut(78), 300);
+</script>
+</body>
+</html>

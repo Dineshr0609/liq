@@ -1,0 +1,107 @@
+Add formulaSource column to calculation-audit-trail.tsx
+File: client/src/pages/calculation-audit-trail.tsx
+Priority: High — traceability is LicenseIQ's core value proposition; Finance must see how each fee was computed
+Effort: Small — add one component and two table columns to existing tables
+Context: The backend sets formulaSource on every CalculationBreakdownItem and persists it to calculationAuditItems. It is returned in the API response. It is currently not displayed anywhere in the UI.
+ 
+Confirmed current state of the two tables
+From code review, the page has exactly two tables:
+•       Summary table headers: Rule Name | Type | Transactions | Sales Amount | Fee Amount | % of Total
+•       Detail table headers: Audit Ref | Product | Qty | Gross Amount | Rule Applied | Contract Fee
+Neither table has a Formula Source column. Neither imports Tooltip. No FormulaSourceBadge component exists anywhere in the file.
+ 
+Step 1 — Add FormulaSourceBadge component
+Add this component near the top of the file, after the imports and before the default export. It needs no new imports beyond what Tooltip requires.
+ 
+// Add to imports if not already present:
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+ 
+// Paste this component before the page's default export function:
+const FORMULA_SOURCE_CONFIG: Record<string, { label: string; color: string; description: string }> = {
+  primary_formula_node:              { label: 'Formula',     color: 'bg-green-100 text-green-800',   description: 'Executed from structured formula definition — highest confidence path' },
+  rebate_tiered_quarterly_universal: { label: 'Quarterly',   color: 'bg-blue-100 text-blue-800',    description: 'Quarterly rebate aggregation via universal engine — full traceability' },
+  table_data_field_mappings:         { label: 'Table',       color: 'bg-purple-100 text-purple-800',description: 'Formula built on-the-fly from AI-extracted table data' },
+  base_rate_percentage:              { label: 'Base Rate',   color: 'bg-orange-100 text-orange-800',description: 'AI-extracted percentage rate applied to transaction amount' },
+  fixed_amount:                      { label: 'Fixed',       color: 'bg-gray-100 text-gray-700',    description: 'Fixed fee or bonus amount applied once per period' },
+  minimum_guarantee:                 { label: 'Min Guar.',   color: 'bg-red-100 text-red-800',      description: 'Minimum guarantee true-up — shortfall between calculated fees and guarantee floor' },
+  tiers_array:                       { label: 'Tiers',       color: 'bg-indigo-100 text-indigo-800',description: 'Formula built from AI-extracted tier array in formulaDefinition' },
+  volume_tiers_legacy:               { label: 'Legacy',      color: 'bg-yellow-100 text-yellow-800',description: 'Built from legacy volumeTiers field — consider migrating to formulaDefinition' },
+  direct_base_rate_final:            { label: 'Fallback',    color: 'bg-amber-100 text-amber-800',  description: 'Final fallback: direct baseRate used — no formula definition found' },
+  unknown:                           { label: 'Unknown',     color: 'bg-gray-100 text-gray-400',    description: 'Formula source could not be determined' },
+};
+ 
+function FormulaSourceBadge({ source, tierMode }: { source?: string; tierMode?: string }) {
+  const cfg = FORMULA_SOURCE_CONFIG[source || 'unknown'] || FORMULA_SOURCE_CONFIG.unknown;
+  return (
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <span
+            className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium cursor-help ${cfg.color}`}
+            data-testid={`badge-formula-source-${source}`}
+          >
+            {cfg.label}
+            {source === 'rebate_tiered_quarterly_universal' && tierMode && (
+              <span className={`ml-1 opacity-75`}>
+                · {tierMode === 'marginal' ? 'marginal' : 'whole'}
+              </span>
+            )}
+          </span>
+        </TooltipTrigger>
+        <TooltipContent side="top">
+          <p className="text-xs max-w-[220px]">{cfg.description}</p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  );
+}
+ 
+Step 2 — Add Formula Source column to the detail table
+The detail table (Audit Ref | Product | Qty | Gross Amount | Rule Applied | Contract Fee) needs one new column. Make two additions:
+ 
+2a — Add the header after the existing 'Rule Applied' header:
+<TableHead className="font-semibold">Rule Applied</TableHead>
+{/* ADD THIS: */}
+<TableHead className="font-semibold">Formula Source</TableHead>
+<TableHead className="text-right font-semibold">Contract Fee</TableHead>
+ 
+2b — Add the cell in each row after the 'Rule Applied' cell. Find the row that renders breakdown items and add:
+<TableCell className="text-xs text-muted-foreground">{item.ruleApplied}</TableCell>
+{/* ADD THIS: */}
+<TableCell>
+  <FormulaSourceBadge
+    source={item.formulaSource}
+    tierMode={(item as any).tierMode}
+  />
+</TableCell>
+<TableCell className="text-right font-semibold">${...}</TableCell>
+ 
+The item.formulaSource field is already returned by the API in the breakdown array — no API changes needed.
+ 
+Step 3 — Add formula source summary below the summary table
+Below the rules summary table (the one showing Rule Name, Type, Transactions, Fee Amount), add a collapsible source breakdown. This is derived entirely from the existing breakdown data — no new API call needed.
+ 
+First, compute the source counts from the breakdown array. Add this derived variable inside the component, after the breakdown data is available:
+const formulaSourceCounts = (breakdown || []).reduce((acc: Record<string, number>, item: any) => {
+  const src = item.formulaSource || 'unknown';
+  acc[src] = (acc[src] || 0) + 1;
+  return acc;
+}, {} as Record<string, number>);
+ 
+Then render the summary pill row immediately below the summary table's closing tag:
+{Object.keys(formulaSourceCounts).length > 0 && (
+  <div className="mt-3 px-1" data-testid="formula-source-summary">
+    <p className="text-[10px] text-muted-foreground uppercase tracking-wide font-semibold mb-1.5">
+      Formula Sources This Run
+    </p>
+    <div className="flex flex-wrap gap-2">
+      {Object.entries(formulaSourceCounts).map(([source, count]) => (
+        <span key={source} className="flex items-center gap-1">
+          <FormulaSourceBadge source={source} />
+          <span className="text-[10px] text-muted-foreground font-medium">{count as number}</span>
+        </span>
+      ))}
+    </div>
+  </div>
+)}
+ 

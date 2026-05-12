@@ -1,0 +1,86 @@
+Add tierMode selector to the rule edit form
+Files: Whichever file contains the rule edit form/modal — check contract-management.tsx or the modal opened from pipeline-results.tsx Edit Rule link
+Priority: Medium — Finance cannot set marginal calculation without this; currently requires developer DB access
+Effort: Small — one new Select field in the existing rule edit form
+Context: rules-management.tsx was removed. The Edit Rule button in pipeline-results.tsx links to /contracts/:id/manage?tab=rules&editRule=:ruleId. The rule edit form lives wherever that route renders. Find that form — it will have fields for ruleName, ruleType, baseRate — and add tierMode alongside them.
+ 
+Step 1 — Locate the rule edit form
+Search the codebase for the form that handles the editRule query param or the rule edit modal/panel. Look for:
+•       A component that reads useSearchParams() or useLocation() for editRule
+•       A form with fields ruleName, ruleType, baseRate
+•       A mutation that calls PATCH /api/contracts/:contractId/rules/:ruleId or PATCH /api/royalty-rules/:id
+That is the target file. All changes below go into that file/component.
+ 
+Step 2 — Add tierMode to the form state
+In the form state initialisation (wherever the rule fields are set when opening the edit form), add tierMode:
+// When initialising form from an existing rule:
+setFormData({
+  ruleName: rule.ruleName || '',
+  ruleType: rule.ruleType || '',
+  baseRate: rule.baseRate || '',
+  // ADD THIS:
+  tierMode: (rule.formulaDefinition as any)?.tierMode || 'whole',
+  // ... other existing fields
+});
+ 
+Step 3 — Add the tierMode Select field
+In the form JSX, add the tierMode field directly after the ruleType field. The field should only render when the rule type is tiered, rebate_tiered, tiered_pricing, royalty, or milestone_tiered:
+ 
+{['tiered', 'rebate_tiered', 'tiered_pricing', 'royalty', 'milestone_tiered']
+  .includes(formData.ruleType) && (
+  <div className="space-y-1" data-testid="field-tier-mode">
+    <Label className="text-xs font-medium">Tier Calculation Mode</Label>
+    <Select
+      value={formData.tierMode || 'whole'}
+      onValueChange={(v) => setFormData((prev: any) => ({ ...prev, tierMode: v }))}
+    >
+      <SelectTrigger className="h-8 text-xs" data-testid="select-tier-mode">
+        <SelectValue />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="whole">
+          Whole-tier — full value gets matched tier rate
+        </SelectItem>
+        <SelectItem value="marginal">
+          Marginal — each band calculated separately, then summed
+        </SelectItem>
+      </SelectContent>
+    </Select>
+    <p className="text-[10px] text-muted-foreground leading-relaxed">
+      Example at $2M with tiers [0-1M @ 2%, 1M+ @ 3%]:
+      whole-tier = $60,000 · marginal = $50,000
+    </p>
+  </div>
+)}
+ 
+Step 4 — Include tierMode in the save payload
+When the form is submitted, include tierMode in the formulaDefinition so it is persisted to the database and picked up by the calculation engine:
+ 
+// In the mutation function that saves the rule:
+const payload = {
+  ruleName: formData.ruleName,
+  ruleType: formData.ruleType,
+  baseRate: formData.baseRate,
+  // Merge tierMode into formulaDefinition:
+  formulaDefinition: {
+    ...(existingRule.formulaDefinition as object || {}),
+    tierMode: formData.tierMode || 'whole',
+  },
+  // ... other existing fields
+};
+await apiRequest('PATCH', `/api/contracts/${contractId}/rules/${ruleId}`, payload);
+ 
+The calculation engine reads tierMode from formulaDefinition.tierMode — this is exactly where it needs to be stored for both the universal per-sale evaluator and executeRebateTieredRule() to pick it up.
+ 
+Step 5 — Show current tierMode in the read-only rule display
+In pipeline-results.tsx, each rule card already shows fields like baseRate, baseMetric, territories. Add tierMode to that display for tiered rules, so Finance can see the current setting without entering edit mode:
+{['tiered', 'rebate_tiered', 'tiered_pricing', 'royalty', 'milestone_tiered']
+  .includes(rule.ruleType) && (rule.formulaDefinition as any)?.tierMode && (
+  <div className={getFieldClass('tierMode')} data-testid={`field-tierMode-${rule.id}`}>
+    <span className="text-muted-foreground">Tier Mode:</span>{' '}
+    <span className="font-medium capitalize">
+      {(rule.formulaDefinition as any)?.tierMode || 'whole'}
+    </span>
+  </div>
+)}
+ 

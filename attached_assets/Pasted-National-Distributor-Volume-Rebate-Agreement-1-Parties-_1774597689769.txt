@@ -1,0 +1,61 @@
+National Distributor Volume Rebate Agreement 
+1. Parties 
+This	Agreement	is	entered	into	between:	
+Company:	Tech	Sound	Audio	("Manufacturer")	
+Distributor:	National	Distributor	("Distributor")	
+2. Agreement Type 
+Contract	Type:	Rebate	
+Contract	Category:	Channel	Incentive	
+Program	Type:	Standard	National	Distributor	Program	
+3. Effective Dates 
+Effective	Date:	January	1,	2026	
+Term:	3	years	unless	terminated	by	either	party	with	60	days	written	notice.	
+4. Territory 
+This	agreement	applies	to	the	following	territories:	
+United	States	(USD)	
+Canada	(CAD)	
+Mexico	(MXN)	
+5. Eligible Products 
+All	products	listed	below	are	eligible	for	rebate	calculations:	
+	
+SoundPro	Wireless	Headphones	-	Black	(TS-WH-PRO-001-BLK)	
+SoundPro	Wireless	Headphones	-	White	(TS-WH-PRO-001-WHT)	
+SoundPro	Wireless	Headphones	-	Silver	(TS-WH-PRO-001-SLV)	
+PremiumSound	Max	-	Black	(TS-WH-PRM-002-BLK)	
+PremiumSound	Max	-	White	(TS-WH-PRM-002-WHT)	
+EssentialSound	Wireless	-	Black	(TS-WH-ESS-003-BLK)	
+
+EssentialSound	Wireless	-	White	(TS-WH-ESS-003-WHT)	
+Studio	Wired	Pro	-	Black	(TS-WD-STD-001-BLK)	
+6. Rebate Structure 
+Distributor	earns	quarterly	volume	rebates	based	on	total	eligible	units	purchased.	
+	
+Tier	1:	0	–	1,000	units	→	2%	rebate	
+Tier	2:	1,001	–	5,000	units	→	5%	rebate	
+Tier	3:	5,001+	units	→	8%	rebate	
+	
+Rebate	percentage	applies	to	Net	Sales	for	eligible	products.	
+7. Calculation Period 
+Rebates	are	calculated	quarterly	based	on	total	units	purchased	during	the	quarter.	
+8. Eligible Sales 
+Eligible	sales	include	distributor	purchases	of	listed	products	within	the	territory.	
+	
+The	following	are	excluded:	
+Returned	products	
+Warranty	replacements	
+Promotional	sample	units	
+9. Reporting Requirement 
+Distributor	must	provide	quarterly	sales	data	within	10	days	after	quarter	end	including:	
+SKU	
+Units	Sold	
+Net	Sales	Amount	
+Territory	
+10. Rebate Payment 
+Manufacturer	will	calculate	rebates	and	issue	payment	within	30	days	after	quarter	end.	
+
+11. Adjustments 
+Returns	or	credits	issued	after	quarter	close	may	adjust	the	original	rebate	calculation.	
+Any	overpaid	rebates	will	be	offset	against	future	rebates.	
+12. Termination 
+Upon	termination,	any	earned	but	unpaid	rebates	will	be	calculated	and	paid	within	30	
+days.

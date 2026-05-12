@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LicenseIQ Contract Data Dictionary</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#fafafa;color:#1a1a1a;line-height:1.6}
+.container{max-width:1200px;margin:0 auto;padding:24px}
+h1{font-size:28px;font-weight:700;margin-bottom:8px;color:#000}
+.subtitle{color:#666;margin-bottom:32px;font-size:14px}
+.nav{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:32px;padding:16px;background:#fff;border-radius:12px;border:1px solid #e5e5e5}
+.nav a{padding:8px 16px;border-radius:8px;text-decoration:none;font-size:13px;font-weight:500;color:#333;background:#f5f5f5;transition:all .2s}
+.nav a:hover,.nav a.active{background:#f97316;color:#fff}
+.section{margin-bottom:40px;background:#fff;border-radius:12px;border:1px solid #e5e5e5;overflow:hidden}
+.section-header{padding:20px 24px;border-bottom:1px solid #e5e5e5;background:#fafafa}
+.section-header h2{font-size:18px;font-weight:600;color:#000}
+.section-header p{font-size:13px;color:#666;margin-top:4px}
+table{width:100%;border-collapse:collapse}
+th{text-align:left;padding:10px 16px;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:#666;background:#fafafa;border-bottom:2px solid #e5e5e5}
+td{padding:10px 16px;font-size:13px;border-bottom:1px solid #f0f0f0}
+tr:hover td{background:#fff8f0}
+.badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600}
+.badge-yes{background:#dcfce7;color:#166534}
+.badge-no{background:#f3f4f6;color:#6b7280}
+.badge-auto{background:#e0f2fe;color:#0369a1}
+.badge-rel{background:#fef3c7;color:#92400e}
+.col-name{font-weight:600;font-family:'SFMono-Regular',Consolas,monospace;color:#c2410c;font-size:12px}
+.type{font-family:'SFMono-Regular',Consolas,monospace;color:#7c3aed;font-size:12px}
+.default{font-family:'SFMono-Regular',Consolas,monospace;color:#059669;font-size:12px}
+.overview-card{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;padding:20px}
+.card{padding:16px;border:1px solid #e5e5e5;border-radius:10px;background:#fff}
+.card h3{font-size:14px;font-weight:600;color:#f97316;margin-bottom:4px}
+.card .count{font-size:24px;font-weight:700;color:#000}
+.card p{font-size:12px;color:#666;margin-top:4px}
+.rel-arrow{color:#f97316;font-weight:700}
+.sql-block{margin:0;padding:20px 24px;background:#1a1a2e;border-top:1px solid #e5e5e5}
+.sql-block h3{font-size:13px;font-weight:600;color:#f97316;margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px}
+.sql-block pre{background:#0d1117;color:#e6edf3;padding:16px;border-radius:8px;overflow-x:auto;font-size:12px;line-height:1.7;font-family:'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace}
+.sql-block .kw{color:#ff7b72}
+.sql-block .fn{color:#d2a8ff}
+.sql-block .str{color:#a5d6ff}
+.sql-block .cm{color:#8b949e;font-style:italic}
+.sql-block .tbl{color:#7ee787}
+.sql-block .col{color:#ffa657}
+.er-diagram{padding:24px;text-align:center}
+.er-diagram svg{max-width:100%;height:auto}
+.er-table{display:inline-block;border:2px solid #e5e5e5;border-radius:10px;background:#fff;margin:8px;text-align:left;min-width:200px;vertical-align:top}
+.er-table-header{padding:10px 16px;background:#f97316;color:#fff;font-weight:700;font-size:13px;border-radius:8px 8px 0 0;text-align:center}
+.er-table-body{padding:8px 12px}
+.er-table-body .er-field{font-size:11px;font-family:'SFMono-Regular',Consolas,monospace;padding:2px 0;color:#333}
+.er-table-body .er-pk{color:#c2410c;font-weight:600}
+.er-table-body .er-fk{color:#7c3aed}
+.er-rel-line{display:flex;align-items:center;justify-content:center;gap:8px;padding:4px 0;font-size:12px;color:#666}
+.er-container{padding:30px 24px;overflow-x:auto}
+.er-grid{display:flex;flex-direction:column;align-items:center;gap:24px;min-width:900px}
+.er-row{display:flex;justify-content:center;gap:16px;flex-wrap:nowrap}
+.er-connector{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 0}
+.er-connector-line{width:2px;height:20px;background:#f97316}
+.er-connector-label{font-size:10px;color:#666;font-weight:600;background:#fff;padding:2px 8px;border:1px solid #e5e5e5;border-radius:4px}
+.er-flow{margin-top:32px;padding:24px;background:#fafafa;border-radius:12px;border:1px solid #e5e5e5}
+.er-flow h3{font-size:16px;font-weight:600;color:#000;margin-bottom:16px;text-align:center}
+.er-flow-steps{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:8px}
+.er-flow-step{padding:10px 16px;background:#fff;border:2px solid #e5e5e5;border-radius:8px;font-size:12px;font-weight:600;color:#333;text-align:center;min-width:120px}
+.er-flow-step.active{border-color:#f97316;background:#fff7ed;color:#c2410c}
+.er-flow-arrow{font-size:18px;color:#f97316;font-weight:700}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>LicenseIQ Contract Data Dictionary</h1>
+<p class="subtitle">7 contract-related tables with field definitions, sample queries, ER diagram, and relationships</p>
+
+<nav class="nav">
+<a href="#overview">Overview</a>
+<a href="#er-diagram">ER Diagram</a>
+<a href="#contracts">contracts</a>
+<a href="#contract_master">contract_master</a>
+<a href="#contract_analysis">contract_analysis</a>
+<a href="#contract_terms">contract_terms</a>
+<a href="#partner_contract_associations">partner_contract_associations</a>
+<a href="#royalty_rules">royalty_rules</a>
+<a href="#contract_clauses">contract_clauses</a>
+<a href="#full-contract-query">Full Contract Query</a>
+<a href="#relationships">Relationships</a>
+</nav>
+
+<!-- Overview -->
+<div id="overview" class="section">
+<div class="section-header">
+<h2>Overview</h2>
+<p>All contract-related tables at a glance</p>
+</div>
+<div class="overview-card">
+<div class="card"><h3>contracts</h3><div class="count">33 columns</div><p>Primary contract record created when a contract document is uploaded. Stores file info, status, organizational context, and core contract metadata.</p></div>
+<div class="card"><h3>contract_master</h3><div class="count">20 columns</div><p>Extended contract metadata. Contains business-level attributes like territory scope, channel scope, payment frequency, and annual value.</p></div>
+<div class="card"><h3>contract_analysis</h3><div class="count">9 columns</div><p>AI-generated analysis results. Stores summary, key terms, risk analysis, insights, and confidence scores. One-to-one with contracts.</p></div>
+<div class="card"><h3>contract_terms</h3><div class="count">19 columns</div><p>Financial terms/tiers within a contract. Each row = a pricing rule, rebate tier, or payment condition. Many-to-one with contracts.</p></div>
+<div class="card"><h3>partner_contract_associations</h3><div class="count">9 columns</div><p>Links partners to contracts. Tracks assignment status and primary/secondary designation.</p></div>
+<div class="card"><h3>royalty_rules</h3><div class="count">20 columns</div><p>License fee / royalty calculation rules extracted from contracts. Defines how to calculate payments.</p></div>
+<div class="card"><h3>contract_clauses</h3><div class="count">11 columns</div><p>Clauses extracted by the 3-stage pipeline. Categorized and linked to flow types.</p></div>
+</div>
+</div>
+
+<!-- ER Diagram -->
+<div id="er-diagram" class="section">
+<div class="section-header">
+<h2>Entity Relationship Diagram</h2>
+<p>Visual representation of contract tables and their relationships</p>
+</div>
+<div class="er-container">
+<div class="er-grid">
+
+<!-- Center: contracts table -->
+<div class="er-row">
+<div class="er-table" style="border-color:#f97316;border-width:3px">
+<div class="er-table-header">contracts</div>
+<div class="er-table-body">
+<div class="er-field er-pk">PK  id (UUID)</div>
+<div class="er-field">    contract_number</div>
+<div class="er-field">    display_name</div>
+<div class="er-field">    contract_type</div>
+<div class="er-field">    contract_subtype</div>
+<div class="er-field">    status</div>
+<div class="er-field">    effective_start</div>
+<div class="er-field">    effective_end</div>
+<div class="er-field">    organization_name</div>
+<div class="er-field">    counterparty_name</div>
+<div class="er-field er-fk">FK  uploaded_by → users.id</div>
+<div class="er-field er-fk">FK  company_id → companies.id</div>
+<div class="er-field" style="color:#999;font-size:10px">    ... +21 more columns</div>
+</div>
+</div>
+</div>
+
+<!-- Connectors -->
+<div class="er-row" style="gap:4px">
+<div class="er-connector"><div class="er-connector-line"></div><div class="er-connector-label">1:1</div><div class="er-connector-line"></div></div>
+<div class="er-connector"><div class="er-connector-line"></div><div class="er-connector-label">1:1</div><div class="er-connector-line"></div></div>
+<div class="er-connector"><div class="er-connector-line"></div><div class="er-connector-label">1:N</div><div class="er-connector-line"></div></div>
+<div class="er-connector"><div class="er-connector-line"></div><div class="er-connector-label">1:N</div><div class="er-connector-line"></div></div>
+<div class="er-connector"><div class="er-connector-line"></div><div class="er-connector-label">1:N</div><div class="er-connector-line"></div></div>
+<div class="er-connector"><div class="er-connector-line"></div><div class="er-connector-label">1:N</div><div class="er-connector-line"></div></div>
+</div>
+
+<!-- Child tables row -->
+<div class="er-row">
+<div class="er-table">
+<div class="er-table-header" style="background:#0369a1">contract_master</div>
+<div class="er-table-body">
+<div class="er-field er-pk">PK  contract_id</div>
+<div class="er-field er-fk">FK  linked_contract_id → contracts.id</div>
+<div class="er-field er-fk">FK  company_id → companies.id</div>
+<div class="er-field">    territory_scope</div>
+<div class="er-field">    channel_scope</div>
+<div class="er-field">    payment_frequency</div>
+<div class="er-field">    currency</div>
+<div class="er-field">    contract_value_estimated_annual</div>
+<div class="er-field" style="color:#999;font-size:10px">    ... +12 more</div>
+</div>
+</div>
+
+<div class="er-table">
+<div class="er-table-header" style="background:#7c3aed">contract_analysis</div>
+<div class="er-table-body">
+<div class="er-field er-pk">PK  id (UUID)</div>
+<div class="er-field er-fk">FK  contract_id → contracts.id</div>
+<div class="er-field">    summary (TEXT)</div>
+<div class="er-field">    key_terms (JSONB)</div>
+<div class="er-field">    risk_analysis (JSONB)</div>
+<div class="er-field">    insights (JSONB)</div>
+<div class="er-field">    confidence</div>
+</div>
+</div>
+
+<div class="er-table">
+<div class="er-table-header" style="background:#166534">contract_terms</div>
+<div class="er-table-body">
+<div class="er-field er-pk">PK  term_id</div>
+<div class="er-field er-fk">FK  contract_id → contracts.id</div>
+<div class="er-field">    term_name</div>
+<div class="er-field">    term_type</div>
+<div class="er-field">    rate_type / rate_value</div>
+<div class="er-field">    tier_min / tier_max</div>
+<div class="er-field" style="color:#999;font-size:10px">    ... +13 more</div>
+</div>
+</div>
+
+<div class="er-table">
+<div class="er-table-header" style="background:#92400e">royalty_rules</div>
+<div class="er-table-body">
+<div class="er-field er-pk">PK  id (UUID)</div>
+<div class="er-field er-fk">FK  contract_id → contracts.id</div>
+<div class="er-field">    rule_type</div>
+<div class="er-field">    rule_name</div>
+<div class="er-field">    formula_definition (JSONB)</div>
+<div class="er-field">    base_rate</div>
+<div class="er-field" style="color:#999;font-size:10px">    ... +14 more</div>
+</div>
+</div>
+
+<div class="er-table">
+<div class="er-table-header" style="background:#b91c1c">contract_clauses</div>
+<div class="er-table-body">
+<div class="er-field er-pk">PK  id (UUID)</div>
+<div class="er-field er-fk">FK  contract_id → contracts.id</div>
+<div class="er-field">    clause_identifier</div>
+<div class="er-field">    text</div>
+<div class="er-field">    clause_category_code</div>
+<div class="er-field">    flow_type_code</div>
+<div class="er-field">    confidence</div>
+</div>
+</div>
+
+<div class="er-table">
+<div class="er-table-header" style="background:#4338ca">partner_contract_associations</div>
+<div class="er-table-body">
+<div class="er-field er-pk">PK  id (UUID)</div>
+<div class="er-field er-fk">FK  contract_id → contracts.id</div>
+<div class="er-field er-fk">FK  partner_id → partners</div>
+<div class="er-field">    contract_status</div>
+<div class="er-field">    is_primary_contract</div>
+<div class="er-field">    effective_date</div>
+</div>
+</div>
+</div>
+
+<!-- Reference tables row -->
+<div style="margin-top:24px;padding-top:24px;border-top:2px dashed #e5e5e5;width:100%">
+<p style="text-align:center;font-size:12px;color:#666;font-weight:600;margin-bottom:12px">REFERENCE TABLES</p>
+</div>
+<div class="er-row">
+<div class="er-table" style="border-color:#e5e5e5">
+<div class="er-table-header" style="background:#666">contract_type_definitions</div>
+<div class="er-table-body">
+<div class="er-field er-pk">PK  id</div>
+<div class="er-field">    code (unique)</div>
+<div class="er-field">    name</div>
+<div class="er-field">    is_active</div>
+</div>
+</div>
+<div class="er-table" style="border-color:#e5e5e5">
+<div class="er-table-header" style="background:#666">subflows</div>
+<div class="er-table-body">
+<div class="er-field er-pk">PK  id</div>
+<div class="er-field">    code (unique)</div>
+<div class="er-field">    name</div>
+<div class="er-field">    is_active</div>
+</div>
+</div>
+<div class="er-table" style="border-color:#e5e5e5">
+<div class="er-table-header" style="background:#666">companies</div>
+<div class="er-table-body">
+<div class="er-field er-pk">PK  id</div>
+<div class="er-field">    name</div>
+<div class="er-field">    code</div>
+</div>
+</div>
+<div class="er-table" style="border-color:#e5e5e5">
+<div class="er-table-header" style="background:#666">users</div>
+<div class="er-table-body">
+<div class="er-field er-pk">PK  id</div>
+<div class="er-field">    username</div>
+<div class="er-field">    role</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<!-- Contract Processing Flow -->
+<div class="er-flow">
+<h3>Contract Processing Flow</h3>
+<div class="er-flow-steps">
+<div class="er-flow-step active">Upload Document</div>
+<div class="er-flow-arrow">→</div>
+<div class="er-flow-step active">Create<br><small>contracts</small></div>
+<div class="er-flow-arrow">→</div>
+<div class="er-flow-step active">Generate<br><small>contract_master</small></div>
+<div class="er-flow-arrow">→</div>
+<div class="er-flow-step active">AI Analysis<br><small>contract_analysis</small></div>
+<div class="er-flow-arrow">→</div>
+<div class="er-flow-step active">Extract Rules<br><small>royalty_rules</small></div>
+<div class="er-flow-arrow">→</div>
+<div class="er-flow-step active">Extract Terms<br><small>contract_terms</small></div>
+<div class="er-flow-arrow">→</div>
+<div class="er-flow-step active">3-Stage Pipeline<br><small>contract_clauses</small></div>
+<div class="er-flow-arrow">→</div>
+<div class="er-flow-step active">Assign Partners<br><small>partner_associations</small></div>
+</div>
+<p style="text-align:center;margin-top:16px;font-size:12px;color:#666">Each step populates the corresponding database table. Steps after "Create" run as background AI tasks.</p>
+</div>
+</div>
+
+<!-- 1. contracts -->
+<div id="contracts" class="section">
+<div class="section-header">
+<h2>contracts</h2>
+<p>Primary contract record created when a contract document is uploaded. Stores file info, status, organizational context, and core contract metadata.</p>
+</div>
+<table>
+<thead><tr><th>Column Name</th><th>Data Type</th><th>Required</th><th>Default</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td class="col-name">id</td><td class="type">VARCHAR (UUID)</td><td><span class="badge badge-auto">Auto</span></td><td class="default">gen_random_uuid()</td><td>Unique contract identifier (primary key)</td></tr>
+<tr><td class="col-name">contract_number</td><td class="type">VARCHAR</td><td><span class="badge badge-no">No</span></td><td class="default">Auto-generated</td><td>Human-readable contract number</td></tr>
+<tr><td class="col-name">file_name</td><td class="type">VARCHAR</td><td><span class="badge badge-yes">Yes</span></td><td class="default">-</td><td>Stored file name on server</td></tr>
+<tr><td class="col-name">original_name</td><td class="type">VARCHAR</td><td><span class="badge badge-yes">Yes</span></td><td class="default">-</td><td>Original uploaded file name</td></tr>
+<tr><td class="col-name">file_size</td><td class="type">INTEGER</td><td><span class="badge badge-yes">Yes</span></td><td class="default">-</td><td>File size in bytes</td></tr>
+<tr><td class="col-name">file_type</td><td class="type">VARCHAR</td><td><span class="badge badge-yes">Yes</span></td><td class="default">-</td><td>MIME type (e.g., application/pdf)</td></tr>
+<tr><td class="col-name">file_path</td><td class="type">VARCHAR</td><td><span class="badge badge-yes">Yes</span></td><td class="default">-</td><td>Server file storage path</td></tr>
+<tr><td class="col-name">contract_type</td><td class="type">VARCHAR</td><td><span class="badge badge-no">No</span></td><td class="default">NULL</td><td>Contract type code (FK to contract_type_definitions.code)</td></tr>
+<tr><td class="col-name">contract_subtype</td><td class="type">VARCHAR</td><td><span class="badge badge-no">No</span></td><td class="default">NULL</td><td>Subflow code (FK to subflows.code)</td></tr>
+<tr><td class="col-name">priority</td><td class="type">VARCHAR</td><td><span class="badge badge-yes">Yes</span></td><td class="default">'normal'</td><td>Priority level (low, normal, high, critical)</td></tr>
+<tr><td class="col-name">status</td><td class="type">VARCHAR</td><td><span class="badge badge-yes">Yes</span></td><td class="default">'uploaded'</td><td>Processing status (uploaded, processing, analyzed, error)</td></tr>
+<tr><td class="col-name">display_name</td><td class="type">VARCHAR</td><td><span class="badge badge-no">No</span></td><td class="default">NULL</td><td>User-editable display name</td></tr>
+<tr><td class="col-name">organization_name</td><td class="type">VARCHAR</td><td><span class="badge badge-no">No</span></td><td class="default">NULL</td><td>Company / Licensor name</td></tr>
+<tr><td class="col-name">counterparty_name</td><td class="type">VARCHAR</td><td><span class="badge badge-no">No</span></td><td class="default">NULL</td><td>Counter Party name</td></tr>
+<tr><td class="col-name">effective_start</td><td class="type">TIMESTAMP</td><td><span class="badge badge-no">No</span></td><td class="default">NULL</td><td>Contract effective start date</td></tr>
+<tr><td class="col-name">effective_end</td><td class="type">TIMESTAMP</td><td><span class="badge badge-no">No</span></td><td class="default">NULL</td><td>Contract effective end date</td></tr>
+<tr><td class="col-name">governing_law</td><td class="type">VARCHAR</td><td><span class="badge badge-no">No</span></td><td class="default">NULL</td><td>Governing jurisdiction</td></tr>
+<tr><td class="col-name">renewal_terms</td><td class="type">TEXT</td><td><span class="badge badge-no">No</span></td><td class="default">NULL</td><td>Renewal terms and conditions</td></tr>
+<tr><td class="col-name">notes</td><td class="type">TEXT</td><td><span class="badge badge-no">No</span></td><td class="default">NULL</td><td>Additional notes</td></tr>
+<tr><td class="col-name">approval_state</td><td class="type">VARCHAR</td><td><span class="badge badge-yes">Yes</span></td><td class="default">'draft'</td><td>Approval workflow state (draft, pending_approval, approved, rejected)</td></tr>
+<tr><td class="col-name">current_version</td><td class="type">INTEGER</td><td><span class="badge badge-yes">Yes</span></td><td class="default">1</td><td>Current version number</td></tr>
+<tr><td class="col-name">uploaded_by</td><td class="type">INTEGER</td><td><span class="badge badge-no">No</span></td><td class="default">NULL</td><td>User who uploaded (FK to users.id)</td></tr>
+<tr><td class="col-name">company_id</td><td class="type">VARCHAR</td><td><span class="badge badge-no">No</span></td><td class="default">NULL</td><td>Owning company (FK to companies.id)</td></tr>
+<tr><td class="col-name">location_id</td><td class="type">VARCHAR</td><td><span class="badge badge-no">No</span></td><td class="default">NULL</td><td>Location assignment</td></tr>
+<tr><td class="col-name">business_unit_id</td><td class="type">VARCHAR</td><td><span class="badge badge-no">No</span></td><td class="default">NULL</td><td>Business unit assignment</td></tr>
+<tr><td class="col-name">use_erp_matching</td><td class="type">BOOLEAN</td><td><span class="badge badge-yes">Yes</span></td><td class="default">false</td><td>Enable ERP semantic matching</td></tr>
+<tr><td class="col-name">created_at</td><td class="type">TIMESTAMP</td><td><span class="badge badge-auto">Auto</span></td><td class="default">NOW()</td><td>Upload timestamp</td></tr>
+<tr><td class="col-name">updated_at</td><td class="type">TIMESTAMP</td><td><span class="badge badge-auto">Auto</span></td><td class="default">NOW()</td><td>Last modified timestamp</td></tr>
+</tbody>
+</table>
+<div class="sql-block">
+<h3>Sample Query: List All Contracts with Type and Status</h3>
+<pre><span class="kw">SELECT</span>
+  c.<span class="col">id</span>,
+  c.<span class="col">contract_number</span>,
+  c.<span class="col">display_name</span>,
+  ctd.<span class="col">name</span>           <span class="kw">AS</span> <span class="col">contract_type_name</span>,
+  sf.<span class="col">name</span>            <span class="kw">AS</span> <span class="col">subflow_name</span>,
+  c.<span class="col">status</span>,
+  c.<span class="col">approval_state</span>,
+  c.<span class="col">organization_name</span>,
+  c.<span class="col">counterparty_name</span>,
+  c.<span class="col">effective_start</span>,
+  c.<span class="col">effective_end</span>,
+  c.<span class="col">current_version</span>,
+  c.<span class="col">created_at</span>
+<span class="kw">FROM</span> <span class="tbl">contracts</span> c
+<span class="kw">LEFT JOIN</span> <span class="tbl">contract_type_definitions</span> ctd
+  <span class="kw">ON</span> c.<span class="col">contract_type</span> = ctd.<span class="col">code</span>
+<span class="kw">LEFT JOIN</span> <span class="tbl">subflows</span> sf
+  <span class="kw">ON</span> c.<span class="col">contract_subtype</span> = sf.<span class="col">code</span>
+<span class="kw">ORDER BY</span> c.<span class="col">created_at</span> <span class="kw">DESC</span>;</pre>
+</div>
+</div>
+
+<!-- 2. contract_master -->
+<div id="contract_master" class="section">
+<div class="section-header">
+<h2>contract_master</h2>
+<p>Extended contract metadata. Contains business-level attributes like territory scope, channel scope, payment frequency, and annual value.</p>
+</div>
+<table>
+<thead><tr><th>Column Name</th><th>Data Type</th><th>Required</th><th>Default</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td class="col-name">contract_id</td><td class="type">VARCHAR</td><td><span class="badge badge-yes">Yes</span></td><td class="default">-</td><td>Contract identifier (PK, matches contracts.id)</td></tr>
+<tr><td class="col-name">linked_contract_id</td><td class="type">VARCHAR</td><td><span class="badge badge-no">No</span></td><td class="default">NULL</td><td>Link to contracts.id (FK)</td></tr>
+<tr><td class="col-name">company_id</td><td class="type">VARCHAR</td><td><span class="badge badge-no">No</span></td><td class="default">NULL</td><td>Company identifier (FK to companies.id)</td></tr>
+<tr><td class="col-name">contract_number</td><td class="type">VARCHAR</td><td><span class="badge badge-no">No</span></td><td class="default">NULL</td><td>Human-readable contract number (unique)</td></tr>
+<tr><td class="col-name">contract_name</td><td class="type">VARCHAR</td><td><span class="badge badge-no">No</span></td><td class="default">NULL</td><td>Contract display name</td></tr>
+<tr><td class="col-name">contract_type</td><td class="type">VARCHAR</td><td><span class="badge badge-no">No</span></td><td class="default">NULL</td><td>Contract type classification</td></tr>
+<tr><td class="col-name">contract_category</td><td class="type">VARCHAR</td><td><span class="badge badge-no">No</span></td><td class="default">NULL</td><td>Category: Revenue, Cost, Mixed</td></tr>
+<tr><td class="col-name">effective_date</td><td class="type">TIMESTAMP</td><td><span class="badge badge-no">No</span></td><td class="default">NULL</td><td>Effective start date</td></tr>
+<tr><td class="col-name">expiration_date</td><td class="type">TIMESTAMP</td><td><span class="badge badge-no">No</span></td><td class="default">NULL</td><td>Expiration date</td></tr>
+<tr><td class="col-name">auto_renew</td><td class="type">BOOLEAN</td><td><span class="badge badge-no">No</span></td><td class="default">NULL</td><td>Auto-renew flag</td></tr>
+<tr><td class="col-name">renewal_term_months</td><td class="type">INTEGER</td><td><span class="badge badge-no">No</span></td><td class="default">NULL</td><td>Renewal period in months</td></tr>
+<tr><td class="col-name">territory_scope</td><td class="type">VARCHAR</td><td><span class="badge badge-no">No</span></td><td class="default">NULL</td><td>Territory coverage</td></tr>
+<tr><td class="col-name">channel_scope</td><td class="type">VARCHAR</td><td><span class="badge badge-no">No</span></td><td class="default">NULL</td><td>Sales channel scope</td></tr>
+<tr><td class="col-name">payment_frequency</td><td class="type">VARCHAR</td><td><span class="badge badge-no">No</span></td><td class="default">NULL</td><td>Payment schedule (monthly, quarterly, annual)</td></tr>
+<tr><td class="col-name">currency</td><td class="type">VARCHAR</td><td><span class="badge badge-no">No</span></td><td class="default">NULL</td><td>Currency code (USD, EUR, etc.)</td></tr>
+<tr><td class="col-name">contract_value_estimated_annual</td><td class="type">DECIMAL</td><td><span class="badge badge-no">No</span></td><td class="default">NULL</td><td>Estimated annual contract value</td></tr>
+<tr><td class="col-name">contract_status</td><td class="type">VARCHAR</td><td><span class="badge badge-no">No</span></td><td class="default">NULL</td><td>Status: Active, Draft, Expired, Terminated</td></tr>
+<tr><td class="col-name">created_date</td><td class="type">TIMESTAMP</td><td><span class="badge badge-auto">Auto</span></td><td class="default">NOW()</td><td>Record creation timestamp</td></tr>
+<tr><td class="col-name">modified_date</td><td class="type">TIMESTAMP</td><td><span class="badge badge-auto">Auto</span></td><td class="default">NOW()</td><td>Last modified timestamp</td></tr>
+</tbody>
+</table>
+<div class="sql-block">
+<h3>Sample Query: Contract Business Details with Company Name</h3>
+<pre><span class="kw">SELECT</span>
+  cm.<span class="col">contract_name</span>,
+  cm.<span class="col">contract_number</span>,
+  comp.<span class="col">name</span>             <span class="kw">AS</span> <span class="col">company_name</span>,
+  cm.<span class="col">contract_category</span>,
+  cm.<span class="col">territory_scope</span>,
+  cm.<span class="col">channel_scope</span>,
+  cm.<span class="col">payment_frequency</span>,
+  cm.<span class="col">currency</span>,
+  cm.<span class="col">contract_value_estimated_annual</span>,
+  cm.<span class="col">contract_status</span>,
+  cm.<span class="col">auto_renew</span>,
+  cm.<span class="col">effective_date</span>,
+  cm.<span class="col">expiration_date</span>
+<span class="kw">FROM</span> <span class="tbl">contract_master</span> cm
+<span class="kw">LEFT JOIN</span> <span class="tbl">companies</span> comp
+  <span class="kw">ON</span> cm.<span class="col">company_id</span> = comp.<span class="col">id</span>
+<span class="kw">WHERE</span> cm.<span class="col">contract_status</span> = <span class="str">'Active'</span>
+<span class="kw">ORDER BY</span> cm.<span class="col">contract_value_estimated_annual</span> <span class="kw">DESC NULLS LAST</span>;</pre>
+</div>
+</div>
+
+<!-- 3. contract_analysis -->
+<div id="contract_analysis" class="section">
+<div class="section-header">
+<h2>contract_analysis</h2>
+<p>AI-generated analysis results. Stores summary, key terms, risk analysis, insights, and confidence scores. One-to-one with contracts.</p>
+</div>
+<table>
+<thead><tr><th>Column Name</th><th>Data Type</th><th>Required</th><th>Default</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td class="col-name">id</td><td class="type">VARCHAR (UUID)</td><td><span class="badge badge-auto">Auto</span></td><td class="default">gen_random_uuid()</td><td>Analysis record ID (primary key)</td></tr>
+<tr><td class="col-name">contract_id</td><td class="type">VARCHAR (UUID)</td><td><span class="badge badge-yes">Yes</span></td><td class="default">-</td><td>Parent contract (FK to contracts.id, CASCADE)</td></tr>
+<tr><td class="col-name">summary</td><td class="type">TEXT</td><td><span class="badge badge-no">No</span></td><td class="default">NULL</td><td>AI-generated contract summary</td></tr>
+<tr><td class="col-name">key_terms</td><td class="type">JSONB</td><td><span class="badge badge-no">No</span></td><td class="default">NULL</td><td>Extracted key terms JSON</td></tr>
+<tr><td class="col-name">risk_analysis</td><td class="type">JSONB</td><td><span class="badge badge-no">No</span></td><td class="default">NULL</td><td>Risk assessment JSON</td></tr>
+<tr><td class="col-name">insights</td><td class="type">JSONB</td><td><span class="badge badge-no">No</span></td><td class="default">NULL</td><td>AI insights JSON</td></tr>
+<tr><td class="col-name">confidence</td><td class="type">DECIMAL(5,2)</td><td><span class="badge badge-no">No</span></td><td class="default">NULL</td><td>Confidence (0.00-1.00)</td></tr>
+<tr><td class="col-name">processing_time</td><td class="type">INTEGER</td><td><span class="badge badge-no">No</span></td><td class="default">NULL</td><td>Processing time (ms)</td></tr>
+<tr><td class="col-name">header_review_flags</td><td class="type">JSONB</td><td><span class="badge badge-no">No</span></td><td class="default">NULL</td><td>Missing field flags</td></tr>
+</tbody>
+</table>
+<div class="sql-block">
+<h3>Sample Query: AI Analysis Summary for a Contract</h3>
+<pre><span class="kw">SELECT</span>
+  c.<span class="col">display_name</span>,
+  c.<span class="col">contract_number</span>,
+  ca.<span class="col">summary</span>,
+  ca.<span class="col">confidence</span>,
+  ca.<span class="col">processing_time</span>,
+  ca.<span class="col">key_terms</span>,
+  ca.<span class="col">risk_analysis</span>,
+  ca.<span class="col">insights</span>
+<span class="kw">FROM</span> <span class="tbl">contract_analysis</span> ca
+<span class="kw">JOIN</span> <span class="tbl">contracts</span> c
+  <span class="kw">ON</span> ca.<span class="col">contract_id</span> = c.<span class="col">id</span>
+<span class="kw">WHERE</span> ca.<span class="col">contract_id</span> = <span class="str">'&lt;contract_uuid&gt;'</span>;
+
+<span class="cm">-- Low-confidence analyses that need human review</span>
+<span class="kw">SELECT</span>
+  c.<span class="col">display_name</span>,
+  ca.<span class="col">confidence</span>,
+  ca.<span class="col">header_review_flags</span>
+<span class="kw">FROM</span> <span class="tbl">contract_analysis</span> ca
+<span class="kw">JOIN</span> <span class="tbl">contracts</span> c <span class="kw">ON</span> ca.<span class="col">contract_id</span> = c.<span class="col">id</span>
+<span class="kw">WHERE</span> ca.<span class="col">confidence</span> &lt; <span class="str">0.70</span>
+<span class="kw">ORDER BY</span> ca.<span class="col">confidence</span> <span class="kw">ASC</span>;</pre>
+</div>
+</div>
+
+<!-- 4. contract_terms -->
+<div id="contract_terms" class="section">
+<div class="section-header">
+<h2>contract_terms</h2>
+<p>Financial terms/tiers within a contract. Each row = a pricing rule, rebate tier, or payment condition. Many-to-one with contracts.</p>
+</div>
+<table>
+<thead><tr><th>Column Name</th><th>Data Type</th><th>Required</th><th>Default</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td class="col-name">term_id</td><td class="type">VARCHAR</td><td><span class="badge badge-yes">Yes</span></td><td class="default">-</td><td>Term identifier (primary key)</td></tr>
+<tr><td class="col-name">contract_id</td><td class="type">VARCHAR</td><td><span class="badge badge-yes">Yes</span></td><td class="default">-</td><td>Parent contract (FK to contracts.id)</td></tr>
+<tr><td class="col-name">term_sequence</td><td class="type">INTEGER</td><td><span class="badge badge-no">No</span></td><td class="default">NULL</td><td>Display order</td></tr>
+<tr><td class="col-name">term_name</td><td class="type">VARCHAR</td><td><span class="badge badge-no">No</span></td><td class="default">NULL</td><td>Term name/label</td></tr>
+<tr><td class="col-name">term_type</td><td class="type">VARCHAR</td><td><span class="badge badge-no">No</span></td><td class="default">NULL</td><td>Type: Rebate, Royalty, Discount, Fee</td></tr>
+<tr><td class="col-name">calculation_basis</td><td class="type">VARCHAR</td><td><span class="badge badge-no">No</span></td><td class="default">NULL</td><td>Basis: Net Sales, Units, Revenue</td></tr>
+<tr><td class="col-name">rate_type</td><td class="type">VARCHAR</td><td><span class="badge badge-no">No</span></td><td class="default">NULL</td><td>Rate type: Percentage, Fixed, Per Unit</td></tr>
+<tr><td class="col-name">rate_value</td><td class="type">DECIMAL(15,6)</td><td><span class="badge badge-no">No</span></td><td class="default">NULL</td><td>Numeric rate value</td></tr>
+<tr><td class="col-name">tier_min</td><td class="type">DECIMAL(15,2)</td><td><span class="badge badge-no">No</span></td><td class="default">NULL</td><td>Minimum tier threshold</td></tr>
+<tr><td class="col-name">tier_max</td><td class="type">DECIMAL(15,2)</td><td><span class="badge badge-no">No</span></td><td class="default">NULL</td><td>Maximum tier threshold</td></tr>
+<tr><td class="col-name">currency</td><td class="type">VARCHAR</td><td><span class="badge badge-no">No</span></td><td class="default">NULL</td><td>Currency code</td></tr>
+<tr><td class="col-name">effective_date</td><td class="type">TIMESTAMP</td><td><span class="badge badge-no">No</span></td><td class="default">NULL</td><td>Term effective date</td></tr>
+<tr><td class="col-name">expiration_date</td><td class="type">TIMESTAMP</td><td><span class="badge badge-no">No</span></td><td class="default">NULL</td><td>Term expiration date</td></tr>
+<tr><td class="col-name">product_scope</td><td class="type">VARCHAR</td><td><span class="badge badge-no">No</span></td><td class="default">NULL</td><td>Product scope text</td></tr>
+<tr><td class="col-name">territory_scope</td><td class="type">VARCHAR</td><td><span class="badge badge-no">No</span></td><td class="default">NULL</td><td>Territory scope text</td></tr>
+<tr><td class="col-name">channel_scope</td><td class="type">VARCHAR</td><td><span class="badge badge-no">No</span></td><td class="default">NULL</td><td>Channel scope text</td></tr>
+<tr><td class="col-name">minimum_commitment</td><td class="type">DECIMAL(15,2)</td><td><span class="badge badge-no">No</span></td><td class="default">NULL</td><td>Minimum commitment amount</td></tr>
+<tr><td class="col-name">notes</td><td class="type">TEXT</td><td><span class="badge badge-no">No</span></td><td class="default">NULL</td><td>Additional notes</td></tr>
+<tr><td class="col-name">source</td><td class="type">VARCHAR</td><td><span class="badge badge-no">No</span></td><td class="default">NULL</td><td>Source: AI-extracted, Manual</td></tr>
+</tbody>
+</table>
+<div class="sql-block">
+<h3>Sample Query: Pricing Tiers for a Contract</h3>
+<pre><span class="kw">SELECT</span>
+  ct.<span class="col">term_name</span>,
+  ct.<span class="col">term_type</span>,
+  ct.<span class="col">calculation_basis</span>,
+  ct.<span class="col">rate_type</span>,
+  ct.<span class="col">rate_value</span>,
+  ct.<span class="col">tier_min</span>,
+  ct.<span class="col">tier_max</span>,
+  ct.<span class="col">currency</span>,
+  ct.<span class="col">minimum_commitment</span>,
+  ct.<span class="col">product_scope</span>,
+  ct.<span class="col">territory_scope</span>,
+  ct.<span class="col">source</span>
+<span class="kw">FROM</span> <span class="tbl">contract_terms</span> ct
+<span class="kw">WHERE</span> ct.<span class="col">contract_id</span> = <span class="str">'&lt;contract_uuid&gt;'</span>
+<span class="kw">ORDER BY</span> ct.<span class="col">term_sequence</span> <span class="kw">ASC NULLS LAST</span>;
+
+<span class="cm">-- Summary: count of terms by type across all contracts</span>
+<span class="kw">SELECT</span>
+  ct.<span class="col">term_type</span>,
+  <span class="fn">COUNT</span>(*) <span class="kw">AS</span> <span class="col">term_count</span>,
+  <span class="fn">AVG</span>(ct.<span class="col">rate_value</span>) <span class="kw">AS</span> <span class="col">avg_rate</span>
+<span class="kw">FROM</span> <span class="tbl">contract_terms</span> ct
+<span class="kw">GROUP BY</span> ct.<span class="col">term_type</span>
+<span class="kw">ORDER BY</span> <span class="col">term_count</span> <span class="kw">DESC</span>;</pre>
+</div>
+</div>
+
+<!-- 5. partner_contract_associations -->
+<div id="partner_contract_associations" class="section">
+<div class="section-header">
+<h2>partner_contract_associations</h2>
+<p>Links partners to contracts. Tracks assignment status and primary/secondary designation.</p>
+</div>
+<table>
+<thead><tr><th>Column Name</th><th>Data Type</th><th>Required</th><th>Default</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td class="col-name">id</td><td class="type">UUID</td><td><span class="badge badge-auto">Auto</span></td><td class="default">gen_random_uuid()</td><td>Record ID (primary key)</td></tr>
+<tr><td class="col-name">association_id</td><td class="type">VARCHAR</td><td><span class="badge badge-no">No</span></td><td class="default">NULL</td><td>Human-readable ID (unique)</td></tr>
+<tr><td class="col-name">partner_id</td><td class="type">VARCHAR</td><td><span class="badge badge-no">No</span></td><td class="default">NULL</td><td>Partner ID (FK to partner master)</td></tr>
+<tr><td class="col-name">contract_id</td><td class="type">VARCHAR</td><td><span class="badge badge-no">No</span></td><td class="default">NULL</td><td>Contract ID (FK to contracts.id)</td></tr>
+<tr><td class="col-name">effective_date</td><td class="type">TIMESTAMP</td><td><span class="badge badge-no">No</span></td><td class="default">NULL</td><td>Effective date</td></tr>
+<tr><td class="col-name">expiration_date</td><td class="type">TIMESTAMP</td><td><span class="badge badge-no">No</span></td><td class="default">NULL</td><td>Expiration date</td></tr>
+<tr><td class="col-name">contract_status</td><td class="type">VARCHAR</td><td><span class="badge badge-no">No</span></td><td class="default">NULL</td><td>Status: Active, Inactive</td></tr>
+<tr><td class="col-name">is_primary_contract</td><td class="type">BOOLEAN</td><td><span class="badge badge-no">No</span></td><td class="default">NULL</td><td>Primary contract flag</td></tr>
+<tr><td class="col-name">notes</td><td class="type">TEXT</td><td><span class="badge badge-no">No</span></td><td class="default">NULL</td><td>Notes</td></tr>
+</tbody>
+</table>
+<div class="sql-block">
+<h3>Sample Query: Partners Assigned to a Contract</h3>
+<pre><span class="kw">SELECT</span>
+  pca.<span class="col">association_id</span>,
+  pca.<span class="col">partner_id</span>,
+  pca.<span class="col">contract_status</span>,
+  pca.<span class="col">is_primary_contract</span>,
+  pca.<span class="col">effective_date</span>,
+  pca.<span class="col">expiration_date</span>,
+  c.<span class="col">display_name</span>     <span class="kw">AS</span> <span class="col">contract_name</span>
+<span class="kw">FROM</span> <span class="tbl">partner_contract_associations</span> pca
+<span class="kw">JOIN</span> <span class="tbl">contracts</span> c
+  <span class="kw">ON</span> pca.<span class="col">contract_id</span> = c.<span class="col">id</span>
+<span class="kw">WHERE</span> pca.<span class="col">contract_id</span> = <span class="str">'&lt;contract_uuid&gt;'</span>
+<span class="kw">ORDER BY</span> pca.<span class="col">is_primary_contract</span> <span class="kw">DESC</span>, pca.<span class="col">effective_date</span>;
+
+<span class="cm">-- All active partner assignments across contracts</span>
+<span class="kw">SELECT</span>
+  pca.<span class="col">partner_id</span>,
+  <span class="fn">COUNT</span>(<span class="kw">DISTINCT</span> pca.<span class="col">contract_id</span>) <span class="kw">AS</span> <span class="col">contract_count</span>,
+  <span class="fn">SUM</span>(<span class="kw">CASE WHEN</span> pca.<span class="col">is_primary_contract</span> <span class="kw">THEN</span> <span class="str">1</span> <span class="kw">ELSE</span> <span class="str">0</span> <span class="kw">END</span>) <span class="kw">AS</span> <span class="col">primary_count</span>
+<span class="kw">FROM</span> <span class="tbl">partner_contract_associations</span> pca
+<span class="kw">WHERE</span> pca.<span class="col">contract_status</span> = <span class="str">'Active'</span>
+<span class="kw">GROUP BY</span> pca.<span class="col">partner_id</span>;</pre>
+</div>
+</div>
+
+<!-- 6. royalty_rules -->
+<div id="royalty_rules" class="section">
+<div class="section-header">
+<h2>royalty_rules</h2>
+<p>License fee / royalty calculation rules extracted from contracts. Defines how to calculate payments.</p>
+</div>
+<table>
+<thead><tr><th>Column Name</th><th>Data Type</th><th>Required</th><th>Default</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td class="col-name">id</td><td class="type">VARCHAR (UUID)</td><td><span class="badge badge-auto">Auto</span></td><td class="default">gen_random_uuid()</td><td>Rule ID (primary key)</td></tr>
+<tr><td class="col-name">contract_id</td><td class="type">VARCHAR (UUID)</td><td><span class="badge badge-yes">Yes</span></td><td class="default">-</td><td>Parent contract (FK, CASCADE)</td></tr>
+<tr><td class="col-name">rule_type</td><td class="type">VARCHAR</td><td><span class="badge badge-yes">Yes</span></td><td class="default">-</td><td>Type: percentage, fixed, tiered, volume_based</td></tr>
+<tr><td class="col-name">rule_name</td><td class="type">VARCHAR</td><td><span class="badge badge-yes">Yes</span></td><td class="default">-</td><td>Rule name</td></tr>
+<tr><td class="col-name">description</td><td class="type">TEXT</td><td><span class="badge badge-no">No</span></td><td class="default">NULL</td><td>Rule description</td></tr>
+<tr><td class="col-name">formula_definition</td><td class="type">JSONB</td><td><span class="badge badge-no">No</span></td><td class="default">NULL</td><td>JSON calculation formula</td></tr>
+<tr><td class="col-name">product_categories</td><td class="type">TEXT[]</td><td><span class="badge badge-no">No</span></td><td class="default">NULL</td><td>Product categories (array)</td></tr>
+<tr><td class="col-name">territories</td><td class="type">TEXT[]</td><td><span class="badge badge-no">No</span></td><td class="default">NULL</td><td>Territories (array)</td></tr>
+<tr><td class="col-name">volume_tiers</td><td class="type">JSONB</td><td><span class="badge badge-no">No</span></td><td class="default">NULL</td><td>Volume tier definitions</td></tr>
+<tr><td class="col-name">base_rate</td><td class="type">DECIMAL(15,2)</td><td><span class="badge badge-no">No</span></td><td class="default">NULL</td><td>Base rate</td></tr>
+<tr><td class="col-name">minimum_amount</td><td class="type">DECIMAL(15,2)</td><td><span class="badge badge-no">No</span></td><td class="default">NULL</td><td>Minimum payment amount</td></tr>
+<tr><td class="col-name">maximum_amount</td><td class="type">DECIMAL(15,2)</td><td><span class="badge badge-no">No</span></td><td class="default">NULL</td><td>Maximum cap amount</td></tr>
+<tr><td class="col-name">effective_date</td><td class="type">TIMESTAMP</td><td><span class="badge badge-no">No</span></td><td class="default">NULL</td><td>Rule effective date</td></tr>
+<tr><td class="col-name">end_date</td><td class="type">TIMESTAMP</td><td><span class="badge badge-no">No</span></td><td class="default">NULL</td><td>Rule end date</td></tr>
+<tr><td class="col-name">priority</td><td class="type">INTEGER</td><td><span class="badge badge-no">No</span></td><td class="default">NULL</td><td>Evaluation priority</td></tr>
+<tr><td class="col-name">is_active</td><td class="type">BOOLEAN</td><td><span class="badge badge-yes">Yes</span></td><td class="default">true</td><td>Active flag</td></tr>
+<tr><td class="col-name">confidence</td><td class="type">REAL</td><td><span class="badge badge-no">No</span></td><td class="default">NULL</td><td>AI extraction confidence (0-1)</td></tr>
+<tr><td class="col-name">source</td><td class="type">VARCHAR</td><td><span class="badge badge-no">No</span></td><td class="default">NULL</td><td>Source: ai_extracted, manual</td></tr>
+<tr><td class="col-name">clause_text</td><td class="type">TEXT</td><td><span class="badge badge-no">No</span></td><td class="default">NULL</td><td>Original contract clause text</td></tr>
+<tr><td class="col-name">extraction_order</td><td class="type">INTEGER</td><td><span class="badge badge-no">No</span></td><td class="default">NULL</td><td>Original document order</td></tr>
+</tbody>
+</table>
+<div class="sql-block">
+<h3>Sample Query: License Fee Rules for a Contract</h3>
+<pre><span class="kw">SELECT</span>
+  rr.<span class="col">rule_name</span>,
+  rr.<span class="col">rule_type</span>,
+  rr.<span class="col">base_rate</span>,
+  rr.<span class="col">minimum_amount</span>,
+  rr.<span class="col">maximum_amount</span>,
+  rr.<span class="col">product_categories</span>,
+  rr.<span class="col">territories</span>,
+  rr.<span class="col">confidence</span>,
+  rr.<span class="col">source</span>,
+  rr.<span class="col">is_active</span>,
+  rr.<span class="col">description</span>
+<span class="kw">FROM</span> <span class="tbl">royalty_rules</span> rr
+<span class="kw">WHERE</span> rr.<span class="col">contract_id</span> = <span class="str">'&lt;contract_uuid&gt;'</span>
+  <span class="kw">AND</span> rr.<span class="col">is_active</span> = <span class="str">true</span>
+<span class="kw">ORDER BY</span> rr.<span class="col">extraction_order</span> <span class="kw">ASC NULLS LAST</span>;
+
+<span class="cm">-- Rules by type across all contracts</span>
+<span class="kw">SELECT</span>
+  rr.<span class="col">rule_type</span>,
+  <span class="fn">COUNT</span>(*) <span class="kw">AS</span> <span class="col">rule_count</span>,
+  <span class="fn">AVG</span>(rr.<span class="col">base_rate</span>) <span class="kw">AS</span> <span class="col">avg_base_rate</span>,
+  <span class="fn">AVG</span>(rr.<span class="col">confidence</span>) <span class="kw">AS</span> <span class="col">avg_confidence</span>
+<span class="kw">FROM</span> <span class="tbl">royalty_rules</span> rr
+<span class="kw">WHERE</span> rr.<span class="col">is_active</span> = <span class="str">true</span>
+<span class="kw">GROUP BY</span> rr.<span class="col">rule_type</span>;</pre>
+</div>
+</div>
+
+<!-- 7. contract_clauses -->
+<div id="contract_clauses" class="section">
+<div class="section-header">
+<h2>contract_clauses</h2>
+<p>Clauses extracted by the 3-stage pipeline. Categorized and linked to flow types.</p>
+</div>
+<table>
+<thead><tr><th>Column Name</th><th>Data Type</th><th>Required</th><th>Default</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td class="col-name">id</td><td class="type">VARCHAR (UUID)</td><td><span class="badge badge-auto">Auto</span></td><td class="default">gen_random_uuid()</td><td>Clause ID (primary key)</td></tr>
+<tr><td class="col-name">contract_id</td><td class="type">VARCHAR (UUID)</td><td><span class="badge badge-yes">Yes</span></td><td class="default">-</td><td>Parent contract (FK, CASCADE)</td></tr>
+<tr><td class="col-name">extraction_run_id</td><td class="type">VARCHAR</td><td><span class="badge badge-no">No</span></td><td class="default">NULL</td><td>Pipeline run ID</td></tr>
+<tr><td class="col-name">clause_identifier</td><td class="type">VARCHAR</td><td><span class="badge badge-no">No</span></td><td class="default">NULL</td><td>Clause reference (3.1, 4.2a)</td></tr>
+<tr><td class="col-name">section_ref</td><td class="type">VARCHAR</td><td><span class="badge badge-no">No</span></td><td class="default">NULL</td><td>Document section ref</td></tr>
+<tr><td class="col-name">text</td><td class="type">TEXT</td><td><span class="badge badge-yes">Yes</span></td><td class="default">-</td><td>Full clause text</td></tr>
+<tr><td class="col-name">clause_category_code</td><td class="type">VARCHAR</td><td><span class="badge badge-no">No</span></td><td class="default">NULL</td><td>Category code (FK to clause_categories.code)</td></tr>
+<tr><td class="col-name">flow_type_code</td><td class="type">VARCHAR</td><td><span class="badge badge-no">No</span></td><td class="default">NULL</td><td>Financial flow type (FK to flow_types.code)</td></tr>
+<tr><td class="col-name">affects_accrual</td><td class="type">BOOLEAN</td><td><span class="badge badge-yes">Yes</span></td><td class="default">false</td><td>Affects accruals flag</td></tr>
+<tr><td class="col-name">confidence</td><td class="type">REAL</td><td><span class="badge badge-no">No</span></td><td class="default">NULL</td><td>AI confidence (0-1)</td></tr>
+<tr><td class="col-name">evidence</td><td class="type">JSONB</td><td><span class="badge badge-no">No</span></td><td class="default">NULL</td><td>Supporting evidence</td></tr>
+</tbody>
+</table>
+<div class="sql-block">
+<h3>Sample Query: Clauses Grouped by Category</h3>
+<pre><span class="kw">SELECT</span>
+  cc.<span class="col">clause_identifier</span>,
+  cc.<span class="col">section_ref</span>,
+  <span class="fn">SUBSTRING</span>(cc.<span class="col">text</span>, <span class="str">1</span>, <span class="str">200</span>) <span class="kw">AS</span> <span class="col">clause_preview</span>,
+  cat.<span class="col">name</span>             <span class="kw">AS</span> <span class="col">category_name</span>,
+  ft.<span class="col">name</span>              <span class="kw">AS</span> <span class="col">flow_type_name</span>,
+  cc.<span class="col">affects_accrual</span>,
+  cc.<span class="col">confidence</span>
+<span class="kw">FROM</span> <span class="tbl">contract_clauses</span> cc
+<span class="kw">LEFT JOIN</span> <span class="tbl">clause_categories</span> cat
+  <span class="kw">ON</span> cc.<span class="col">clause_category_code</span> = cat.<span class="col">code</span>
+<span class="kw">LEFT JOIN</span> <span class="tbl">flow_types</span> ft
+  <span class="kw">ON</span> cc.<span class="col">flow_type_code</span> = ft.<span class="col">code</span>
+<span class="kw">WHERE</span> cc.<span class="col">contract_id</span> = <span class="str">'&lt;contract_uuid&gt;'</span>
+<span class="kw">ORDER BY</span> cc.<span class="col">clause_category_code</span>, cc.<span class="col">clause_identifier</span>;
+
+<span class="cm">-- Clause count by category for a contract</span>
+<span class="kw">SELECT</span>
+  <span class="fn">COALESCE</span>(cat.<span class="col">name</span>, cc.<span class="col">clause_category_code</span>, <span class="str">'Uncategorized'</span>) <span class="kw">AS</span> <span class="col">category</span>,
+  <span class="fn">COUNT</span>(*) <span class="kw">AS</span> <span class="col">clause_count</span>,
+  <span class="fn">ROUND</span>(<span class="fn">AVG</span>(cc.<span class="col">confidence</span>)::numeric, <span class="str">2</span>) <span class="kw">AS</span> <span class="col">avg_confidence</span>
+<span class="kw">FROM</span> <span class="tbl">contract_clauses</span> cc
+<span class="kw">LEFT JOIN</span> <span class="tbl">clause_categories</span> cat <span class="kw">ON</span> cc.<span class="col">clause_category_code</span> = cat.<span class="col">code</span>
+<span class="kw">WHERE</span> cc.<span class="col">contract_id</span> = <span class="str">'&lt;contract_uuid&gt;'</span>
+<span class="kw">GROUP BY</span> <span class="col">category</span>
+<span class="kw">ORDER BY</span> <span class="col">clause_count</span> <span class="kw">DESC</span>;</pre>
+</div>
+</div>
+
+<!-- Full Contract Query -->
+<div id="full-contract-query" class="section">
+<div class="section-header">
+<h2>Full Contract View Query</h2>
+<p>Comprehensive query joining contracts + master + analysis into a single row, with counts of related records</p>
+</div>
+<div class="sql-block" style="border-top:none">
+<h3>Complete Contract Summary (Single Row per Contract)</h3>
+<pre><span class="kw">SELECT</span>
+  <span class="cm">-- Contract basics</span>
+  c.<span class="col">id</span>,
+  c.<span class="col">contract_number</span>,
+  c.<span class="col">display_name</span>,
+  c.<span class="col">status</span>,
+  c.<span class="col">approval_state</span>,
+  c.<span class="col">current_version</span>,
+  c.<span class="col">organization_name</span>,
+  c.<span class="col">counterparty_name</span>,
+  c.<span class="col">effective_start</span>,
+  c.<span class="col">effective_end</span>,
+
+  <span class="cm">-- Type info</span>
+  ctd.<span class="col">name</span>                  <span class="kw">AS</span> <span class="col">contract_type_name</span>,
+  sf.<span class="col">name</span>                   <span class="kw">AS</span> <span class="col">subflow_name</span>,
+
+  <span class="cm">-- Master data</span>
+  cm.<span class="col">territory_scope</span>,
+  cm.<span class="col">channel_scope</span>,
+  cm.<span class="col">payment_frequency</span>,
+  cm.<span class="col">currency</span>,
+  cm.<span class="col">contract_value_estimated_annual</span>,
+  cm.<span class="col">contract_status</span>        <span class="kw">AS</span> <span class="col">business_status</span>,
+  cm.<span class="col">auto_renew</span>,
+
+  <span class="cm">-- AI analysis</span>
+  ca.<span class="col">summary</span>               <span class="kw">AS</span> <span class="col">ai_summary</span>,
+  ca.<span class="col">confidence</span>            <span class="kw">AS</span> <span class="col">analysis_confidence</span>,
+
+  <span class="cm">-- Counts</span>
+  (<span class="kw">SELECT</span> <span class="fn">COUNT</span>(*) <span class="kw">FROM</span> <span class="tbl">royalty_rules</span> rr
+   <span class="kw">WHERE</span> rr.<span class="col">contract_id</span> = c.<span class="col">id</span>
+     <span class="kw">AND</span> rr.<span class="col">is_active</span> = <span class="str">true</span>)     <span class="kw">AS</span> <span class="col">active_rules</span>,
+  (<span class="kw">SELECT</span> <span class="fn">COUNT</span>(*) <span class="kw">FROM</span> <span class="tbl">contract_terms</span> ct
+   <span class="kw">WHERE</span> ct.<span class="col">contract_id</span> = c.<span class="col">id</span>)  <span class="kw">AS</span> <span class="col">total_terms</span>,
+  (<span class="kw">SELECT</span> <span class="fn">COUNT</span>(*) <span class="kw">FROM</span> <span class="tbl">contract_clauses</span> cc
+   <span class="kw">WHERE</span> cc.<span class="col">contract_id</span> = c.<span class="col">id</span>)  <span class="kw">AS</span> <span class="col">total_clauses</span>,
+  (<span class="kw">SELECT</span> <span class="fn">COUNT</span>(*) <span class="kw">FROM</span> <span class="tbl">partner_contract_associations</span> pca
+   <span class="kw">WHERE</span> pca.<span class="col">contract_id</span> = c.<span class="col">id</span>) <span class="kw">AS</span> <span class="col">total_partners</span>
+
+<span class="kw">FROM</span> <span class="tbl">contracts</span> c
+<span class="kw">LEFT JOIN</span> <span class="tbl">contract_type_definitions</span> ctd
+  <span class="kw">ON</span> c.<span class="col">contract_type</span> = ctd.<span class="col">code</span>
+<span class="kw">LEFT JOIN</span> <span class="tbl">subflows</span> sf
+  <span class="kw">ON</span> c.<span class="col">contract_subtype</span> = sf.<span class="col">code</span>
+<span class="kw">LEFT JOIN</span> <span class="tbl">contract_master</span> cm
+  <span class="kw">ON</span> cm.<span class="col">linked_contract_id</span> = c.<span class="col">id</span>
+<span class="kw">LEFT JOIN</span> <span class="tbl">contract_analysis</span> ca
+  <span class="kw">ON</span> ca.<span class="col">contract_id</span> = c.<span class="col">id</span>
+<span class="kw">ORDER BY</span> c.<span class="col">created_at</span> <span class="kw">DESC</span>;</pre>
+</div>
+</div>
+
+<!-- Relationships -->
+<div id="relationships" class="section">
+<div class="section-header">
+<h2>Table Relationships</h2>
+<p>Foreign keys and joins between contract tables</p>
+</div>
+<table>
+<thead><tr><th>From Table</th><th>From Column</th><th></th><th>To Table</th><th>To Column</th><th>Type</th><th>Notes</th></tr></thead>
+<tbody>
+<tr><td class="col-name">contracts</td><td class="type">id</td><td class="rel-arrow">&rarr;</td><td class="col-name">contract_analysis</td><td class="type">contract_id</td><td><span class="badge badge-rel">One-to-One</span></td><td>Each contract has one analysis. CASCADE delete.</td></tr>
+<tr><td class="col-name">contracts</td><td class="type">id</td><td class="rel-arrow">&rarr;</td><td class="col-name">contract_master</td><td class="type">linked_contract_id</td><td><span class="badge badge-rel">One-to-One</span></td><td>Extended metadata linked by contract_id.</td></tr>
+<tr><td class="col-name">contracts</td><td class="type">id</td><td class="rel-arrow">&rarr;</td><td class="col-name">royalty_rules</td><td class="type">contract_id</td><td><span class="badge badge-rel">One-to-Many</span></td><td>Contract can have many rules. CASCADE delete.</td></tr>
+<tr><td class="col-name">contracts</td><td class="type">id</td><td class="rel-arrow">&rarr;</td><td class="col-name">contract_clauses</td><td class="type">contract_id</td><td><span class="badge badge-rel">One-to-Many</span></td><td>Contract can have many clauses. CASCADE delete.</td></tr>
+<tr><td class="col-name">contracts</td><td class="type">id</td><td class="rel-arrow">&rarr;</td><td class="col-name">contract_terms</td><td class="type">contract_id</td><td><span class="badge badge-rel">One-to-Many</span></td><td>Contract can have many terms/tiers.</td></tr>
+<tr><td class="col-name">contracts</td><td class="type">id</td><td class="rel-arrow">&rarr;</td><td class="col-name">partner_contract_associations</td><td class="type">contract_id</td><td><span class="badge badge-rel">One-to-Many</span></td><td>Contract can have many partner assignments.</td></tr>
+<tr><td class="col-name">contracts</td><td class="type">uploaded_by</td><td class="rel-arrow">&rarr;</td><td class="col-name">users</td><td class="type">id</td><td><span class="badge badge-rel">Many-to-One</span></td><td>User who uploaded the contract.</td></tr>
+<tr><td class="col-name">contracts</td><td class="type">company_id</td><td class="rel-arrow">&rarr;</td><td class="col-name">companies</td><td class="type">id</td><td><span class="badge badge-rel">Many-to-One</span></td><td>Owning company.</td></tr>
+<tr><td class="col-name">contracts</td><td class="type">contract_type</td><td class="rel-arrow">&rarr;</td><td class="col-name">contract_type_definitions</td><td class="type">code</td><td><span class="badge badge-rel">Many-to-One</span></td><td>Contract type lookup.</td></tr>
+<tr><td class="col-name">contracts</td><td class="type">contract_subtype</td><td class="rel-arrow">&rarr;</td><td class="col-name">subflows</td><td class="type">code</td><td><span class="badge badge-rel">Many-to-One</span></td><td>Subflow lookup.</td></tr>
+<tr><td class="col-name">contract_master</td><td class="type">company_id</td><td class="rel-arrow">&rarr;</td><td class="col-name">companies</td><td class="type">id</td><td><span class="badge badge-rel">Many-to-One</span></td><td>Company for master record.</td></tr>
+<tr><td class="col-name">contract_clauses</td><td class="type">clause_category_code</td><td class="rel-arrow">&rarr;</td><td class="col-name">clause_categories</td><td class="type">code</td><td><span class="badge badge-rel">Many-to-One</span></td><td>Clause category lookup.</td></tr>
+<tr><td class="col-name">contract_clauses</td><td class="type">flow_type_code</td><td class="rel-arrow">&rarr;</td><td class="col-name">flow_types</td><td class="type">code</td><td><span class="badge badge-rel">Many-to-One</span></td><td>Financial flow type lookup.</td></tr>
+</tbody>
+</table>
+</div>
+
+<p style="text-align:center;color:#999;font-size:12px;padding:24px 0">LicenseIQ by CimpleIT &mdash; Contract Data Dictionary &mdash; Generated for internal reference</p>
+
+</div>
+</body>
+</html>

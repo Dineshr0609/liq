@@ -1,0 +1,159 @@
+Surface approvalStatus, tierMode, and pending-approval errors in rules UI
+Files: client/src/pages/rules-management.tsx, client/src/pages/calculations.tsx (or royalty-dashboard.tsx — whichever triggers calculation)
+Priority: High — without these changes, Finance cannot manage the approval gate or understand why calculations return $0
+Effort: Medium — three separate changes across two files
+ 
+Change 1 — approvalStatus in rules-management.tsx
+The rules-management page is the primary place Finance manages rules day-to-day. It currently doesn't show approvalStatus. Three additions are needed.
+ 
+1a — Add approvalStatus column to the rules table
+In the rules table, add an Approval Status column after the existing Status (isActive) column. The column header:
+<TableHead className="font-semibold">Approval</TableHead>
+ 
+The column cell for each rule:
+<TableCell>
+  <ApprovalStatusBadge status={rule.approvalStatus} />
+</TableCell>
+ 
+Add the ApprovalStatusBadge component near the top of the file:
+const APPROVAL_CONFIG = {
+  approved: { label: 'Approved', className: 'bg-green-100 text-green-800 border-green-200', icon: CheckCircle2 },
+  pending:  { label: 'Pending',  className: 'bg-yellow-100 text-yellow-800 border-yellow-200', icon: Clock },
+  rejected: { label: 'Rejected', className: 'bg-red-100 text-red-800 border-red-200', icon: XCircle },
+};
+ 
+function ApprovalStatusBadge({ status }: { status?: string }) {
+  const cfg = APPROVAL_CONFIG[status as keyof typeof APPROVAL_CONFIG] || APPROVAL_CONFIG.pending;
+  const Icon = cfg.icon;
+  return (
+    <Badge variant="outline" className={`text-[10px] gap-1 ${cfg.className}`}
+      data-testid={`badge-approval-${status}`}>
+      <Icon className="w-3 h-3" />
+      {cfg.label}
+    </Badge>
+  );
+}
+ 
+Import icons if not already present: CheckCircle2, Clock, XCircle from lucide-react.
+ 
+1b — Add approvalStatus filter dropdown
+In the filter bar alongside the existing flow type and status filters, add:
+<Select value={approvalFilter} onValueChange={setApprovalFilter}>
+  <SelectTrigger className="w-[160px] h-8 text-xs" data-testid="select-approval-filter">
+    <SelectValue placeholder="All Approvals" />
+  </SelectTrigger>
+  <SelectContent>
+    <SelectItem value="all">All Approvals</SelectItem>
+    <SelectItem value="pending">Pending Approval</SelectItem>
+    <SelectItem value="approved">Approved</SelectItem>
+    <SelectItem value="rejected">Rejected</SelectItem>
+  </SelectContent>
+</Select>
+ 
+Add useState: const [approvalFilter, setApprovalFilter] = useState('all'). Include it in the filteredRules logic: if approvalFilter !== 'all', filter by rule.approvalStatus === approvalFilter.
+ 
+1c — Add inline approve/reject actions to rule rows
+In each rule row's action column, alongside the existing Edit button, add a conditional quick-action based on current approvalStatus:
+{rule.approvalStatus === 'pending' && (
+  <Button size="sm" variant="outline"
+    className="h-7 text-[10px] text-green-700 border-green-300 hover:bg-green-50"
+    data-testid={`button-approve-rule-${rule.id}`}
+    onClick={() => approveMutation.mutate({ contractId: rule.contractId, ruleId: rule.id })}>
+    <CheckCircle2 className="w-3 h-3 mr-1" /> Approve
+  </Button>
+)}
+{rule.approvalStatus === 'approved' && (
+  <Badge className="h-7 text-[10px] bg-green-100 text-green-700">
+    <CheckCircle2 className="w-3 h-3 mr-1" /> Active
+  </Badge>
+)}
+{rule.approvalStatus === 'rejected' && (
+  <Button size="sm" variant="outline"
+    className="h-7 text-[10px] text-orange-700 border-orange-300 hover:bg-orange-50"
+    data-testid={`button-reopen-rule-${rule.id}`}
+    onClick={() => approveMutation.mutate({ contractId: rule.contractId, ruleId: rule.id })}>
+    <RotateCcw className="w-3 h-3 mr-1" /> Re-approve
+  </Button>
+)}
+ 
+Add the approveMutation using the existing approve endpoint:
+const approveMutation = useMutation({
+  mutationFn: ({ contractId, ruleId }: { contractId: string; ruleId: string }) =>
+    apiRequest('POST', `/api/contracts/${contractId}/rules/${ruleId}/approve`),
+  onSuccess: () => {
+    queryClient.invalidateQueries({ queryKey: ['/api/royalty-rules'] });
+    toast({ title: 'Rule approved — now active in calculations' });
+  },
+});
+ 
+Change 2 — tierMode selector in rule edit UI
+In the rule edit form — either in rules-management.tsx inline edit panel or contract-management.tsx rule edit modal — add a Tier Calculation Mode field. This field is only shown when the rule type is tiered, rebate_tiered, tiered_pricing, or royalty.
+ 
+Add conditionally after the existing Rate or Type field:
+{(ruleType === 'tiered' || ruleType === 'rebate_tiered' ||
+ ruleType === 'tiered_pricing' || ruleType === 'royalty') && (
+  <div className="space-y-1">
+    <Label className="text-xs font-medium">Tier Calculation Mode</Label>
+    <Select
+      value={formData.tierMode || 'whole'}
+      onValueChange={(v) => setFormData(prev => ({ ...prev, tierMode: v }))}
+      data-testid="select-tier-mode">
+      <SelectTrigger className="h-8 text-xs">
+        <SelectValue />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="whole">
+          Whole-tier — matched tier rate applies to entire value
+        </SelectItem>
+        <SelectItem value="marginal">
+          Marginal — each tier band calculated separately and summed
+        </SelectItem>
+      </SelectContent>
+    </Select>
+    <p className="text-[10px] text-muted-foreground">
+      Whole-tier: $2M at 3% tier = $60,000. Marginal: ($1M×2%) + ($1M×3%) = $50,000.
+    </p>
+  </div>
+)}
+ 
+Include tierMode in the rule update payload when saving:
+await apiRequest('PATCH', `/api/contracts/${contractId}/rules/${rule.id}`, {
+  ...otherFields,
+  formulaDefinition: { ...rule.formulaDefinition, tierMode: formData.tierMode || 'whole' },
+});
+ 
+Change 3 — Surface pending approval error in calculation trigger UI
+Find the page that triggers fee calculations — likely calculations.tsx, royalty-dashboard.tsx, or sales-upload.tsx. When the API call to calculate fees returns metadata.auditTrail with type === 'pending_approval_block', show a prominent inline error banner instead of displaying $0 results.
+ 
+After receiving the calculation result, check for the pending approval block:
+const pendingBlock = result.metadata?.auditTrail?.find(
+  (t: any) => t.type === 'pending_approval_block'
+);
+ 
+If found, show this banner instead of the results table:
+{pendingBlock ? (
+  <div className="rounded-lg border border-yellow-300 bg-yellow-50 p-4 flex items-start gap-3"
+    data-testid="banner-pending-approval">
+    <AlertTriangle className="w-5 h-5 text-yellow-600 mt-0.5 flex-shrink-0" />
+    <div>
+      <p className="text-sm font-semibold text-yellow-800">
+        {pendingBlock.pendingApprovalCount} rule{pendingBlock.pendingApprovalCount !== 1 ? 's' : ''} pending approval
+      </p>
+      <p className="text-xs text-yellow-700 mt-1">
+        Fee calculations cannot run until rules are approved by an authorized Finance user.
+        Go to <strong>Rules Management</strong> to review and approve pending rules.
+      </p>
+      <Link href={`/contracts/${contractId}/manage?tab=rules`}>
+        <Button size="sm" variant="outline"
+          className="mt-2 text-xs h-7 border-yellow-400 text-yellow-800 hover:bg-yellow-100"
+          data-testid="button-go-to-rules">
+          Go to Rules Management
+        </Button>
+      </Link>
+    </div>
+  </div>
+) : (
+  // existing results display
+)}
+ 
+ 

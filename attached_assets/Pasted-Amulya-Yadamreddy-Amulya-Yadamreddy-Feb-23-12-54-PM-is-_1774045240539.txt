@@ -1,0 +1,297 @@
+Amulya Yadamreddy
+Amulya Yadamreddy
+,
+Feb 23, 12:54 PM
+,
+is this the one sir?
+,Feb 23, 12:54 PM,
+You
+,
+Feb 23, 4:54 PM
+,
+Ok
+,Feb 23, 4:54 PM,
+Thursday, Feb 26
+Amulya Yadamreddy
+,
+Feb 26, 1:22 PM
+,
+Precision_machining.pdf
+Precision_machining.pdf
+,Feb 26, 1:22 PM,
+Tuesday, Mar 3
+Amulya Yadamreddy
+,
+Mar 3, 10:12 AM
+,
+Image_20260303_101209_549.jpeg
+,Mar 3, 10:12 AM,
+Amulya Yadamreddy
+,
+Mar 3, 6:18 PM
+,
+SuperLenses_Contract_Terms_Summary (1).docx
+SuperLenses_Contract_Terms_Summary (1).docx
+,Mar 3, 6:18 PM,
+Friday, Mar 6
+Amulya Yadamreddy
+,
+Mar 6, 9:17 AM
+,
+LicenseIQ Data Models (1).xlsx
+LicenseIQ Data Models (1).xlsx
+,Mar 6, 9:17 AM,
+Thursday, Mar 12
+Amulya Yadamreddy
+,
+Mar 12, 3:34 PM
+,
+Task: Implement and deploy the full LicenseIQ Schema Data-form dropdown + company-context behavior now validated in dev.
+
+Scope:
+Apply to LicenseIQ Schema -> Data tab -> Add New Record/Edit Record forms (generic renderer for all entities).
+
+Primary requirement:
+1) Company context behavior
+For any table with company_id, on Add Record:
+  - auto-set company_id from user context:
+    - first dataContextCompanyId
+    - fallback loginContext.companyId
+  - auto-set company_name display helper when available
+In create mode, company_id must be non-editable:
+  - show read-only company name (fallback to company id)
+  - remove dropdown/user interference for company in create mode
+Keep payload unchanged/compatible: still submit underlying company_id
+Apply to all entities, not only products/partner tables
+
+2) Products hierarchy ID migration behavior
+Products save/update APIs must store hierarchy selections in:
+  - product_category_id
+  - product_family_id
+  - product_line_id
+Do NOT write legacy text columns (product_category, product_family, product_line) from save/update path
+Keep legacy compatibility:
+  - if old payload sends text keys, map internally to *_id
+Validate incoming hierarchy IDs exist in product_hierarchy.hierarchy_id
+
+3) Products dropdown behavior
+For products form, use dropdowns and save IDs:
+  - product_category_id, product_family_id, product_line_id
+  - display label = hierarchy_value
+  - stored value = hierarchy_id
+Hide legacy product text hierarchy fields from Products Add/Edit form:
+  - product_category
+  - product_family
+  - product_line
+Company-dependent loading:
+  - hierarchy fields from product_hierarchy filtered by selected company + level
+  - product_family/product_line should load by company+level, and if parent is selected apply parent filter additionally
+Product classification dropdowns:
+  - product_classification, asset_type, durability_class, revenue_type, tax_category, regulatory_class
+  - load from product_classifications
+  - available only when selected company has product master support (based on product hierarchy presence)
+
+4) Product dependency resets
+On company_id change, clear:
+  - product_category_id, product_family_id, product_line_id
+  - product_classification, asset_type, durability_class, revenue_type, tax_category, regulatory_class
+On category change, clear family+line ids
+On family change, clear line id
+
+5) Additional dropdowns already standardized
+Products:
+  - product_status dropdown
+  - record_status dropdown
+Partner Master:
+  - partner_type, partner_classification, status, payment_terms, payment_method, currency, headquarters_country, record_status
+  - primary_sales_channel, authorized_channels from sales_channels
+  - primary_territory, authorized_territories from territory_master
+Sales Channels:
+  - channel_type, channel_category, payment_terms_default, plus existing status/record_status/booleans
+Territory Master:
+  - parent_territory_id, territory_type, region_level, currency_code, language, plus status/record_status
+Product Attributes:
+  - product_id, attribute_category, attribute_name, record_status
+Product BOM:
+  - product_id, parent_product_id, component_product_id, substitute_product_id, bom_type, component_uom, plus existing boolean/status
+
+6) DB/data requirements
+Ensure products has:
+  - product_category_id, product_family_id, product_line_id
+Ensure product hierarchy rows exist for all target companies in production
+Backfill old product text hierarchy values to ID columns where needed
+Keep old text columns for backward compatibility during transition
+
+7) Implementation files/pattern
+Frontend generic form/dropdown config:
+  - client/src/pages/licenseiq-schema.tsx
+Backend generic entity save/update + dropdown routes:
+  - server/routes.ts
+Keep changes minimal and isolated to generic form/save pathways
+
+8) Acceptance criteria
+Add Record auto-selects company from user context and locks it (read-only) in create mode
+All configured dropdown fields render as dropdowns (not plain text)
+Product hierarchy fields save IDs, not text
+Dropdown label/value behavior is correct (show label, save value/id)
+Product dropdown dependencies and reset logic work
+Unsupported companies return empty product-specific dropdowns
+Existing entities/tables not listed above are unaffected
+
+9) Deliverables
+Exact files changed
+Summary of route changes and frontend lookup config changes
+SQL/migration/backfill scripts used
+Manual test checklist + API endpoints tested
+,Mar 12, 3:34 PM,
+Friday, Mar 13
+Amulya Yadamreddy
+,
+Mar 13, 11:15 AM
+,
+Task: Update LicenseIQ Schema Data forms so company_id is auto-filled and non-editable in Edit Record mode, based on logged-in user context.
+
+Context:
+The generic Add/Edit data form is rendered from client/src/pages/licenseiq-schema.tsx.
+Add Record already auto-fills company_id from user/org context.
+I now want the same behavior in Edit Record mode.
+
+Requirements:
+1. In Edit Record mode, if user/company context exists:
+   - do NOT render company_id as a dropdown
+   - render it as a read-only/disabled field
+   - display the company name
+   - if company name is unavailable, fall back to showing the company ID
+2. The underlying saved value must still be the real company_id
+3. When opening Edit Record:
+   - override or normalize form state so company_id comes from current user context
+   - use:
+     - dataContextCompanyId first
+     - fallback loginContext.companyId
+4. Keep payload compatibility unchanged
+5. Do not refactor unrelated fields or generic form behavior
+
+Implementation guidance:
+In client/src/pages/licenseiq-schema.tsx:
+  - add resolved values such as:
+    - resolvedFormCompanyId
+    - resolvedFormCompanyName
+  - derive company name from companiesData
+Update the company field render logic:
+  - if field is company_id and a resolved company exists, render a disabled Input instead of a Select
+  - apply this in Edit mode too, not only Create mode
+Update the Edit button handler:
+  - when setting dataFormValues, merge current record with:
+    - company_id from context
+    - company_name from resolved company lookup
+
+Expected result:
+When a Precision Tech admin opens Edit Record, Company Id should already show Precision Tech Manufacturing
+User should not be able to change it
+Save should still submit the real company_id
+
+Deliverables:
+1. exact file changed
+2. exact code updated
+3. short verification steps
+,Mar 13, 11:15 AM,
+Amulya Yadamreddy
+,
+Mar 13, 4:07 PM
+,
+audit_trail.txt
+,Mar 13, 4:07 PM,
+Tuesday, Mar 17
+Amulya Yadamreddy
+,
+Tue 5:55 PM
+,
+missing clauses (in the contract_rules table ). 
+while creating the contract from scratch the contract partner (counter party) dropdown is not available 
+In the edit , the partner assignments , while adding new partner the partners dropdown is not according to the user login context .
+remove item master , vendors ,Invoices
+Add clause categories , flowtypes, rule templates, base metrics , clause execution groups,customer_segments (lookup tables)
+
+
+Null columns to be discussed:
+contract rules :
+ feild mappings -null( for rules) , empty ( clauses )
+ customer_segments - null ( for rules) , empty (clauses)
+contract terms :
+applies to product , product_family - shows null ( for the clause "5. Eligible Products")
+applies to territory , channel - shows null ( for the whole column ) - eventhough the contract is territory restricted.
+payment timing is null ( quarterly is mentioned in the conttract)
+extraction_run:
+current_stage is null
+
+
+extraction_run_results:
+results are not updating after re runing the speciifc stage in the frontend
+,Tue 5:55 PM,
+Wednesday, Mar 18
+You
+,
+Wed 7:47 AM
+,
+Ok
+,Wed 7:47 AM,
+Yesterday
+Amulya Yadamreddy
+,
+Yesterday 11:23 AM
+,
+In royalty licensing contract pdf it says , "Effective Date: January 1, 2026 Term: 5 years unless terminated earlier by agreement." , in the extraction , it shows end date as January 1, 2031. but in the rebate pdf it says  "Effective Date: January 1, 2026 Term: 3 years unless terminated by either party with 60 days written notice" in the contract  and in the extraction the end date is mentioned as "not specified"
+,Yesterday 11:23 AM,
+Amulya Yadamreddy
+,
+Yesterday 3:40 PM
+,
+Image_20260319_154028_336.jpeg
+,Yesterday 3:40 PM,
+Today
+Amulya Yadamreddy
+,
+7:47 AM
+,
+contract_stratch_errors.docx
+contract_stratch_errors.docx
+,7:47 AM,
+Amulya Yadamreddy
+,
+9:56 AM
+,
+contract_stratch_errors.docx
+contract_stratch_errors.docx
+,9:56 AM,
+Amulya Yadamreddy
+,
+3:10 PM
+,
+contract_stratch_errors.docx
+contract_stratch_errors.docx
+,3:10 PM,
+Amulya Yadamreddy
+,
+4:10 PM
+,
+contract_stratch_errors.docx
+contract_stratch_errors.docx
+,4:10 PM,
+Amulya Yadamreddy
+,
+55 min
+,
+After uploading the contract it is showing rules extracted as 0 , instead it should show total rules extracted.
+image.png
+,55 min,
+Amulya Yadamreddy
+,
+2 min
+,
+image.png
+,2 min,
+Unread
+Amulya Yadamreddy
+,
+2 min
+,

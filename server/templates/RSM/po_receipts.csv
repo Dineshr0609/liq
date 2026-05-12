@@ -1,0 +1,4 @@
+date,poNumber,vendorCode,productCode,productName,qtyReceived,unitCost,totalCost,warehouseCode
+2026-01-06,PO-2026-0118,VEND-MFG,RES-WIDGET-A,Widget Alpha,500,27.50,13750.00,WH-EAST
+2026-02-12,PO-2026-0162,VEND-MFG,RES-WIDGET-B,Widget Beta,250,36.00,9000.00,WH-WEST
+2026-03-10,PO-2026-0198,VEND-MFG,RES-WIDGET-A,Widget Alpha,600,27.50,16500.00,WH-CENTRAL

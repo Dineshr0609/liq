@@ -1,0 +1,49 @@
+BACKEND (Server)4. schema.ts — Zod Validation Fix
+Problem: Contract creation was failing because Zod schemas had .min(1) on fields like counterpartyName and contractType, but those fields are legitimately empty at creation time (filled in later after AI analysis).
+Change: Relaxed the validations to .optional() or .nullable() on fields that don't need to be mandatory at upload time.
+5. routes.ts — Rebate Eligibility Pre-Filter (TWO places)
+Problem: Sales rows with transaction_type = 'return', 'sample', 'warranty', 'demo', 'promo' were being passed into the calculation engine and inflating royalty totals.
+Change: Added a filter step in two route handlers (/calculate-matched-royalties and /calculate-fees) that strips out non-eligible rows before any calculation happens:
+6. routes.ts — Minimum Guarantee Response Fix (line ~5753)
+Problem: The calculate-fees route hardcoded minimumGuarantee: 0 in its JSON response, so even after the engine calculated the correct true-up, the API always returned $0 for the guarantee.
+Change:
+CALCULATION ENGINE — LEGACY (dynamicRulesEngine.ts)7. VolumeTier Interface — Added Missing Fields
+Problem: The VolumeTier type didn't include unit, productSize, or label fields. These were being stored in the DB by the AI extractor but the TypeScript engine had nowhere to put them.
+Change:
+8. Per-Unit Rate Calculation Fix (THE BIG ONE)
+Problem: Aurora Flame Maple (1,100 units at $1.25/unit) was calculating $247.50 instead of $1,375. Root cause: the engine always used [saleAmount × (rate / 100)](http://vscodecontentref/20) — treating everything as a percentage — even when the tier had [unit: 'per_unit'](http://vscodecontentref/21) meaning it's a $/unit rate, not a percentage.
+Change: Added detection logic before the calculation:
+9. Quarterly Rebate Aggregation Engine (THE LARGEST CHANGE)
+Problem: The Distributor Rebate contract had tiered rules based on total units per quarter per product. The old engine evaluated each sale row independently, so a product selling 3,000 + 4,000 units in Q1 (7,000 total) would qualify at the 2% tier (≥1 unit) instead of the 4% tier (≥5,000 units). It never combined the quantities first.
+Change: Added a full pre-processing stage for rebate_tiered rules:
+Step 1 — Auto-detection: If a rule has ruleType = 'tiered' but its name contains "rebate" or "quarter" AND its tier minimums look like unit counts (not dollar amounts), it is automatically reclassified to rebate_tiered at runtime.
+Step 2 — Group & Aggregate: All sales for that rule are grouped by (Year + Quarter) + (groupBy dimension). The groupBy dimension comes from the rule's formulaDefinition.calculation.groupBy — defaults to 'product', can also be 'category', 'territory', or 'channel'. Within each group, all quantities and net purchase amounts are summed together.
+Step 3 — Tier lookup on the group total: The combined volume of the group is checked against the tier table to find the qualifying tier. One single calculation and one breakdown entry is produced per group (e.g., "Product X - Q1 2026: 7,000 units → 4% tier → $140").
+Step 4 — Excluded from regular loop: rebate_tiered rules are removed from the standard per-row processing loop to prevent double-counting.
+CALCULATION ENGINE — UNIVERSAL (calculationService.ts)10. Minimum Guarantee True-Up Applied
+Problem: CNT-2026-021 (TechSound MVP) showed $70,500 total but had a $100,000 minimum guarantee. The minimum_guarantee rule type was explicitly filtered out at the top of the evaluator (line 479 return false), so it was never applied. The return value also had no minimumGuarantee field.
+Change: Added a post-loop block after all sales are processed:
+Finds any rule with ruleType = 'minimum_guarantee'
+Reads its minimumGuarantee column value from the DB
+If totalFee < guaranteeValue → calculates the shortfall (true-up), adds it as a breakdown item labeled "Annual Minimum Royalty Guarantee", and sets finalTotalFee = guaranteeValue
+Added minimumGuarantee?: number to the CalculationResult interface so the value flows out to the route handler
+Result: TechSound now correctly shows $70,500 royalty + $29,500 true-up = $100,000 total.
+DATABASE
+No schema migrations were created. All DB table structures and columns already existed. No ALTER TABLE, no new tables, no seed data changes were made. The minimum guarantee value ($100,000) was already in the contract_rules.minimum_guarantee column for TechSound — the engine just wasn't reading it.---
+9. Quarterly Rebate Aggregation Engine (THE LARGEST CHANGE)
+Problem: The Distributor Rebate contract had tiered rules based on total units per quarter per product. The old engine evaluated each sale row independently, so a product selling 3,000 + 4,000 units in Q1 (7,000 total) would qualify at the 2% tier (≥1 unit) instead of the 4% tier (≥5,000 units). It never combined the quantities first.
+Change: Added a full pre-processing stage for rebate_tiered rules:
+Step 1 — Auto-detection: If a rule has ruleType = 'tiered' but its name contains "rebate" or "quarter" AND its tier minimums look like unit counts (not dollar amounts), it is automatically reclassified to rebate_tiered at runtime.
+Step 2 — Group & Aggregate: All sales for that rule are grouped by (Year + Quarter) + (groupBy dimension). The groupBy dimension comes from the rule's formulaDefinition.calculation.groupBy — defaults to 'product', can also be 'category', 'territory', or 'channel'. Within each group, all quantities and net purchase amounts are summed together.
+Step 3 — Tier lookup on the group total: The combined volume of the group is checked against the tier table to find the qualifying tier. One single calculation and one breakdown entry is produced per group (e.g., "Product X - Q1 2026: 7,000 units → 4% tier → $140").
+Step 4 — Excluded from regular loop: rebate_tiered rules are removed from the standard per-row processing loop to prevent double-counting.
+CALCULATION ENGINE — UNIVERSAL (calculationService.ts)10. Minimum Guarantee True-Up Applied
+Problem: CNT-2026-021 (TechSound MVP) showed $70,500 total but had a $100,000 minimum guarantee. The minimum_guarantee rule type was explicitly filtered out at the top of the evaluator (line 479 return false), so it was never applied. The return value also had no minimumGuarantee field.
+Change: Added a post-loop block after all sales are processed:
+Finds any rule with ruleType = 'minimum_guarantee'
+Reads its minimumGuarantee column value from the DB
+If totalFee < guaranteeValue → calculates the shortfall (true-up), adds it as a breakdown item labeled "Annual Minimum Royalty Guarantee", and sets finalTotalFee = guaranteeValue
+Added minimumGuarantee?: number to the CalculationResult interface so the value flows out to the route handler
+Result: TechSound now correctly shows $70,500 royalty + $29,500 true-up = $100,000 total.
+DATABASE
+No schema migrations were created. All DB table structures and columns already existed. No ALTER TABLE, no new tables, no seed data changes were made. The minimum guarantee value ($100,000) was already in the contract_rules.minimum_guarantee column for TechSound — the engine just wasn't reading it.

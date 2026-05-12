@@ -1,0 +1,56 @@
+Bug 1: Royalties calculated using units instead of Net Sales
+
+The AI is calculating royalties based on the number of units sold, but the contract clearly states that royalties must be calculated using Net Sales in dollar value. Net Sales means the total sales revenue after allowed deductions, not product quantity. Any royalty logic that uses units, quantities, or “per unit” calculations is incorrect and does not follow the contract. The AI must always look for the term “Net Sales” and use dollar values when calculating royalties.
+
+Bug 2: AI invents per-unit royalty amounts that do not exist
+
+The AI generates royalty amounts such as $6.50 per unit, $0.07 per unit, and similar values. These numbers are not present anywhere in the contract. The contract only defines royalty rates as percentages, not as fixed dollar amounts per unit. The AI must never convert percentages into per-unit dollar values unless the contract explicitly states a per-unit fee.
+
+
+Bug 3: Missing the highest Automotive royalty tier
+
+The contract includes a royalty tier for sales above $50,000,000 with a 4.8% rate. The AI output is missing this tier or incorrectly merges it with lower tiers. This results in under-charging royalties for high-volume sales. The AI must always extract and apply all tiers, including open-ended “above” tiers.
+
+Bug 4: Minimum annual royalties are ignored
+
+For Automotive Components, the contract requires minimum annual royalty payments even if actual calculated royalties are lower. The AI does not enforce these minimum guarantees and only calculates percentage-based royalties. This violates the contract. The AI must always compare the calculated royalty with the minimum amount and charge the higher value.
+
+Bug 5: Industrial and Aerospace categories treated as volume tiers
+
+The AI incorrectly treats “Industrial” and “Aerospace” as quantity-based tiers instead of product categories. In the contract, these categories have flat royalty percentages and are not dependent on sales volume ranges. The AI must recognize category-based pricing and avoid applying tier logic where it does not exist.
+
+
+Bug 6: Custom Engineering fee is incomplete
+
+For Custom Engineering Projects, the contract requires a percentage royalty plus an additional $15,000 fee. The AI applies only the percentage and ignores the fixed fee. This results in under-billing. The AI must always apply both the percentage royalty and the fixed engineering fee together.
+
+
+
+Bug 7: Correct handling of fees and milestones (control case)
+
+Unlike royalties, the AI correctly extracted license fees, technology transfer fees, and milestone payments as fixed one-time amounts. This behavior is correct and should be used as a reference pattern. The AI should apply the same level of accuracy and restraint when handling royalty rules.
+
+Bug 8: Percentage values display differently in Edit mode vs Manage Rules view
+
+In the Manage Rules list view, the AI sometimes displays incorrect royalty values such as $0.07, $0.06, or $0.05. However, when the user clicks Edit, the same rule correctly converts percentages like 6.5% into 0.065 and 5.8% into 0.058. This inconsistency creates confusion and makes the user believe the contract contains per-unit pricing when it does not. The AI must ensure that both the display view and edit view show the same, correct percentage-based values.
+
+Bug 9: Incorrect rounding and inflation of percentage values in display mode
+
+The AI sometimes rounds 6.5% (0.065) up to 0.07 and 5.8% (0.058) down to 0.06 when showing rules in the Manage Rules display. These rounded numbers do not exist in the contract and change the legal meaning of the royalty rate. The AI must never round, approximate, or “clean up” percentage values for display purposes.
+
+Bug 10: Contract values appear correct in Edit mode but wrong in summary view
+
+The Edit screen correctly reflects the contract by converting percentages into accurate decimal values. The problem occurs only in the summary or list view of Manage Rules. This means the data transformation layer is altering values for presentation. The AI must treat Edit view and Manage Rules view as reading from the same source of truth, without any transformation that changes meaning.
+
+Bug 11: AI invents fallback rates when it cannot map contract percentages
+
+When the AI fails to correctly map tiered percentages, it appears to fall back to commonly used values such as 0.7, 0.6, and 0.5. These numbers are not stated anywhere in the contract. The AI must never insert default or assumed royalty values when contract extraction is uncertain. Instead, it should flag the rule for review.
+
+Bug 12: Tier 1 Automotive percentages are misrepresented in Manage Rules
+
+Tier 1 Automotive royalties should always reflect exact contract percentages: 6.5%, 5.8%, 5.2%, and 4.8%. The AI sometimes shows these as $0.07, $0.06, or $0.05 in the Manage Rules display. This is incorrect and misleading. The AI must preserve exact values and show them consistently across all tiers.
+
+Bug 13: Display logic incorrectly converts percentages into currency
+
+The Manage Rules display incorrectly prefixes decimal royalty values with a dollar sign ($), making them appear as currency or per-unit pricing. Royalty rates are percentages, not currency amounts. The AI must ensure that royalty rates are always displayed as percentages or decimal rates, never as dollar values.
+

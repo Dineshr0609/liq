@@ -1,0 +1,4 @@
+contract_id,quarter,eligible_units,eligible_net_sales,excluded_units,excluded_net_sales,applicable_tier,rebate_rate,rebate_amount,payment_due_date,notes
+DRA-TSA-ND-2026,2026-Q1,950,191250.0,130,22600.0,Tier 1,2.0%,3825.0,2026-04-30,950 eligible units keeps quarter in Tier 1; return and sample rows excluded.
+DRA-TSA-ND-2026,2026-Q2,1550,387375.0,75,19125.0,Tier 2,5.0%,19368.75,2026-07-30,"1,550 eligible units puts quarter in Tier 2; warranty row excluded."
+DRA-TSA-ND-2026,2026-H1,2500,578625.0,205,41725.0,-,-,23193.75,-,H1 total shown for management view only; payments remain quarterly.

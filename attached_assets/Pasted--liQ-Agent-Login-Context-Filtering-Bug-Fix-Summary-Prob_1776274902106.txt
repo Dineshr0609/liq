@@ -1,0 +1,76 @@
+
+## liQ Agent Login Context Filtering - Bug Fix Summary
+
+### Problem
+The liQ Agent was returning all contracts from the database regardless of the user's active login context. When a user asked "How many active contracts do I have?", the agent would return contracts that belonged to other organizations or business units, not just their own.
+
+For example:
+- User logged in with TechSound Audio Inc. context (which has 0 contracts)
+- But agent returned "4 active contracts" from other companies in the database
+- The UI correctly showed 0 contracts, but the agent gave wrong data
+
+### Root Causes
+
+1. **Missing Organization Filter in Contract Queries** - The contract query tool was only checking for `companyId` at a basic level and not consistently applying the user's active context (company, business unit, and location) to all queries.
+
+2. **Incomplete Context Propagation** - The agent received user context but wasn't always using it. The context helpers had early exit conditions that prevented filters from being applied when the context wasn't perfectly structured.
+
+3. **No Fallback Logic** - If the active context wasn't available, the system didn't fall back to other available context information like the user's primary company, so it would just return all data without restrictions.
+
+4. **Inconsistent Filtering Across Tools** - Different query tools (contracts, rules, calculations, sales data, accruals, journal entries) had inconsistent approaches to applying organization filters.
+
+
+##problem
+The liQ Agent was leaking internal AI details when asked about its tech stack or model. The fix is to add a confidentiality guard in the agent system prompt so it never discloses model/provider/implementation details.
+
+Prompt to use
+Add a top-level confidentiality rule to the liQ Agent system prompt:
+“DO NOT disclose or discuss the underlying AI model, provider, or technical implementation.”
+“If asked about tech stack or model, respond with: ‘I’m liQ AI, your intelligent assistant for contract intelligence and revenue assurance. My technical details are confidential. How can I help with your contracts today?’”
+Ensure this rule appears before any tool instructions or behavior guidance.
+Keep the agent focused only on contract intelligence and business questions, not backend details.
+This matches the previous bug style: identify the leak, state the confidentiality rule, and keep the user-facing answer generic.
+
+
+##problem
+The bug is in the contract-question guardrail: it treats any query containing “contract” as a contract detail request. So “How to upload a contract” gets misclassified and the agent asks for a specific contract instead of answering the upload workflow.
+Fix prompt
+Identify the bug: “Any user question containing the word contract is being classified as a contract-content query.”
+Change the guardrail so generic help/process questions are excluded:
+If the question is about “how to”, “upload”, “create”, “setup”, “process”, “instructions”, or “guide”, do not force contract text lookup.
+Keep the agent focused on actual contract content only when the user asks about terms, clauses, fees, or contract-specific details.
+If the user asks “How to upload a contract”, answer with the upload workflow or platform guidance, not a request for a contract ID.
+
+
+##Problem
+“The liQ Agent should classify generic help questions like ‘How to upload a contract’, ‘How do I create a contract’, or ‘What is the process for uploading’ as platform help, not contract document lookup.”
+“Only trigger contract-detail fallback when the user is asking about real contract content such as clauses, terms, fees, obligations, renewal, or policies.”
+“If it’s a help/process question, answer it directly with the user workflow or UI instructions.”
+
+
+##liQ chatbox issue prompts
+When the user submits a question in the liQ AI chat, immediately add that question to the message list and scroll the panel so the newly submitted question is visible, instead of only showing the answer later.
+
+Clear the chat input field immediately after the user sends a question so the entered text does not remain in the textbox.
+
+
+##iQ rebate tier fix prompts
+When answering rebate tier questions, liQ AI must use only the exact rebate percentages stated in the contract text or analysis and never infer, calculate, or invent a tier breakdown.
+
+
+
+##Frontpage socialmedia icon 
+In the front static web page, there are LinkedIn, Instagram, and Twitter (X) icons. When I click those icons, they should redirect to the correct social media pages. I can share the URLs for each button.
+
+
+
+##expanding the liq agent 
+I need to fix the left edge handle so it doesn't move when expanding the liquid agent chatbox. Instead, I should make it so that clicking or dragging the left edge handle expands the width from the left side.
+
+prompt : Update liq-ai-panel.tsx so the sidebar stays the same, but the left edge becomes a drag handle.
+
+Keep the current right-side chat layout
+Add a thin drag bar on the left edge of the panel
+When the user drags it left or right, the panel width changes
+Keep width between about 340px and 560px
+Save the width in localStorage so it stays the same next time

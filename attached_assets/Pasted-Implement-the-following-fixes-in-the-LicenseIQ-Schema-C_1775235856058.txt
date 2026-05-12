@@ -1,0 +1,130 @@
+Implement the following fixes in the LicenseIQ Schema Catalog (Entity Data Browser) exactly as specified.
+
+Tech context:
+Frontend: React + TypeScript (client/src/pages/licenseiq-schema.tsx)
+Backend: Express + TypeScript (server/routes.ts)
+Keep existing patterns/styles/components.
+Do not introduce breaking schema changes.
+Ensure validations run in both frontend and backend where applicable.
+Apply changes in a production-safe way: no schema-breaking DB migrations, preserve backward compatibility, and include rollback notes for each modified area.
+
+Scope to implement (all required), excluding deferred bugs listed at the end.
+
+1) Entity selection cleanup
+Remove/hide company_master from Entity Data Browser table dropdown.
+Keep table in DB/backend, but do not show it in UI entity selector.
+
+2) Company filter cleanup
+In Organizational Context (Data tab), remove “All Companies” behavior.
+Company dropdown should use explicit selection (Select company) and not _all semantics.
+
+3) Mandatory field UX + validation
+Show * on mandatory fields in add/edit record form.
+Validate mandatory fields on save with clear error and highlight.
+Apply mandatory overrides for these tables/fields:
+  - sales_channels: channel_id, channel_code, channel_name
+  - territory_master: territory_id, territory_code, territory_name
+  - partner_master: partner_id, company_id, partner_name
+  - product_hierarchy: hierarchy_id, company_id, level_name, level_order, hierarchy_value
+  - product_classifications: classification_dimension, classification_value
+  - products: product_id, company_id, sku, product_name
+  - product_attributes: attribute_id, product_id, attribute_name, attribute_value
+  - product_territory_matrix: territory_auth_id, product_id, territory_id, is_authorized
+  - product_channel_matrix: channel_auth_id, product_id, channel_id, is_authorized
+  - product_packaging_matrix: package_id, product_id, package_type, units_per_package
+  - product_bom: bom_id, parent_product_id, component_product_id, component_quantity
+status and record_status must never be mandatory in UI validation.
+
+4) Sales channel type options
+In sales_channels, channel_type dropdown options must be exactly:
+  - B2B
+  - B2C
+  - Direct
+
+5) Delete confirmation readability
+In delete confirmation dialog, do not show UUID/auto-generated id.
+Show user-friendly label (name first, then code if needed).
+Apply across all data tables and lookup tables.
+Message format should be:
+  - Are you sure you want to delete "<label>"? This action cannot be undone.
+Never show raw UUID as display label fallback.
+
+6) Strict text validation (numeric-only not allowed)
+Enforce strict text-entry validation for configured text fields (frontend + backend API POST/PATCH).
+If a configured text field receives numeric-only content, block save.
+Use industry-style message:
+  - Title: Validation Error
+  - Message: Enter a valid text value for: <Field Names>. Numbers-only entries are not allowed.
+Apply strict-text validation on these fields:
+
+  company_master:
+  company_name, legal_entity_name, industry, headquarters_city, headquarters_state, headquarters_country, erp_system, primary_currency, status, record_status
+
+  partner_master:
+  business_unit, partner_name, partner_type, partner_classification, legal_entity_name, headquarters_city, headquarters_state, headquarters_country, primary_contact_name, status, payment_terms, payment_method, currency, primary_sales_channel, authorized_channels, primary_territory, authorized_territories, record_status
+
+  territory_master:
+  territory_name, territory_type, tax_jurisdiction, language, status, record_status
+
+  sales_channels:
+  channel_name, channel_type, channel_category, payment_terms_default, status, record_status
+
+  partner_contract_associations:
+  contract_status, record_status
+
+  product_hierarchy:
+  level_name, hierarchy_value, record_status
+
+  product_classifications:
+  classification_dimension, classification_value, record_status
+
+  products:
+  product_name, product_category, product_family, product_line, product_classification, asset_type, durability_class, revenue_type, tax_category, regulatory_class, base_unit_of_measure, alternate_uom_sellable, product_status, record_status
+
+  product_attributes:
+  attribute_name, attribute_category, record_status
+
+  product_territory_matrix:
+  certification_type, certification_status, record_status
+
+  product_channel_matrix:
+  record_status
+
+  product_packaging_matrix:
+  package_type, record_status
+
+  product_bom:
+  component_uom, bom_type, record_status
+
+7) Partner Master multi-select fields
+In add/edit Partner Master form:
+  - authorized_channels must be multi-select.
+  - authorized_territories must be multi-select.
+Use modern UX (dropdown + checkbox + selected chips), not native <select multiple>.
+
+8) Date behavior and validation
+All date fields must use calendar-capable date input UX in form.
+Display selected date clearly in MM-DD-YYYY.
+Date validation rules:
+  - expiration_date must be later than effective_date
+  - end_date must be later than start_date
+Enforce in frontend and backend API.
+Date display in table should render in MM-DD-YYYY where date columns are detected.
+
+Acceptance criteria:
+Mandatory indicators/validation work as specified.
+Delete dialog never shows UUID label.
+Strict text fields reject numeric-only values with standardized message.
+Partner multi-select UX is modern and functional.
+Date validations block invalid sequences and date formatting is consistent.
+
+Deferred / do NOT include in this release:
+Auto-generated code null issue across code fields (known deferred bug).
+Advanced city autocomplete/address intelligence bug (deferred in latest discussion).
+IDE/Visual Studio-only issues and local editor diagnostics that are unrelated to runtime product behavior.
+
+After implementation, provide:
+1) File list changed
+2) Short summary per bug
+3) QA checklist with manual test steps for each bug
+4) Rollback notes by area

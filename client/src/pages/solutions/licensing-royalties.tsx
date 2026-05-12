@@ -1,0 +1,137 @@
+import { Link } from "wouter";
+import { PublicNavigation } from "@/components/public-navigation";
+import { PublicFooter } from "@/components/public-footer";
+import { ErpLogos } from "@/components/erp-logos";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import {
+  FileText, CheckCircle, ArrowRight, ArrowLeft
+} from "lucide-react";
+
+export default function LicensingRoyaltiesSolution() {
+  const flow = {
+    title: "Licensing & Royalties",
+    icon: FileText,
+    gradient: "from-purple-500 to-violet-600",
+    items: [
+      "Sales-based and usage-based royalties",
+      "Tiered rates, minimum guarantees, caps",
+      "Licensee reporting validation",
+      "Fee statements and settlements",
+    ],
+    description: "Execute complex fee agreements with precision. From tiered rate calculations to minimum guarantee enforcement, ensure every contract fee is accurately captured and documented.",
+    benefits: [
+      "Automate tiered fee calculations with contract-defined rates",
+      "Enforce minimum guarantees and cap maximums automatically",
+      "Validate licensee-reported data against contract terms",
+      "Generate professional fee statements for licensees",
+      "Create audit-ready evidence packages for compliance",
+    ],
+  };
+
+  return (
+    <div className="min-h-screen bg-white dark:bg-slate-950">
+      <PublicNavigation currentPage="solutions" />
+
+      <section className="relative overflow-hidden bg-gradient-to-br from-slate-50 via-purple-50 to-violet-50 dark:from-slate-950 dark:via-purple-950/20 dark:to-violet-950/20 pt-28 pb-20">
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-20 left-1/4 w-96 h-96 bg-purple-400/10 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-20 right-1/4 w-96 h-96 bg-violet-400/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
+        </div>
+
+        <div className="container mx-auto px-4 relative z-10">
+          <Link href="/solutions">
+            <span className="inline-flex items-center gap-2 text-purple-600 hover:text-purple-700 mb-6 cursor-pointer">
+              <ArrowLeft className="h-4 w-4" />
+              Back to Solutions
+            </span>
+          </Link>
+          
+          <div className="max-w-4xl mx-auto text-center space-y-6">
+            <div className={`inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-r ${flow.gradient} text-white mb-4`}>
+              <flow.icon className="h-10 w-10" />
+            </div>
+            <Badge className="bg-purple-600 text-white px-4 py-2">
+              Solutions by Revenue Flow
+            </Badge>
+            <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-slate-900 dark:text-white">
+              {flow.title}
+            </h1>
+            <p className="text-xl text-slate-600 dark:text-slate-300 max-w-3xl mx-auto">
+              {flow.description}
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section className="py-16 bg-white dark:bg-slate-950">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto">
+            <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-8">What We Cover</h2>
+            <div className="grid md:grid-cols-2 gap-4">
+              {flow.items.map((item, idx) => (
+                <Card key={idx} className="border-purple-200 dark:border-purple-800 bg-purple-50 dark:bg-purple-950/20">
+                  <CardContent className="p-4 flex items-start gap-3">
+                    <CheckCircle className="h-5 w-5 text-purple-600 flex-shrink-0 mt-0.5" />
+                    <p className="text-slate-700 dark:text-slate-300 font-medium">{item}</p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="py-16 bg-slate-50 dark:bg-slate-900">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto">
+            <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-8">Key Benefits</h2>
+            <div className="space-y-4">
+              {flow.benefits.map((benefit, idx) => (
+                <Card key={idx} className="border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-950/20">
+                  <CardContent className="p-4 flex items-start gap-3">
+                    <div className="w-6 h-6 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <span className="text-green-600 dark:text-green-400 text-sm font-bold">{idx + 1}</span>
+                    </div>
+                    <p className="text-slate-700 dark:text-slate-300">{benefit}</p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="py-16 bg-white dark:bg-slate-950">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto">
+            <Card>
+              <CardContent className="p-8">
+                <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-6 text-center">Supported ERPs</h3>
+                <ErpLogos size="md" />
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      <section className="py-16 bg-gradient-to-r from-purple-600 to-violet-600">
+        <div className="container mx-auto px-4 text-center">
+          <h2 className="text-3xl font-bold text-white mb-4">Ready to Automate Your Fee Calculations?</h2>
+          <p className="text-purple-100 mb-8 max-w-2xl mx-auto">
+            Join forward-thinking finance teams using LicenseIQ for audit-ready contract-to-cash execution.
+          </p>
+          <Link href="/early-adopter">
+            <Button size="lg" className="bg-white text-purple-600 hover:bg-purple-50">
+              Join Early Adopter Program
+              <ArrowRight className="ml-2 h-5 w-5" />
+            </Button>
+          </Link>
+        </div>
+      </section>
+
+      <PublicFooter />
+    </div>
+  );
+}

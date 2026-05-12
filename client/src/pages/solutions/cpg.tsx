@@ -1,0 +1,147 @@
+import { Link } from "wouter";
+import { PublicNavigation } from "@/components/public-navigation";
+import { PublicFooter } from "@/components/public-footer";
+import { ErpLogos } from "@/components/erp-logos";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import {
+  Package, CheckCircle, ArrowRight, ArrowLeft
+} from "lucide-react";
+
+export default function CpgSolution() {
+  const industry = {
+    title: "Branded Manufacturing & Consumer Packaged Goods",
+    subtitle: "Rebates, MDF, and incentive complexity",
+    icon: Package,
+    gradient: "from-green-500 to-green-600",
+    challenges: [
+      "Rebate programs disconnected from contracts",
+      "Claims approved without full validation",
+      "Accruals and settlements don't reconcile",
+    ],
+    solutions: [
+      "Contract-driven rebate logic",
+      "Claim validation and eligibility enforcement",
+      "Accurate accruals and settlements",
+      "Dispute and adjustment traceability",
+    ],
+    erp: "SAP, Oracle, NetSuite, Salesforce, QuickBooks, Snowflake",
+    flows: ["Rebates", "MDF", "Trade Incentives"],
+  };
+
+  return (
+    <div className="min-h-screen bg-white dark:bg-slate-950">
+      <PublicNavigation currentPage="solutions" />
+
+      <section className="relative overflow-hidden bg-gradient-to-br from-slate-50 via-green-50 to-emerald-50 dark:from-slate-950 dark:via-green-950/20 dark:to-emerald-950/20 pt-28 pb-20">
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-20 left-1/4 w-96 h-96 bg-green-400/10 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-20 right-1/4 w-96 h-96 bg-emerald-400/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
+        </div>
+
+        <div className="container mx-auto px-4 relative z-10">
+          <Link href="/solutions">
+            <span className="inline-flex items-center gap-2 text-green-600 hover:text-green-700 mb-6 cursor-pointer">
+              <ArrowLeft className="h-4 w-4" />
+              Back to Solutions
+            </span>
+          </Link>
+          
+          <div className="max-w-4xl mx-auto text-center space-y-6">
+            <div className={`inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-r ${industry.gradient} text-white mb-4`}>
+              <industry.icon className="h-10 w-10" />
+            </div>
+            <Badge className="bg-green-600 text-white px-4 py-2">
+              Solutions by Industry
+            </Badge>
+            <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-slate-900 dark:text-white">
+              {industry.title}
+            </h1>
+            <p className="text-xl text-slate-600 dark:text-slate-300">
+              {industry.subtitle}
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section className="py-16 bg-white dark:bg-slate-950">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto">
+            <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-8">Common Challenges</h2>
+            <div className="space-y-4">
+              {industry.challenges.map((challenge, idx) => (
+                <Card key={idx} className="border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-950/20">
+                  <CardContent className="p-4 flex items-start gap-3">
+                    <div className="w-6 h-6 rounded-full bg-red-100 dark:bg-red-900 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <span className="text-red-600 dark:text-red-400 text-sm font-bold">{idx + 1}</span>
+                    </div>
+                    <p className="text-slate-700 dark:text-slate-300">{challenge}</p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="py-16 bg-slate-50 dark:bg-slate-900">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto">
+            <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-8">How LicenseIQ Helps</h2>
+            <div className="grid md:grid-cols-2 gap-4">
+              {industry.solutions.map((solution, idx) => (
+                <Card key={idx} className="border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-950/20">
+                  <CardContent className="p-4 flex items-start gap-3">
+                    <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
+                    <p className="text-slate-700 dark:text-slate-300">{solution}</p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="py-16 bg-white dark:bg-slate-950">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto space-y-8">
+            <Card>
+              <CardContent className="p-8">
+                <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-6 text-center">Supported ERPs</h3>
+                <ErpLogos size="md" />
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-6">
+                <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-3">Revenue Flows</h3>
+                <div className="flex flex-wrap gap-2">
+                  {industry.flows.map((flow, idx) => (
+                    <Badge key={idx} variant="secondary">{flow}</Badge>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      <section className="py-16 bg-gradient-to-r from-green-600 to-emerald-600">
+        <div className="container mx-auto px-4 text-center">
+          <h2 className="text-3xl font-bold text-white mb-4">Ready to Transform Your Contract Execution?</h2>
+          <p className="text-green-100 mb-8 max-w-2xl mx-auto">
+            Join forward-thinking finance teams using LicenseIQ for audit-ready contract-to-cash execution.
+          </p>
+          <Link href="/early-adopter">
+            <Button size="lg" className="bg-white text-green-600 hover:bg-green-50">
+              Join Early Adopter Program
+              <ArrowRight className="ml-2 h-5 w-5" />
+            </Button>
+          </Link>
+        </div>
+      </section>
+
+      <PublicFooter />
+    </div>
+  );
+}

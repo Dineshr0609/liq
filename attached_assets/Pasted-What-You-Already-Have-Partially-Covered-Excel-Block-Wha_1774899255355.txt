@@ -1,0 +1,85 @@
+What You Already Have (Partially Covered)
+Excel Block	What Exists Today
+Contract/Rule Control	Rules with priorities, qualifiers (SKU, territory, partner, channel), effective/expiry dates, rule snapshots in calculation_rule_results
+Transaction Evaluation	Legacy + Universal engines match sales → rules via product/territory/segment/channel dimensions
+Accrual Line Generation	Auto-accrual pipeline creates accrual + audit trail + JE after calculation
+Approval & Export	Accrual approve/reject flow, JE draft→posted stages, ERP sync log
+Reconciliation	JE reconciliation table, period variance tracking
+Key Gaps — What's Missing or Incomplete
+GAP 1: Period & Cutoff Control (Major)
+The Excel requires a Period Master configurable at company/BU level with cutoff policies. Your current system has:
+
+period_close table — but it tracks close status, not period definitions that drive calculations
+Missing: A period_master configuration table (period_id, start_date, end_date, status: open/closed/locked) at company/BU level
+Missing: cutoff_policy configuration (strict cutoff vs. backpost vs. accrual adjustment) at company/BU level
+Missing: overflow_policy — handling late-arriving transactions (post to current period or back-adjust prior period)
+Missing: Cutoff date rules (transaction-date vs. reporting-date vs. invoice-date) as configurable policy
+GAP 2: Dataset Control & Completeness (Major)
+The Excel requires every dataset to carry metadata and a completeness status. Currently:
+
+Sales data is uploaded and stored in sales_data but has no dataset-level metadata
+Missing: dataset_registry table (dataset_id, source, period, cutoff_date, data_status: full/partial, record_count, certified_by, certified_at)
+Missing: Data completeness checks before calculation runs
+Missing: Final/partial flag — the system doesn't distinguish between partial and complete datasets
+Missing: Data certification workflow (who certifies a dataset as "final enough" to calculate)
+GAP 3: Company-Level Calculation Scope (Critical — Your Ultimate Goal)
+The Excel says: "A single sales/POS transaction can match multiple contracts." Currently your calculation is contract-centric (you pick a contract, then calculate). The Excel framework wants it to be company/period-centric:
+
+Upload sales data → system identifies ALL eligible contracts for the company in that period → evaluates ALL rules across ALL contracts → produces accrual lines per contract/rule
+Missing: A "Calculate All" flow that runs all company contracts against the dataset for a period
+Missing: Multi-contract eligibility resolution per transaction (SKU → Distributor → Territory → Eligible Contracts hierarchy)
+Missing: Duplicate/overlap detection when multiple contracts apply to the same transaction
+GAP 4: Accrual Line Types (Moderate)
+The Excel defines 5 distinct accrual line types. Currently you only generate "Calculated" lines:
+
+Missing line types: Adjustment, Override, Reversal, True-up
+Key rule: Overrides should NEVER overwrite the original calculation — they create a separate negative/positive adjustment line. The aggregate sum produces the true-up.
+Missing: Adjustment accrual lines that sit alongside original calculated lines
+GAP 5: Delta Logic / Rollforward (Major)
+The Excel requires comparing current calculations to prior exported amounts and generating delta packages:
+
+Missing: prior_export_snapshot — storing previously exported amounts
+Missing: Delta calculation engine (current calc − prior export = delta to send)
+Missing: Rollforward framework (open items from prior period flowing into current)
+Missing: Retro-active recalculation when a contract is amended mid-period
+GAP 6: Payment vs. Accrual Separation (Moderate)
+The Excel says the system needs a parameter at flow-type level to control whether to generate accruals, payments, or both:
+
+Currently accruals are auto-generated but payment events are not a separate concept
+Missing: payment_events table and flow
+Missing: Configuration at flow-type level (accrual-only, payment-only, both)
+Missing: Payment scheduling (e.g., accrue monthly, pay quarterly)
+GAP 7: Currency / FX Handling (Not Implemented)
+Missing: FX rate master table
+Missing: Multi-currency calculation (transaction currency → contract currency → reporting currency)
+Missing: FX policy configuration (transaction-date rate, period-average rate, month-end rate)
+Missing: ERP-side vs. LicenseIQ-side FX decision
+GAP 8: Rounding & Materiality (Not Implemented)
+Missing: Rounding policy configuration at transaction/rule/line/batch levels
+Missing: Materiality thresholds (suppress tiny deltas until a threshold is reached)
+GAP 9: Minimum Guarantees & Settlement Terms (Partial)
+Rules support minimumGuarantee but the true-up calculation (guaranteed − calculated = shortfall to accrue) is not automated
+Missing: Settlement DSL fields (payment_frequency, payment_delay_days) on rules
+Missing: Accounting code configuration per rule (accrual_account, liability_account)
+GAP 10: Financial Event Timeline (Not Implemented)
+Missing: A per-contract chronological timeline view (Jan: Accrual $80k → Feb: Accrual $100k → Mar: Adjustment −$5k → Apr: Payment $120k)
+Summary: Configuration Tables Needed
+New Table	Purpose
+period_master	Company/BU-level fiscal period definitions
+cutoff_policies	Cutoff rules (strict/backpost/adjustment) per company/BU
+dataset_registry	Metadata for every uploaded dataset (source, completeness, certification)
+accrual_lines	Granular per-rule accrual lines with type (calculated/adjustment/override/reversal/true-up)
+prior_export_snapshots	Stores last-exported amounts for delta calculation
+payment_events	Payment scheduling and tracking
+fx_rates	Currency exchange rates by date
+calculation_policies	Company-level rounding, materiality, FX method, cutoff method configs
+My Understanding of Your Ultimate Goal
+You want the system to work like this:
+
+Upload sales/POS data for a company + period
+System auto-identifies all active contracts for that company in that period
+Each transaction is evaluated against ALL eligible contract rules (not just one pre-selected contract)
+Accrual lines are generated per rule, per contract — with proper types (calculated, adjustment, override, etc.)
+The whole thing is period-driven — not contract-driven
+This is a fundamental shift from the current "select a contract → calculate" model to a "select a company + period → calculate everything" model.
+

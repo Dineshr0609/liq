@@ -1,0 +1,26 @@
+node_modules
+.env
+dist
+build
+backups
+exports
+.local
+.cache
+coverage
+*.log
+*.zip
+*.tar
+*.rar
+*.exe
+*.dll
+.sql
+.gz
+.vscode
+.idea
+
+# Uploaded contract files (sensitive user data)
+uploads/
+
+# Timestamped database backups (keep only the latest main backups)
+database/backups/*_202*.sql
+database/backups/*_202*.sql.gz

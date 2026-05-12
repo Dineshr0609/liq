@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LicenseIQ — Deductions Workspace</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0a0f;--surface:#111118;--surface2:#1a1a24;--surface3:#2d2d3a;
+  --border:#2a2830;--border2:#3a3848;
+  --text:#fafaf8;--text2:#8a8578;--text3:#5a584f;
+  --accent:#c85a2a;--accent-light:#e8734a;--accent-glow:rgba(200,90,42,.12);
+  --ok:#1a9b7a;--ok-glow:rgba(26,155,122,.12);
+  --warn:#c47a1a;--critical:#d94040;--purple:#7a5af8;
+  --ai-from:#c85a2a;--ai-to:#1a9b7a;
+  --radius:8px;--radius-sm:6px;--radius-pill:100px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);height:100vh;display:flex;flex-direction:column;overflow:hidden;font-family:'DM Sans',system-ui,sans-serif;font-size:13px}
+
+/* ── TOPNAV ── */
+.topnav{height:50px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 18px;gap:14px;flex-shrink:0}
+.brand{display:flex;align-items:center;gap:9px;text-decoration:none;color:var(--text)}
+.brand-icon{width:28px;height:28px;background:linear-gradient(135deg,var(--ai-from),var(--ai-to));border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px}
+.brand-name{font-size:15px;font-weight:700;letter-spacing:-.3px;font-family:'Playfair Display',serif}
+.brand-name em{font-style:normal;background:linear-gradient(90deg,var(--ai-from),var(--ai-to));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.nav-sep{width:1px;height:22px;background:var(--border)}
+.nav-breadcrumb{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2)}
+.nav-breadcrumb span{color:var(--text3)}
+.spacer{flex:1}
+.topnav-search{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:6px 11px;color:var(--text);font-size:12px;width:220px;outline:none;font-family:'DM Sans',sans-serif}
+.topnav-search:focus{border-color:var(--accent)}
+.btn{padding:6px 14px;border-radius:var(--radius-sm);border:none;font-size:12px;font-weight:500;cursor:pointer;transition:all .15s;font-family:'DM Sans',sans-serif;display:inline-flex;align-items:center;gap:5px}
+.btn-primary{background:var(--accent);color:#fff}.btn-primary:hover{background:var(--accent-light)}
+.btn-ok{background:var(--ok);color:#fff}.btn-ok:hover{opacity:.85}
+.btn-ghost{background:transparent;border:1px solid var(--border2);color:var(--text2)}.btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
+.btn-warn{background:rgba(196,122,26,.15);border:1px solid rgba(196,122,26,.3);color:var(--warn)}
+.btn-critical{background:rgba(217,64,64,.15);border:1px solid rgba(217,64,64,.3);color:var(--critical)}
+.btn-purple{background:rgba(122,90,248,.15);border:1px solid rgba(122,90,248,.3);color:var(--purple)}
+.btn-sm{padding:4px 10px;font-size:11px}
+.btn-xs{padding:2px 7px;font-size:10px}
+.avatar{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--ai-from),var(--ai-to));display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700}
+.icon-btn{width:28px;height:28px;border-radius:var(--radius-sm);background:transparent;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;color:var(--text2)}
+.icon-btn:hover{border-color:var(--border2);color:var(--text)}
+
+/* ── LAYOUT ── */
+.layout{display:flex;flex:1;overflow:hidden}
+.sidebar{width:210px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:10px 8px;gap:1px;overflow-y:auto;flex-shrink:0}
+.sidebar-section{font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.8px;text-transform:uppercase;padding:10px 10px 4px}
+.sidebar-item{display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:var(--radius-sm);color:var(--text2);cursor:pointer;font-size:12px;transition:all .15s;text-decoration:none}
+.sidebar-item:hover{background:var(--surface2);color:var(--text)}
+.sidebar-item.active{background:var(--accent-glow);color:var(--accent);font-weight:500}
+.sidebar-item .icon{font-size:13px;width:15px;text-align:center;flex-shrink:0}
+.sidebar-badge{margin-left:auto;background:var(--warn);color:#000;font-size:9px;font-weight:700;border-radius:var(--radius-pill);padding:1px 5px}
+.sidebar-badge.ok{background:var(--ok);color:#fff}
+.sidebar-badge.accent{background:var(--accent);color:#fff}
+.sidebar-badge.critical{background:var(--critical);color:#fff}
+.sidebar-divider{height:1px;background:var(--border);margin:4px 8px}
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+
+/* ── PAGE HEADER ── */
+.page-header{background:var(--surface);border-bottom:1px solid var(--border);padding:13px 20px 0;flex-shrink:0}
+.page-header-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.page-header-left h1{font-size:19px;font-weight:700;font-family:'Playfair Display',serif}
+.page-header-left p{font-size:12px;color:var(--text2);margin-top:2px}
+.header-actions{display:flex;align-items:center;gap:8px}
+.period-selector{display:flex;align-items:center;gap:6px;background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius-sm);padding:5px 10px;font-size:12px;cursor:pointer;color:var(--text)}
+.period-selector span{color:var(--text2)}
+
+/* ── AGENT BAR ── */
+.agent-bar{background:rgba(122,90,248,.07);border-bottom:1px solid rgba(122,90,248,.2);padding:7px 20px;display:flex;align-items:center;gap:10px;font-size:11px;flex-shrink:0}
+.agent-dot{width:6px;height:6px;border-radius:50%;background:var(--purple);animation:pulse-p 2s infinite;flex-shrink:0}
+@keyframes pulse-p{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(122,90,248,.4)}50%{opacity:.7;box-shadow:0 0 0 4px rgba(122,90,248,0)}}
+.agent-text{color:rgba(180,160,255,.85);flex:1}
+.agent-stat{font-size:10px;color:var(--text3);padding:2px 8px;background:rgba(122,90,248,.1);border:1px solid rgba(122,90,248,.15);border-radius:var(--radius-pill)}
+
+/* ── KPI STRIP ── */
+.kpi-strip{display:flex;gap:0;background:var(--surface);border-bottom:1px solid var(--border);flex-shrink:0}
+.kpi-card{flex:1;padding:11px 16px;border-right:1px solid var(--border);cursor:default}
+.kpi-card:last-child{border-right:none}
+.kpi-label{font-size:10px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.kpi-value{font-size:17px;font-weight:700;line-height:1;font-family:'Playfair Display',serif}
+.kpi-sub{font-size:10px;color:var(--text2);margin-top:3px}
+.kpi-value.ok{color:var(--ok)}.kpi-value.warn{color:var(--warn)}.kpi-value.critical{color:var(--critical)}.kpi-value.purple{color:var(--purple)}
+
+/* ── VIEW TABS ── */
+.view-tabs{display:flex;gap:2px;border-top:1px solid var(--border);padding:0 2px}
+.view-tab{padding:9px 16px;font-size:12px;font-weight:500;color:var(--text2);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;display:flex;align-items:center;gap:6px}
+.view-tab:hover{color:var(--text)}
+.view-tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.view-tab .tab-badge{background:var(--surface3);color:var(--text2);font-size:9px;font-weight:700;padding:1px 6px;border-radius:var(--radius-pill)}
+.view-tab.active .tab-badge{background:var(--accent-glow);color:var(--accent)}
+
+/* ── WORK AREA ── */
+.work-area{flex:1;display:flex;overflow:hidden}
+
+/* ── QUEUE ── */
+.queue-panel{width:300px;border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;background:var(--surface)}
+.queue-toolbar{padding:10px 12px;border-bottom:1px solid var(--border);display:flex;gap:6px;flex-shrink:0}
+.queue-search{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:5px 9px;color:var(--text);font-size:12px;outline:none;font-family:'DM Sans',sans-serif}
+.queue-search:focus{border-color:var(--accent)}
+.queue-filter-row{padding:6px 12px;border-bottom:1px solid var(--border);display:flex;gap:4px;flex-wrap:wrap;flex-shrink:0}
+.filter-chip{padding:3px 9px;border-radius:var(--radius-pill);font-size:10px;font-weight:600;cursor:pointer;border:1px solid var(--border);color:var(--text2);transition:all .12s}
+.filter-chip.active{background:var(--accent-glow);color:var(--accent);border-color:rgba(200,90,42,.3)}
+.filter-chip:hover:not(.active){border-color:var(--border2);color:var(--text)}
+.queue-list{flex:1;overflow-y:auto}
+.queue-group-label{padding:8px 12px 4px;font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.6px;text-transform:uppercase;display:flex;align-items:center;gap:6px}
+.queue-group-label::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* ── QUEUE ITEM ── */
+.queue-item{padding:11px 12px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .12s;position:relative}
+.queue-item:hover{background:var(--surface2)}
+.queue-item.selected{background:var(--accent-glow);border-left:3px solid var(--accent)}
+.queue-item.agent-auto{border-left:3px solid var(--purple)}
+.qi-top{display:flex;align-items:flex-start;justify-content:space-between;gap:6px;margin-bottom:3px}
+.qi-title{font-size:12px;font-weight:600;line-height:1.3;flex:1}
+.qi-amount{font-size:12px;font-weight:700;white-space:nowrap;font-family:'JetBrains Mono',monospace;color:var(--critical)}
+.qi-meta{font-size:10.5px;color:var(--text2);margin-bottom:5px}
+.qi-footer{display:flex;align-items:center;gap:5px}
+.qi-age{margin-left:auto;font-size:10px;color:var(--text3)}
+
+/* ── BADGES ── */
+.badge{display:inline-flex;align-items:center;padding:2px 7px;border-radius:var(--radius-pill);font-size:10px;font-weight:600;white-space:nowrap;gap:3px}
+.badge-ok{background:rgba(26,155,122,.15);color:var(--ok)}
+.badge-warn{background:rgba(196,122,26,.15);color:var(--warn)}
+.badge-critical{background:rgba(217,64,64,.15);color:var(--critical)}
+.badge-accent{background:rgba(200,90,42,.15);color:var(--accent)}
+.badge-muted{background:rgba(138,133,120,.1);color:var(--text2)}
+.badge-purple{background:rgba(122,90,248,.15);color:var(--purple)}
+.agent-pulse{width:5px;height:5px;border-radius:50%;background:var(--purple);animation:pulse-p 1.5s infinite;display:inline-block}
+
+/* ── CENTER PANEL ── */
+.center-panel{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.center-header{padding:13px 18px;border-bottom:1px solid var(--border);background:var(--surface);flex-shrink:0}
+.center-title{font-size:15px;font-weight:700;font-family:'Playfair Display',serif;margin-bottom:5px}
+.center-sub-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.center-header-actions{display:flex;gap:6px;margin-top:10px}
+.center-tabs{display:flex;border-bottom:1px solid var(--border);padding:0 12px;background:var(--surface);flex-shrink:0}
+.center-tab{padding:8px 12px;font-size:12px;color:var(--text2);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;white-space:nowrap}
+.center-tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.center-tab:hover:not(.active){color:var(--text)}
+.tab-content{display:none}.tab-content.active{display:block}
+.center-body{flex:1;overflow-y:auto;padding:16px 18px}
+
+/* ── DECOMPOSITION TABLE ── */
+.section-label{font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.section-label::after{content:'';flex:1;height:1px;background:var(--border)}
+.ded-table{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:14px}
+.ded-table thead th{padding:7px 10px;text-align:left;color:var(--text2);font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:.4px;border-bottom:1px solid var(--border);background:var(--surface);position:sticky;top:0;z-index:1}
+.ded-table thead th.right{text-align:right}
+.ded-table tbody tr{border-bottom:1px solid rgba(42,40,48,.6);transition:background .1s;cursor:pointer}
+.ded-table tbody tr:hover{background:var(--surface2)}
+.ded-table td{padding:9px 10px;vertical-align:middle}
+.ded-table td.right{text-align:right;font-family:'JetBrains Mono',monospace;font-size:11.5px}
+.ded-table tfoot td{padding:9px 10px;border-top:2px solid var(--border2);font-weight:700}
+.ded-table tfoot td.right{font-family:'JetBrains Mono',monospace;font-size:12px}
+.row-valid{background:rgba(26,155,122,.04)}
+.row-invalid{background:rgba(217,64,64,.04)}
+.row-research{background:rgba(196,122,26,.04)}
+.row-agent{background:rgba(122,90,248,.04)}
+.ded-dot{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:6px}
+.dot-ok{background:var(--ok)}.dot-warn{background:var(--warn)}.dot-critical{background:var(--critical)}.dot-purple{background:var(--purple)}.dot-muted{background:var(--text3)}
+
+/* ── AGENT REASONING ── */
+.agent-block{background:rgba(122,90,248,.07);border:1px solid rgba(122,90,248,.2);border-radius:var(--radius);padding:12px 14px;margin-bottom:14px}
+.ab-header{display:flex;align-items:center;gap:7px;margin-bottom:8px;font-size:11px;font-weight:600;color:var(--purple)}
+.ab-step{display:flex;gap:8px;margin-bottom:6px;font-size:11.5px;line-height:1.55}
+.ab-num{width:18px;height:18px;border-radius:50%;background:rgba(122,90,248,.2);border:1px solid rgba(122,90,248,.3);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:var(--purple);flex-shrink:0;margin-top:1px}
+.ab-text{color:var(--text2)}.ab-text strong{color:var(--text)}
+.ab-rec{margin-top:8px;padding:8px 10px;background:rgba(122,90,248,.08);border-radius:var(--radius-sm);font-size:11.5px;color:var(--text2);line-height:1.6}
+.ab-rec strong{color:var(--purple)}
+
+/* ── SUMMARY BAR ── */
+.ded-summary{display:flex;align-items:center;gap:0;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:14px;overflow:hidden}
+.ds-cell{flex:1;padding:12px 16px;border-right:1px solid var(--border)}
+.ds-cell:last-child{border-right:none}
+.ds-label{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.ds-val{font-size:20px;font-weight:700;font-family:'JetBrains Mono',monospace;line-height:1}
+.ds-sub{font-size:10px;color:var(--text2);margin-top:2px}
+
+/* ── EXPECTED QUEUE STYLE ── */
+.expected-row{display:flex;align-items:center;gap:10px;padding:9px 12px;border-bottom:1px solid rgba(42,40,48,.5);cursor:pointer;transition:background .1s}
+.expected-row:hover{background:var(--surface2)}
+
+/* ── TIMELINE ── */
+.timeline{display:flex;flex-direction:column;gap:0;margin-bottom:14px}
+.tl-item{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid rgba(42,40,48,.5)}
+.tl-item:last-child{border-bottom:none}
+.tl-dot-col{display:flex;flex-direction:column;align-items:center;width:20px;flex-shrink:0;padding-top:2px}
+.tl-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.tl-line{width:1px;flex:1;background:var(--border);margin:3px 0}
+.tl-content{flex:1;padding-bottom:4px}
+.tl-title{font-size:12px;font-weight:500}
+.tl-meta{font-size:10.5px;color:var(--text2);margin-top:2px}
+
+/* ── CENTER FOOTER ── */
+.center-footer{padding:12px 18px;border-top:1px solid var(--border);display:flex;align-items:center;gap:8px;flex-shrink:0;background:var(--surface)}
+.footer-status{font-size:11.5px;color:var(--text2)}.footer-status strong{color:var(--text)}
+
+/* ── AI PANEL ── */
+.ai-panel{width:265px;border-left:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;flex-shrink:0;background:var(--surface)}
+.ai-panel-header{padding:12px 14px;border-bottom:1px solid var(--border);flex-shrink:0}
+.ai-title-row{display:flex;align-items:center;gap:7px;margin-bottom:2px}
+.ai-title{font-size:13px;font-weight:700;background:linear-gradient(90deg,var(--ai-from),var(--ai-to));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.ai-sub{font-size:10px;color:var(--text2)}
+.ai-status-dot{width:6px;height:6px;border-radius:50%;background:var(--ok);flex-shrink:0;animation:pulse-ok 2s infinite}
+@keyframes pulse-ok{0%,100%{opacity:1}50%{opacity:.4}}
+.ai-context{background:var(--surface2);border-bottom:1px solid var(--border);padding:6px 14px;font-size:11px;color:var(--text2);flex-shrink:0}
+.ai-context span{color:var(--accent);font-weight:500}
+.ai-msgs{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px}
+.ai-msg{padding:9px 11px;border-radius:var(--radius);font-size:11.5px;line-height:1.55}
+.ai-msg.ai{background:var(--surface2);border:1px solid var(--border)}
+.ai-msg.user{background:var(--accent-glow);border:1px solid rgba(200,90,42,.25);align-self:flex-end}
+.ai-msg strong{color:var(--accent-light)}
+.ai-msg .ai-label{font-size:9px;font-weight:700;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:4px}
+.ai-prompts{padding:0 12px 8px;display:flex;flex-direction:column;gap:4px;flex-shrink:0}
+.ai-prompt{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:7px 10px;font-size:11px;color:var(--text2);cursor:pointer;transition:all .15s;line-height:1.4}
+.ai-prompt:hover{border-color:var(--accent);color:var(--text)}
+.ai-input-row{display:flex;gap:6px;padding:10px 12px;border-top:1px solid var(--border);flex-shrink:0}
+.ai-input{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:7px 10px;color:var(--text);font-size:12px;outline:none;font-family:'DM Sans',sans-serif}
+.ai-input:focus{border-color:var(--accent)}
+.ai-send{background:linear-gradient(135deg,var(--ai-from),var(--ai-to));border:none;border-radius:var(--radius-sm);padding:7px 11px;color:#fff;font-size:14px;cursor:pointer;flex-shrink:0}
+
+/* ── PROGRESS BAR ── */
+.prog-bar{height:4px;background:var(--surface3);border-radius:2px;overflow:hidden;margin-top:5px}
+.prog-fill{height:100%;border-radius:2px;transition:width .3s}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:rgba(255,255,255,.08);border-radius:2px}
+</style>
+</head>
+<body>
+
+<!-- TOPNAV -->
+<nav class="topnav">
+  <a class="brand" href="licenseiq-financial-control-center.html">
+    <div class="brand-icon">⚡</div>
+    <span class="brand-name">License<em>IQ</em></span>
+  </a>
+  <div class="nav-sep"></div>
+  <div class="nav-breadcrumb">
+    <span>Finance Hub</span><span>›</span>
+    <span style="color:var(--text)">Deductions Workspace</span>
+  </div>
+  <div class="spacer"></div>
+  <input class="topnav-search" placeholder="🔍  Search deductions, partners…">
+  <button class="icon-btn">🔔</button>
+  <button class="icon-btn">?</button>
+  <div class="avatar">CT</div>
+</nav>
+
+<div class="layout">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-section">Financial Control</div>
+  <a class="sidebar-item" href="licenseiq-financial-control-center.html"><span class="icon">🏠</span> Control Center</a>
+  <div class="sidebar-divider"></div>
+  <div class="sidebar-section">Contract Intelligence</div>
+  <div class="sidebar-item"><span class="icon">🔍</span> Search &amp; Manage</div>
+  <div class="sidebar-item"><span class="icon">🗺️</span> Term Mapping</div>
+  <div class="sidebar-item"><span class="icon">🕐</span> Pending Queue <span class="sidebar-badge">7</span></div>
+  <div class="sidebar-divider"></div>
+  <div class="sidebar-section">Contract Execution</div>
+  <div class="sidebar-item"><span class="icon">📊</span> Sales Data</div>
+  <div class="sidebar-item"><span class="icon">⚙️</span> Calculation Engine</div>
+  <div class="sidebar-divider"></div>
+  <div class="sidebar-section">Finance Hub</div>
+  <a class="sidebar-item" href="licenseiq-accrual-management.html"><span class="icon">📋</span> Accrual Management</a>
+  <div class="sidebar-item"><span class="icon">📋</span> Claims Workspace <span class="sidebar-badge">23</span></div>
+  <div class="sidebar-item active"><span class="icon">✂️</span> Deductions <span class="sidebar-badge critical">11</span></div>
+  <a class="sidebar-item" href="licenseiq-settlement.html"><span class="icon">⚖️</span> Settlement <span class="sidebar-badge accent">14</span></a>
+  <div class="sidebar-item"><span class="icon">🧾</span> Invoices &amp; Memos <span class="sidebar-badge">8</span></div>
+  <a class="sidebar-item" href="licenseiq-journal-entry-hub.html"><span class="icon">📓</span> Journal Entry Hub</a>
+  <a class="sidebar-item" href="licenseiq-period-close.html"><span class="icon">🗂️</span> Period Close <span class="sidebar-badge ok">2</span></a>
+  <div class="sidebar-divider"></div>
+  <div class="sidebar-section">Financial Intelligence</div>
+  <div class="sidebar-item"><span class="icon">📈</span> Revenue Analytics</div>
+  <div class="sidebar-item"><span class="icon">🤖</span> AI Audit Trail</div>
+  <div class="sidebar-item"><span class="icon">📦</span> Audit Packages</div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+
+<!-- PAGE HEADER -->
+<div class="page-header">
+  <div class="page-header-top">
+    <div class="page-header-left">
+      <h1>Deductions Workspace</h1>
+      <p>Decompose, validate &amp; route payment shortfalls — expected and unexpected</p>
+    </div>
+    <div class="header-actions">
+      <div class="period-selector"><span>Period:</span> Q2 2026 (Apr) <span style="margin-left:4px">▾</span></div>
+      <button class="btn btn-ghost btn-sm">⬇ Export</button>
+      <button class="btn btn-primary btn-sm">+ Manual Deduction</button>
+    </div>
+  </div>
+
+  <!-- VIEW TABS -->
+  <div class="view-tabs">
+    <div class="view-tab active" onclick="switchView(this,'unexpected')">Unexpected <span class="tab-badge">11</span></div>
+    <div class="view-tab" onclick="switchView(this,'expected')">Expected — Auto-clearing <span class="tab-badge" style="background:rgba(26,155,122,.15);color:var(--ok)">34</span></div>
+    <div class="view-tab" onclick="switchView(this,'resolved')">Resolved <span class="tab-badge">128</span></div>
+  </div>
+</div>
+
+<!-- AGENT BAR -->
+<div class="agent-bar">
+  <div class="agent-dot"></div>
+  <span class="agent-text">✦ DataIQ Agent active — monitoring Oracle AR cash applications · auto-matched 34 expected deductions this period · 2 unexpected arrived in last hour</span>
+  <span class="agent-stat">Auto-cleared today: <strong style="color:var(--purple)">34</strong></span>
+  <span class="agent-stat">Finance needed: <strong style="color:var(--warn)">11</strong></span>
+  <span class="agent-stat">Recovery rate: <strong style="color:var(--ok)">84%</strong></span>
+</div>
+
+<!-- KPI STRIP -->
+<div class="kpi-strip">
+  <div class="kpi-card">
+    <div class="kpi-label">Open Unexpected</div>
+    <div class="kpi-value critical">11</div>
+    <div class="kpi-sub">Needs Finance decomposition</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-label">Total Shortfall Q2</div>
+    <div class="kpi-value warn">$842K</div>
+    <div class="kpi-sub">Across 45 deductions</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-label">Valid — Clearing</div>
+    <div class="kpi-value ok">$618K</div>
+    <div class="kpi-sub">73% contractually valid</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-label">Disputed — Recovery</div>
+    <div class="kpi-value critical">$142K</div>
+    <div class="kpi-sub">Debit memos issued · 6 open</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-label">In Research</div>
+    <div class="kpi-value purple">$82K</div>
+    <div class="kpi-sub">Awaiting backup docs</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-label">Avg Days to Clear</div>
+    <div class="kpi-value">6.2</div>
+    <div class="kpi-sub">↓ from 14.1 days pre-LIQ</div>
+  </div>
+</div>
+
+<!-- WORK AREA -->
+<div class="work-area">
+
+  <!-- QUEUE PANEL -->
+  <div class="queue-panel" id="queuePanel">
+    <div class="queue-toolbar">
+      <input class="queue-search" placeholder="🔍 Filter…">
+      <button class="icon-btn btn-sm">⚙</button>
+    </div>
+    <div class="queue-filter-row">
+      <span class="filter-chip active">All (11)</span>
+      <span class="filter-chip">Unresolved (4)</span>
+      <span class="filter-chip">Research (3)</span>
+      <span class="filter-chip">Disputed (4)</span>
+    </div>
+    <div class="queue-list" id="unexpectedQueue">
+
+      <div class="queue-group-label">Unresolved — No backup received</div>
+
+      <!-- DED-001 SELECTED -->
+      <div class="queue-item selected" onclick="selectItem(this)">
+        <div class="qi-top">
+          <div class="qi-title">National Distributor Inc.</div>
+          <div class="qi-amount">–$38,000</div>
+        </div>
+        <div class="qi-meta">INV-2026-0312 · $500K inv · Apr 19 · EDI 820</div>
+        <div class="qi-footer">
+          <span class="badge badge-critical">Unresolved</span>
+          <span class="badge badge-muted">3 line items</span>
+          <span class="qi-age">1 day ago</span>
+        </div>
+      </div>
+
+      <!-- DED-002 -->
+      <div class="queue-item" onclick="selectItem(this)">
+        <div class="qi-top">
+          <div class="qi-title">Pacific Rim Electronics</div>
+          <div class="qi-amount">–$24,600</div>
+        </div>
+        <div class="qi-meta">INV-2026-0298 · $180K inv · Apr 17 · Portal</div>
+        <div class="qi-footer">
+          <span class="badge badge-warn">Research</span>
+          <span class="badge badge-muted">2 line items</span>
+          <span class="qi-age">3 days ago</span>
+        </div>
+      </div>
+
+      <!-- DED-003 -->
+      <div class="queue-item" onclick="selectItem(this)">
+        <div class="qi-top">
+          <div class="qi-title">Euro Audio GmbH</div>
+          <div class="qi-amount">–$18,200</div>
+        </div>
+        <div class="qi-meta">INV-2026-0285 · $92K inv · Apr 15 · Wire</div>
+        <div class="qi-footer">
+          <span class="badge badge-warn">Research</span>
+          <span class="badge badge-purple">Agent decomposed</span>
+          <span class="qi-age">5 days ago</span>
+        </div>
+      </div>
+
+      <div class="queue-group-label" style="margin-top:4px">Disputed — Recovery in progress</div>
+
+      <!-- DED-004 -->
+      <div class="queue-item" onclick="selectItem(this)">
+        <div class="qi-top">
+          <div class="qi-title">Sonics Pro Manufacturing</div>
+          <div class="qi-amount">–$31,400</div>
+        </div>
+        <div class="qi-meta">INV-2026-0271 · Apr 11 · Debit memo issued</div>
+        <div class="qi-footer">
+          <span class="badge badge-critical">Disputed</span>
+          <span class="badge badge-muted">AP</span>
+          <span class="qi-age">9 days</span>
+        </div>
+      </div>
+
+      <div class="queue-item" onclick="selectItem(this)">
+        <div class="qi-top">
+          <div class="qi-title">AudioTech Solutions Ltd.</div>
+          <div class="qi-amount">–$19,800</div>
+        </div>
+        <div class="qi-meta">INV-2026-0259 · Apr 9 · Awaiting partner response</div>
+        <div class="qi-footer">
+          <span class="badge badge-critical">Disputed</span>
+          <span class="badge badge-muted">AR</span>
+          <span class="qi-age">11 days</span>
+        </div>
+      </div>
+
+      <div class="queue-group-label" style="margin-top:4px">Partially cleared — remainder open</div>
+
+      <div class="queue-item" onclick="selectItem(this)">
+        <div class="qi-top">
+          <div class="qi-title">National Distributor Inc.</div>
+          <div class="qi-amount">–$12,400</div>
+        </div>
+        <div class="qi-meta">INV-2026-0244 · $22.4K cleared · $12.4K open</div>
+        <div class="qi-footer">
+          <span class="badge badge-warn">Partial</span>
+          <span class="badge badge-muted">2 of 4 cleared</span>
+          <span class="qi-age">14 days</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- EXPECTED VIEW (hidden) -->
+  <div id="expectedView" style="display:none;flex:1;overflow-y:auto;padding:16px 18px;">
+    <div style="margin-bottom:14px;">
+      <div class="section-label">Expected Deductions — Agent Auto-Clearing <span style="font-size:11px;color:var(--purple);font-weight:400;text-transform:none;letter-spacing:0;">34 this period · no Finance action required</span></div>
+      <div style="background:rgba(122,90,248,.06);border:1px solid rgba(122,90,248,.2);border-radius:var(--radius);padding:10px 14px;font-size:11.5px;color:var(--text2);margin-bottom:12px;">
+        <strong style="color:var(--purple)">✦ Agent:</strong> These deductions match approved settlements or open claims. I have auto-matched and am clearing them against Oracle AR. Finance can review any item but no action is needed unless you override.
+      </div>
+      <div style="display:flex;flex-direction:column;gap:4px;">
+        <div class="expected-row">
+          <span class="agent-pulse"></span>
+          <div style="flex:1;font-size:12px;font-weight:500;">National Distributor — Q1 Rebate settlement</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--critical);">–$112,800</div>
+          <span class="badge badge-purple">Auto-clearing</span>
+          <span style="font-size:10px;color:var(--text3);margin-left:4px;">→ STL-2026-0429</span>
+        </div>
+        <div class="expected-row">
+          <div style="width:5px;height:5px;border-radius:50%;background:var(--ok);flex-shrink:0;"></div>
+          <div style="flex:1;font-size:12px;font-weight:500;">Pacific Rim — Q1 Rebate partial</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--critical);">–$89,300</div>
+          <span class="badge badge-ok">Cleared</span>
+          <span style="font-size:10px;color:var(--text3);margin-left:4px;">→ STL-2026-0421</span>
+        </div>
+        <div class="expected-row">
+          <div style="width:5px;height:5px;border-radius:50%;background:var(--ok);flex-shrink:0;"></div>
+          <div style="flex:1;font-size:12px;font-weight:500;">Euro Audio — Q1 Channel Incentive</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--critical);">–$44,200</div>
+          <span class="badge badge-ok">Cleared</span>
+          <span style="font-size:10px;color:var(--text3);margin-left:4px;">→ STL-2026-0418</span>
+        </div>
+        <div style="padding:8px 12px;font-size:11px;color:var(--text3);text-align:center;">+ 31 more auto-cleared · <span style="color:var(--accent);cursor:pointer;">View all</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CENTER PANEL -->
+  <div class="center-panel" id="centerPanel">
+    <div class="center-header">
+      <div class="center-title">National Distributor Inc. — DED-2026-0041</div>
+      <div class="center-sub-row">
+        <span class="badge badge-critical">Unresolved</span>
+        <span class="badge badge-muted">INV-2026-0312 · $500,000</span>
+        <span class="badge badge-muted">Received Apr 19 · EDI 820</span>
+        <span style="font-size:11px;color:var(--text2);">Shortfall: <strong style="color:var(--critical);font-family:'JetBrains Mono',monospace;">–$38,000</strong></span>
+      </div>
+      <div class="center-header-actions">
+        <button class="btn btn-ghost btn-sm">📋 View Invoice</button>
+        <button class="btn btn-ghost btn-sm">📄 View Contract</button>
+        <button class="btn btn-ghost btn-sm">⬇ Export</button>
+      </div>
+    </div>
+
+    <div class="center-tabs">
+      <div class="center-tab active" onclick="switchTab(this,'decompose')">Decompose &amp; Route</div>
+      <div class="center-tab" onclick="switchTab(this,'evidence')">Backup Docs</div>
+      <div class="center-tab" onclick="switchTab(this,'timeline')">Timeline &amp; Audit</div>
+    </div>
+
+    <!-- DECOMPOSE TAB -->
+    <div class="center-body tab-content active" id="decompose">
+
+      <!-- SUMMARY BAR -->
+      <div class="ded-summary">
+        <div class="ds-cell">
+          <div class="ds-label">Invoice Amount</div>
+          <div class="ds-val" style="color:var(--text)">$500,000</div>
+          <div class="ds-sub">INV-2026-0312 · Net 30</div>
+        </div>
+        <div class="ds-cell">
+          <div class="ds-label">Payment Received</div>
+          <div class="ds-val" style="color:var(--ok)">$462,000</div>
+          <div class="ds-sub">Apr 19 · EDI 820 · Chase</div>
+        </div>
+        <div class="ds-cell">
+          <div class="ds-label">Deduction Taken</div>
+          <div class="ds-val" style="color:var(--critical)">–$38,000</div>
+          <div class="ds-sub">Unilateral self-service</div>
+        </div>
+        <div class="ds-cell">
+          <div class="ds-label">Decomposed</div>
+          <div class="ds-val" style="color:var(--warn)">$38,000</div>
+          <div class="ds-sub">3 line items · agent drafted</div>
+        </div>
+        <div class="ds-cell">
+          <div class="ds-label">Resolved</div>
+          <div class="ds-val" style="color:var(--text3)">$0</div>
+          <div class="ds-sub">Pending Finance action</div>
+        </div>
+      </div>
+
+      <!-- AGENT REASONING -->
+      <div class="agent-block">
+        <div class="ab-header"><div class="agent-dot"></div>✦ DataIQ Agent — Deduction Analysis</div>
+        <div class="ab-step"><div class="ab-num">1</div><div class="ab-text">Received EDI 820 from National Distributor · <strong>$462,000 payment</strong> against <strong>INV-2026-0312 ($500,000)</strong> · shortfall = <strong>$38,000</strong></div></div>
+        <div class="ab-step"><div class="ab-num">2</div><div class="ab-text">No remittance detail in 820 envelope · cross-referenced open claims and approved settlements for this partner</div></div>
+        <div class="ab-step"><div class="ab-num">3</div><div class="ab-text"><strong>$20,200</strong> matches approved claim CLM-2026-0441 (price protection · 3,200 units × $20) — but claim was partially approved · partner may have self-served the full $84,200 or a portion</div></div>
+        <div class="ab-step"><div class="ab-num">4</div><div class="ab-text"><strong>$12,400</strong> pattern matches chargeback CLM-2026-0438 — partially rejected · $12,400 was the ineligible portion · no contractual basis confirmed</div></div>
+        <div class="ab-step"><div class="ab-num">5</div><div class="ab-text"><strong>$5,400</strong> unidentified · no matching claim · no contract clause · flagged as <strong style="color:var(--critical)">Unknown — research required</strong></div></div>
+        <div class="ab-rec"><strong>Agent recommendation:</strong> Clear $20,200 against approved claim. Dispute $12,400 (no contractual basis — issue debit memo). Put $5,400 on Research hold for 10 days pending backup. Total recoverable: $17,800.</div>
+      </div>
+
+      <!-- DECOMPOSITION TABLE -->
+      <div class="section-label">Deduction Line Items — Decomposition</div>
+      <table class="ded-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Description / Type</th>
+            <th>Linked Claim / Contract</th>
+            <th class="right">Amount</th>
+            <th>Agent Assessment</th>
+            <th>Finance Decision</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Line 1 — Valid, clear -->
+          <tr class="row-valid">
+            <td><span class="ded-dot dot-ok"></span>1</td>
+            <td>
+              <div style="font-weight:600;font-size:12px;">Price Protection — SKU-2201</div>
+              <div style="font-size:10.5px;color:var(--text2);">SoundPro Wireless · 3,200 units × $20 drop</div>
+            </td>
+            <td>
+              <div style="font-size:11px;"><span style="color:var(--accent)">CLM-2026-0441</span> · Partial approval $64K</div>
+              <div style="font-size:10px;color:var(--text2);">CL-04 · Price Protection · CNT-2026-040</div>
+            </td>
+            <td class="right">$20,200</td>
+            <td><span class="badge badge-ok">✓ Valid</span><div style="font-size:10px;color:var(--text2);margin-top:2px;">Matches approved claim</div></td>
+            <td>
+              <div style="display:flex;flex-direction:column;gap:3px;">
+                <button class="btn btn-ok btn-xs" style="justify-content:center;">✓ Clear</button>
+                <button class="btn btn-ghost btn-xs" style="justify-content:center;">Dispute</button>
+              </div>
+            </td>
+          </tr>
+          <!-- Line 2 — Invalid, dispute -->
+          <tr class="row-invalid">
+            <td><span class="ded-dot dot-critical"></span>2</td>
+            <td>
+              <div style="font-weight:600;font-size:12px;">Chargeback — deal support Q1</div>
+              <div style="font-size:10.5px;color:var(--text2);">SKU group 4400 · Q1 deal pricing claim</div>
+            </td>
+            <td>
+              <div style="font-size:11px;"><span style="color:var(--critical)">CLM-2026-0438</span> · Ineligible portion</div>
+              <div style="font-size:10px;color:var(--text2);">Rejected — exceeded contract max</div>
+            </td>
+            <td class="right">$12,400</td>
+            <td><span class="badge badge-critical">✕ Invalid</span><div style="font-size:10px;color:var(--critical);margin-top:2px;">No contractual basis</div></td>
+            <td>
+              <div style="display:flex;flex-direction:column;gap:3px;">
+                <button class="btn btn-critical btn-xs" style="justify-content:center;">✕ Dispute</button>
+                <button class="btn btn-ghost btn-xs" style="justify-content:center;">Research</button>
+              </div>
+            </td>
+          </tr>
+          <!-- Line 3 — Unknown -->
+          <tr class="row-research">
+            <td><span class="ded-dot dot-warn"></span>3</td>
+            <td>
+              <div style="font-weight:600;font-size:12px;">Unknown — no remittance detail</div>
+              <div style="font-size:10.5px;color:var(--text2);">No backup received · type unidentified</div>
+            </td>
+            <td>
+              <div style="font-size:11px;color:var(--text3);">No matching claim or clause found</div>
+              <div style="font-size:10px;color:var(--text2);">Agent searched CNT-2026-040 · no match</div>
+            </td>
+            <td class="right">$5,400</td>
+            <td><span class="badge badge-warn">Research</span><div style="font-size:10px;color:var(--warn);margin-top:2px;">Backup needed</div></td>
+            <td>
+              <div style="display:flex;flex-direction:column;gap:3px;">
+                <button class="btn btn-warn btn-xs" style="justify-content:center;">Research</button>
+                <button class="btn btn-ghost btn-xs" style="justify-content:center;">Dispute</button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="3"><strong>Total deduction</strong></td>
+            <td class="right"><strong>$38,000</strong></td>
+            <td colspan="2">
+              <span style="font-size:10px;color:var(--ok);">$20,200 clearable · </span>
+              <span style="font-size:10px;color:var(--critical);">$12,400 dispute · </span>
+              <span style="font-size:10px;color:var(--warn);">$5,400 research</span>
+            </td>
+          </tr>
+        </tfoot>
+      </table>
+
+      <!-- RESOLUTION OPTIONS -->
+      <div class="section-label">Bulk Resolution</div>
+      <div style="display:flex;gap:8px;margin-bottom:14px;">
+        <div style="flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px;cursor:pointer;transition:all .15s" onmouseover="this.style.borderColor='var(--ok)'" onmouseout="this.style.borderColor='var(--border)'">
+          <div style="font-size:12px;font-weight:600;color:var(--ok);margin-bottom:4px;">✓ Accept Agent Recommendation</div>
+          <div style="font-size:11px;color:var(--text2);line-height:1.5;">Clear <strong style="color:var(--text)">$20,200</strong> · dispute <strong style="color:var(--text)">$12,400</strong> · put <strong style="color:var(--text)">$5,400</strong> on research hold. Issue debit memo for $12,400.</div>
+        </div>
+        <div style="flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px;cursor:pointer;transition:all .15s" onmouseover="this.style.borderColor='var(--critical)'" onmouseout="this.style.borderColor='var(--border)'">
+          <div style="font-size:12px;font-weight:600;color:var(--critical);margin-bottom:4px;">✕ Dispute Full Amount</div>
+          <div style="font-size:11px;color:var(--text2);line-height:1.5;">Dispute all <strong style="color:var(--text)">$38,000</strong>. Issue debit memo. Request partner provide remittance detail for full amount before any clearing.</div>
+        </div>
+        <div style="flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px;cursor:pointer;transition:all .15s" onmouseover="this.style.borderColor='var(--warn)'" onmouseout="this.style.borderColor='var(--border)'">
+          <div style="font-size:12px;font-weight:600;color:var(--warn);margin-bottom:4px;">⏸ Research Hold</div>
+          <div style="font-size:11px;color:var(--text2);line-height:1.5;">Put full amount on hold. Request backup documentation from partner via portal. 10-day window. Review when received.</div>
+        </div>
+      </div>
+
+    </div><!-- end decompose tab -->
+
+    <!-- BACKUP DOCS TAB -->
+    <div class="center-body tab-content" id="evidence">
+      <div class="section-label">Backup Documentation</div>
+      <div style="background:rgba(217,64,64,.06);border:1px solid rgba(217,64,64,.2);border-radius:var(--radius);padding:10px 14px;margin-bottom:12px;font-size:11.5px;color:var(--text2);">
+        <strong style="color:var(--critical);">⚠ No remittance detail received</strong> — the EDI 820 payment did not include line-level remittance. Partner has been notified via portal to submit backup. 10-day window expires <strong style="color:var(--text)">Apr 29, 2026</strong>.
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px;">
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:11px 14px;display:flex;align-items:center;gap:10px;">
+          <span style="font-size:20px;">📄</span>
+          <div style="flex:1;"><div style="font-size:12px;font-weight:600;">EDI 820 — Payment Remittance</div><div style="font-size:11px;color:var(--text2);">Received Apr 19 · No line detail · Header only</div></div>
+          <span class="badge badge-warn">Partial</span>
+        </div>
+        <div style="background:var(--surface2);border:1px dashed rgba(122,90,248,.3);border-radius:var(--radius);padding:11px 14px;display:flex;align-items:center;gap:10px;">
+          <span style="font-size:20px;opacity:.4;">📂</span>
+          <div style="flex:1;"><div style="font-size:12px;color:var(--text2);">Deduction backup — awaiting from partner</div><div style="font-size:11px;color:var(--text3);">Requested Apr 19 · Due Apr 29</div></div>
+          <span class="badge badge-purple">Pending</span>
+        </div>
+      </div>
+      <div style="margin-top:12px;display:flex;gap:8px;">
+        <button class="btn btn-ghost btn-sm">📤 Request via Portal</button>
+        <button class="btn btn-ghost btn-sm">+ Upload Received Doc</button>
+      </div>
+    </div>
+
+    <!-- TIMELINE TAB -->
+    <div class="center-body tab-content" id="timeline">
+      <div class="section-label">Activity Log</div>
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="tl-dot-col"><div class="tl-dot" style="background:var(--purple)"></div><div class="tl-line"></div></div>
+          <div class="tl-content"><div class="tl-title">Agent decomposed deduction into 3 line items</div><div class="tl-meta">Apr 19, 2026 · 09:22 · DataIQ Agent · matched CLM-0441 and CLM-0438</div></div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot-col"><div class="tl-dot" style="background:var(--text2)"></div><div class="tl-line"></div></div>
+          <div class="tl-content"><div class="tl-title">EDI 820 received — $462,000 payment · $38,000 shortfall detected</div><div class="tl-meta">Apr 19, 2026 · 09:14 · DataIQ ingested from Chase bank feed</div></div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot-col"><div class="tl-dot" style="background:var(--text2)"></div><div class="tl-line"></div></div>
+          <div class="tl-content"><div class="tl-title">Partner notified — backup documentation requested</div><div class="tl-meta">Apr 19, 2026 · 09:22 · DataIQ via partner portal · 10-day deadline set</div></div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot-col"><div class="tl-dot" style="background:var(--ok)"></div></div>
+          <div class="tl-content"><div class="tl-title">Invoice INV-2026-0312 issued · $500,000 · Net 30</div><div class="tl-meta">Mar 20, 2026 · Oracle AR · due Apr 19</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="center-footer">
+      <span class="footer-status">DED-2026-0041 · <strong>$38,000 unresolved</strong> · No backup received · Agent recommendation available</span>
+      <div style="flex:1"></div>
+      <button class="btn btn-ghost btn-sm">⏸ Research Hold</button>
+      <button class="btn btn-critical btn-sm">✕ Dispute Full</button>
+      <button class="btn btn-ok btn-sm">✓ Accept Agent Rec.</button>
+    </div>
+
+  </div><!-- end center-panel -->
+
+  <!-- AI PANEL -->
+  <div class="ai-panel">
+    <div class="ai-panel-header">
+      <div class="ai-title-row">
+        <div class="ai-status-dot"></div>
+        <div class="ai-title">LicenseIQ AI</div>
+      </div>
+      <div class="ai-sub">Active on DED-2026-0041 · 3 line items analysed</div>
+    </div>
+    <div class="ai-context">Context: <span>National Distributor · INV-2026-0312 · $38K shortfall</span></div>
+    <div class="ai-msgs">
+      <div class="ai-msg ai">
+        <div class="ai-label">LicenseIQ AI</div>
+        I've decomposed this <strong>$38,000 deduction</strong> into 3 line items:<br><br>
+        <strong>$20,200</strong> — Valid price protection. Matches your approved claim CLM-0441. Safe to clear against Oracle AR.<br><br>
+        <strong>$12,400</strong> — Invalid chargeback. This is the ineligible portion we already rejected in CLM-0438. No contractual basis. Issue debit memo.<br><br>
+        <strong>$5,400</strong> — Unknown. No matching claim or clause. Need backup from partner before deciding.
+      </div>
+      <div class="ai-msg ai">
+        <div class="ai-label">LicenseIQ AI</div>
+        If you accept my recommendation, <strong>$12,400 becomes recoverable</strong> via the debit memo process. Historical recovery rate for National Distributor disputes is <strong style="color:var(--ok)">91%</strong> — they typically respond within 8 days.
+      </div>
+    </div>
+    <div class="ai-prompts">
+      <div class="ai-prompt">Why is $12,400 ineligible — show contract clause</div>
+      <div class="ai-prompt">Draft debit memo for $12,400 dispute</div>
+      <div class="ai-prompt">What's National Distributor's dispute history?</div>
+      <div class="ai-prompt">Generate AR clearing entry for $20,200</div>
+    </div>
+    <div class="ai-input-row">
+      <input class="ai-input" placeholder="Ask about this deduction…">
+      <button class="ai-send">➤</button>
+    </div>
+  </div>
+
+</div><!-- end work-area -->
+</div><!-- end main -->
+</div><!-- end layout -->
+
+<script>
+function switchView(el, view) {
+  document.querySelectorAll('.view-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  const q = document.getElementById('queuePanel');
+  const c = document.getElementById('centerPanel');
+  const e = document.getElementById('expectedView');
+  if(view==='expected'){
+    q.style.display='none'; c.style.display='none'; e.style.display='block';
+  } else {
+    q.style.display='flex'; c.style.display='flex'; e.style.display='none';
+  }
+}
+function selectItem(el){
+  document.querySelectorAll('.queue-item').forEach(i=>i.classList.remove('selected'));
+  el.classList.add('selected');
+}
+function switchTab(el, id){
+  document.querySelectorAll('.center-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById(id).classList.add('active');
+}
+</script>
+</body>
+</html>

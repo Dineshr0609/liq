@@ -1,0 +1,77 @@
+Implement the Partner Master Headquarters address UX exactly as follows (production-ready):
+
+Objective
+In Partner Master Add/Edit Record:
+  1) Headquarters City must be searchable from master city data.
+  2) On city selection, Headquarters State and Headquarters Country auto-fill.
+  3) State and Country must be disabled/read-only after auto-fill.
+  4) City field display must show only: City (ZIP).
+  5) Do NOT show state/country codes or names inside the City field.
+
+Backend requirements
+1. Master data source priority
+Use these tables as authoritative source:
+  - country_master
+  - state_master
+  - city_master
+Join city -> state -> country.
+
+2. City lookup API
+Endpoint: GET /api/reference/cities?q=&limit=
+Search across:
+  - city_name
+  - postal_code
+  - state_name/state_code
+  - country_name/country_code
+Return JSON fields:
+  - city
+  - state
+  - country
+  - cityId
+  - postalCode
+Sort by city_name, state_name, country_name, postal_code.
+Limit results by limit.
+Optional fallback to legacy sources only if master tables are unavailable.
+
+Frontend requirements (Partner Master form)
+1. Headquarters City control
+Use searchable popover/combobox with debounced API query to /api/reference/cities.
+Suggestion row text must be:
+  - City (ZIP) when ZIP exists
+  - City when ZIP is missing
+Selected display in input/button must be exactly same format (City (ZIP)).
+Do not append state/country in this field display.
+
+2. Auto-fill behavior on selection
+On selecting a city suggestion:
+  - set headquarters_city = city
+  - set headquarters_state = state
+  - set headquarters_country = country
+  - store postal code for city display label
+  - close popover
+
+3. State/Country fields
+Render as disabled/read-only inputs once city/state/country are present.
+Show helper text like “Auto-filled from selected city.”
+User must not be able to manually edit state/country after selection.
+
+4. Form lifecycle consistency
+Clear city postal display state on:
+  - open add form
+  - close/cancel form
+  - overlay close
+  - edit record open (unless mapped from selected suggestion)
+Keep existing required-field validation and save behavior unchanged.
+
+Quality/safety
+No React hook order violations.
+No regression in create/edit/delete flows.
+Keep existing tenant/company context behavior.
+Keep keyboard accessibility in combobox (arrow/enter/escape).
+
+Acceptance criteria
+Typing in Headquarters City shows results from city_master source.
+Selecting result auto-fills state and country.
+State/Country are disabled and non-editable.
+City field displays only City (ZIP), never “City, ST, Country”.
+Saved record persists city/state/country correctly.
